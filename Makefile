@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-g -Wall -ansi -pedantic
+CFLAGS=-g -Wall -Wextra -Weverything -ansi -pedantic
 LDFLAGS=
 SOURCES=main.c
 OUT=-o main
