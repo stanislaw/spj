@@ -4,10 +4,11 @@
 #include "spj.h"
 
 int main() {
-    printf("We can now iterate the whole string:\n");
-
     char *jsonbytes = "{\"Here some\":\"JSON bytes\"}";
     int datasize = strlen(jsonbytes);
+
+    printf("We can now iterate the whole string:\n");
+
 
     spj_parse(jsonbytes, datasize);
 

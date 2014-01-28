@@ -12,25 +12,26 @@ static spj_iter_t spj_iter_create(const char *jsonbytes, int datasize) {
     return iterator;
 }
 
-// возвращает символ, увеличивает итератор
+
 static int spj_iter_getc(spj_iter_t *iterator) {
     int c = iterator->data[iterator->currentposition];
 
     if (c) {
         iterator->currentposition++;
     } else {
-        c = EOF; // конец строки json. curpos оставим на месте 
+        c = EOF;
     }
 
     return c;
 }
 
-// изменяет итератор на offset позиций, возвращает currentPosition
+
 static int spj_iter_seek(spj_iter_t *iterator, int offset) {
-    iterator->currentposition += offset; // проверим допустимость новой позиции. Она д.б. внутри строки json.
+    iterator->currentposition += offset;
+
 
     if (iterator->currentposition > iterator->datasize - 1) {
-        iterator->currentposition = iterator->datasize - 1; // это 0 в конце строки
+        iterator->currentposition = iterator->datasize - 1;
     } else if (iterator->currentposition < 0) {
         iterator->currentposition = 0;
     }
