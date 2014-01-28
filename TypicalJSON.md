@@ -1,5 +1,5 @@
 
-```JSON
+```json
 {
     "data": [
         {
