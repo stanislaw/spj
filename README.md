@@ -79,3 +79,7 @@ JSONObject есть read-only, вы можете при его создании 
 * [Typical JSON](https://github.com/stanislaw/spj/blob/master/TypicalJSON.md)
 * `curl http://hashcode.ru/api/json/deleted_questions?startAt=1&amount=1`
 
+## Ссылки
+
+* [Toy parser and lexer на C++](https://github.com/stanislaw/spj/blob/master/ParserAndLexer.md)
+ 
