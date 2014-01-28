@@ -5,7 +5,7 @@
 
 int main() {
     char *jsonbytes = "{\"Here some\":\"JSON bytes\"}";
-    int datasize = strlen(jsonbytes);
+    int datasize = (int)strlen(jsonbytes);
 
     printf("We can now iterate the whole string:\n");
 

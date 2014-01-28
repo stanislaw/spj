@@ -26,7 +26,7 @@ static int spj_iter_getc(spj_iter_t *iterator) {
 }
 
 
-static int spj_iter_seek(spj_iter_t *iterator, int offset) {
+static int __attribute__((unused)) spj_iter_seek(spj_iter_t *iterator, int offset) {
     iterator->currentposition += offset;
 
 
