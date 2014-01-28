@@ -4,8 +4,12 @@ LDFLAGS=
 SOURCES=main.m
 OUT=-o main
 
-INCLUDE_PATHS:= -I$(dir $(lastword $(MAKEFILE_LIST)))/spj
+INCLUDE_PATHS:= -Ispj
+
+run: all exec
 
 all:
 	$(CC) $(CFLAGS) $(INCLUDE_PATHS) $(SOURCES) $(OUT)
 
+exec:
+	./main
