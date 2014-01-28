@@ -45,7 +45,7 @@ int spj_iter_peek (spj_iter_t *iterator) {
 
 
 void spj_parse(const char *jsonbytes, int datasize) {
-    spj_iter_t iterator = spj_iter_create(jsonbytes, 10);
+    spj_iter_t iterator = spj_iter_create(jsonbytes, datasize);
 
     while (spj_iter_peek(&iterator)) {
         printf("%c", spj_iter_getc(&iterator));
