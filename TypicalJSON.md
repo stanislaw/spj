@@ -25,7 +25,8 @@
           "last_activity": 1366613085178,
           "last_ping": 1366616861547
         },
-        
+         
+        ... each user record can contain up to 20 keys: id, email, name, nick, ...  
         ... up to 1000 records
     ]
 }
