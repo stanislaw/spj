@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 
-spj_iter_t spj_iter_create(const char *jsonbytes, int datasize) {
+static spj_iter_t spj_iter_create(const char *jsonbytes, int datasize) {
     spj_iter_t iterator;
 
     iterator.data = jsonbytes;
@@ -13,7 +13,7 @@ spj_iter_t spj_iter_create(const char *jsonbytes, int datasize) {
 }
 
 // возвращает символ, увеличивает итератор
-int spj_iter_getc(spj_iter_t *iterator) {
+static int spj_iter_getc(spj_iter_t *iterator) {
     int c = iterator->data[iterator->currentposition];
 
     if (c) {
@@ -26,7 +26,7 @@ int spj_iter_getc(spj_iter_t *iterator) {
 }
 
 // изменяет итератор на offset позиций, возвращает currentPosition
-int spj_iter_seek(spj_iter_t *iterator, int offset) {
+static int spj_iter_seek(spj_iter_t *iterator, int offset) {
     iterator->currentposition += offset; // проверим допустимость новой позиции. Она д.б. внутри строки json.
 
     if (iterator->currentposition > iterator->datasize - 1) {
@@ -39,7 +39,7 @@ int spj_iter_seek(spj_iter_t *iterator, int offset) {
 }
 
 
-int spj_iter_peek (spj_iter_t *iterator) {
+static int spj_iter_peek (spj_iter_t *iterator) {
    return iterator->data[iterator->currentposition];
 }
 
@@ -51,6 +51,5 @@ void spj_parse(const char *jsonbytes, int datasize) {
         printf("%c", spj_iter_getc(&iterator));
     }
 }
-
 
 
