@@ -45,12 +45,12 @@ union value {
 };
 
 
-typedef struct jVal {
+typedef struct jval {
   jValue_type type;    // try to do it without flags
   struct jval *parent; // calculated AFTER the filling of the PARENT's container
   char *name;          // name pairs (valid only for members of the object)
   union value value;
-} jVal;
+} jval;
 
 
 typedef struct spj_iter {
@@ -60,9 +60,9 @@ typedef struct spj_iter {
 } spj_iter_t;
 
 
-int spj_parse (const char *json_str, jVal *root);
-int spj_parse2 (const char *json_str, size_t jsize, jVal *root);
-int spj_delete (jVal *obj);
+int spj_parse (const char *json_str, jval *root);
+int spj_parse2 (const char *json_str, size_t jsize, jval *root);
+int spj_delete (jval *obj);
 
 
 

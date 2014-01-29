@@ -5,12 +5,12 @@
 
 int main() {
     char *jsonbytes = "{\"Here some\":\"JSON bytes\"}";
-    jVal jval;
+    jval jv;
 
     printf("We can now iterate the whole string:\n");
 
 
-    spj_parse(jsonbytes, &jval);
+    spj_parse(jsonbytes, &jv);
 
     printf("\n");
 

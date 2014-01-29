@@ -48,7 +48,7 @@ static int spj_iter_peek (spj_iter_t *iterator) {
 }
 
 
-int spj_parse (const char *json_str, jVal *root) {
+int spj_parse (const char *json_str, jval *root) {
     size_t datasize = strlen(json_str);
 
     spj_iter_t iterator = spj_iter_create(json_str, datasize);
@@ -61,11 +61,11 @@ int spj_parse (const char *json_str, jVal *root) {
 }
 
 
-int spj_parse2 (const char *json_str, size_t jsize, jVal *root) {
+int spj_parse2 (const char *json_str, size_t jsize, jval *root) {
     return 0;
 }
 
-int spj_delete (jVal *obj) {
+int spj_delete (jval *obj) {
     return 0;
 }
 
