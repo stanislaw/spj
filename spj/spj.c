@@ -1,6 +1,8 @@
 #include "spj.h"
 
 #include <stdio.h>
+#include <string.h>
+
 
 static spj_iter_t spj_iter_create(const char *jsonbytes, int datasize) {
     spj_iter_t iterator;
@@ -46,12 +48,25 @@ static int spj_iter_peek (spj_iter_t *iterator) {
 }
 
 
-void spj_parse(const char *jsonbytes, int datasize) {
-    spj_iter_t iterator = spj_iter_create(jsonbytes, datasize);
+int spj_parse (const char *json_str, jVal *root) {
+    size_t datasize = strlen(json_str);
+
+    spj_iter_t iterator = spj_iter_create(json_str, datasize);
 
     while (spj_iter_peek(&iterator)) {
         printf("%c", spj_iter_getc(&iterator));
     }
+
+    return 0;
+}
+
+
+int spj_parse2 (const char *json_str, size_t jsize, jVal *root) {
+    return 0;
+}
+
+int spj_delete (jVal *obj) {
+    return 0;
 }
 
 

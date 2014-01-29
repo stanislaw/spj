@@ -1,3 +1,4 @@
+#include <stdio.h>
 
 struct jval;
 #ifdef USE_OBJ_DICT
@@ -59,5 +60,10 @@ typedef struct spj_iter {
 } spj_iter_t;
 
 
-void spj_parse(const char *jsonbytes, int datasize);
+int spj_parse (const char *json_str, jVal *root);
+int spj_parse2 (const char *json_str, size_t jsize, jVal *root);
+int spj_delete (jVal *obj);
+
+
+
 
