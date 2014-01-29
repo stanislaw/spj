@@ -30,13 +30,20 @@ static int spj_iter_getc(spj_iter_t *iterator) {
 
 
 static int __attribute__((unused)) spj_iter_seek(spj_iter_t *iterator, int offset) {
-    iterator->currentposition += offset;
+    if (offset > 0) {
+        iterator->currentposition += offset;
 
+        if (iterator->currentposition > iterator->datasize - 1) {
+            iterator->currentposition = iterator->datasize - 1;
+        }
+    } else if (offset < 0) {
+        unsigned int uoffset = (unsigned int)(-offset);
 
-    if (iterator->currentposition > iterator->datasize - 1) {
-        iterator->currentposition = iterator->datasize - 1;
-    } else if (iterator->currentposition < 0) {
-        iterator->currentposition = 0;
+        if (iterator->currentposition > uoffset) {
+            iterator->currentposition -= uoffset;
+        } else {
+            iterator->currentposition = 0;
+        }
     }
 
     return iterator->currentposition;
