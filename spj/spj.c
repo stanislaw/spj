@@ -14,7 +14,8 @@ static spj_iter_t spj_iter_create(const char *jsonbytes, int datasize) {
 
 
 static int spj_iter_getc(spj_iter_t *iterator) {
-    int c = iterator->data[iterator->currentposition];
+    int c = (iterator->currentposition > iterator->datasize - 1) ? 0 
+            : iterator->data[iterator->currentposition];
 
     if (c) {
         iterator->currentposition++;
