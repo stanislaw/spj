@@ -100,4 +100,6 @@ JSONObject есть read-only, вы можете при его создании 
 ## Ссылки
 
 * [Toy parser and lexer на C++](https://github.com/stanislaw/spj/blob/master/ParserAndLexer.md)
- 
+
+* [Идеи об организации jObject: можно использовать специфику строкового ключа для эффективного поиска](http://stackoverflow.com/q/6714715/276994)
+
