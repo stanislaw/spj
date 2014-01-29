@@ -18,7 +18,7 @@ typedef enum jValue_type {
 
 typedef struct jObject {
   struct jval *data; // array
-  int size;
+  size_t size;
 #ifdef USE_OBJ_DICT
   struct htab *hash;
 #endif
@@ -27,13 +27,13 @@ typedef struct jObject {
 
 typedef struct jArray {
   struct jval *data; // array
-  int size;
+  size_t size;
 } jArray;
 
 
 typedef struct jString {
   char *data; // nil terminating
-  int size;
+  size_t size;
 } jString;
 
 
@@ -55,7 +55,7 @@ typedef struct jval {
 
 typedef struct spj_iter {
    const char *data;
-   int currentposition;
+   size_t currentposition;
    size_t datasize;
 } spj_iter_t;
 
