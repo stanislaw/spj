@@ -4,7 +4,7 @@
 #include <string.h>
 
 
-static spj_iter_t spj_iter_create(const char *jsonbytes, int datasize) {
+static spj_iter_t spj_iter_create(const char *jsonbytes, size_t datasize) {
     spj_iter_t iterator;
 
     iterator.data = jsonbytes;

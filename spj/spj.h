@@ -55,8 +55,8 @@ typedef struct jVal {
 
 typedef struct spj_iter {
    const char *data;
-   int currentposition,
-       datasize;
+   int currentposition;
+   size_t datasize;
 } spj_iter_t;
 
 
