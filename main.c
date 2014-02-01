@@ -5,7 +5,7 @@
 
 int main() {
     char *jsonbytes = "{\"Here some\":\"JSON bytes\"}";
-    jval jv;
+    SpjJSONData jv;
 
     printf("We can now iterate the whole string:\n");
 
