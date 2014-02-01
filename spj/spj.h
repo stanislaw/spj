@@ -19,6 +19,12 @@ typedef enum SpjJSONValueType {
 } SpjJSONValueType;
 
 
+typedef enum {
+    SpjJSONParsingResultError = 0,
+    SpjJSONParsingResultSuccess = 0
+} SpjJSONParsingResult;
+
+
 typedef struct SpjObject {
   struct SpjJSONData *data; // array
   size_t size;
@@ -90,7 +96,7 @@ SpjJSONTokenType spj_getoken (spj_iterator_t *iterator, spj_lexer_t *lexer);
 
 
 // Jerror устанавливаем код возврата в curpos + 1 и начинаем просто возвращаться из рекурсии с ним.
-int spj_parse (const char *json_str, SpjJSONData *root);
+SpjJSONParsingResult spj_parse (const char *json_str, SpjJSONData *root);
 int spj_delete (SpjJSONData *object);
 
 
