@@ -6,6 +6,36 @@
 #include <string.h>
 #include <ctype.h>
 
+
+typedef struct {
+    //char in;
+    union SpjJSONValue value;
+} spj_lexer_t;
+
+
+typedef struct {
+    const char *data;
+    size_t currentposition;
+    size_t datasize;
+} spj_iterator_t;
+
+
+typedef enum SpjJSONTokenType {
+    SpjJSONTokenError,
+    SpjJSONTokenNumber,
+    SpjJSONTokenString,
+    SpjJSONTokenBool,     // true false
+    SpjJSONTokenNull,     // null
+    SpjJSONTokenObjectStart, // {
+    SpjJSONTokenArrayStart, // [
+    SpjJSONTokenObjectEnd,   // }
+    SpjJSONTokenArrayEnd,   // ]
+    SpjJSONTokenColon,    // : =
+    SpjJSONTokenComma,    // ,
+    SpjJSONTokenEOS //
+} SpjJSONTokenType;
+
+
 static char spj_iterator_peek(spj_iterator_t *iterator);
 
 static spj_iterator_t spj_iterator_create(const char *jsonbytes, size_t datasize) {
@@ -131,6 +161,8 @@ SpjJSONTokenType spj_gettoken_number(spj_iterator_t *iterator, spj_lexer_t *lexe
     return SpjJSONTokenNumber;
 }
 
+
+// Для всех лексем, кроме Object и Array лексер возвращает (в аргументе lex) значение, которое парсер просто копирует в элемент контейнера.
 SpjJSONTokenType spj_gettoken(spj_iterator_t *iterator, spj_lexer_t *lexer) {
     SpjJSONTokenType jtokentype;
 
@@ -154,19 +186,77 @@ SpjJSONTokenType spj_gettoken(spj_iterator_t *iterator, spj_lexer_t *lexer) {
         case '}':
             return SpjJSONTokenObjectEnd;
 
+        case ',':
+            return SpjJSONTokenComma;
+
         case '"':
             return spj_gettoken_string(iterator, lexer);
     }
 
-    if (isdigit(currentbyte)) {
+    if (isdigit(currentbyte) || currentbyte == '-') {
         return spj_gettoken_number(iterator, lexer);
     }
+
+    if (currentbyte == 't') {
+        spj_iterator_seek(iterator, 1);
+        if (spj_iterator_getc(iterator) == 'r' &&
+            spj_iterator_getc(iterator) == 'u' &&
+            spj_iterator_getc(iterator) == 'e') {
+
+            printf("Token[Bool] : true\n");
+
+            lexer->value.number = 1;
+            return SpjJSONTokenBool;
+
+        } else {
+            assert(0);
+        }
+    }
+
+    if (currentbyte == 'f') {
+        spj_iterator_seek(iterator, 1);
+        if (spj_iterator_getc(iterator) == 'a' &&
+            spj_iterator_getc(iterator) == 'l' &&
+            spj_iterator_getc(iterator) == 's' &&
+            spj_iterator_getc(iterator) == 'e') {
+
+            printf("Token[Bool] : false\n");
+
+            lexer->value.number = 0;
+            return SpjJSONTokenBool;
+
+        } else {
+            assert(0);
+        }
+    }
+
+    if (currentbyte == 'n') {
+        spj_iterator_seek(iterator, 1);
+        if (spj_iterator_getc(iterator) == 'u' &&
+            spj_iterator_getc(iterator) == 'l' &&
+            spj_iterator_getc(iterator) == 'l') {
+
+            printf("Token[Null]\n");
+
+            return SpjJSONTokenNull;
+
+        } else {
+            assert(0);
+        }
+    }
+
+
+    // We should not reach here
+    assert(0);
 
     return jtokentype;
 }
 
 
 SpjJSONParsingResult spj_parse_object(spj_iterator_t *iterator, SpjJSONData *jsondata) {
+    char currentbyte = spj_iterator_getc(iterator);
+
+    assert(currentbyte == '{');
 
     return 0;
 }
@@ -178,14 +268,14 @@ SpjJSONParsingResult spj_parse_array(spj_iterator_t *iterator, SpjJSONData *json
 }
 
 
-SpjJSONParsingResult spj_parse(const char *json_str, SpjJSONData *jsondata) {
+SpjJSONParsingResult spj_parse(const char *jsonstring, SpjJSONData *jsondata) {
     SpjJSONParsingResult result = SpjJSONParsingResultSuccess;
 
-    printf("Original JSON: %s\n", json_str);
+    printf("Original JSON: %s\n", jsonstring);
     
-    size_t datasize = strlen(json_str);
+    size_t datasize = strlen(jsonstring);
 
-    spj_iterator_t iterator = spj_iterator_create(json_str, datasize);
+    spj_iterator_t iterator = spj_iterator_create(jsonstring, datasize);
     spj_lexer_t lexer;
 
     spj_iterator_consume_whitespace(&iterator);

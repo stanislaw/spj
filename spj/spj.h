@@ -19,12 +19,6 @@ typedef enum SpjJSONValueType {
 } SpjJSONValueType;
 
 
-typedef enum {
-    SpjJSONParsingResultError = 0,
-    SpjJSONParsingResultSuccess = 0
-} SpjJSONParsingResult;
-
-
 typedef struct SpjObject {
   struct SpjJSONData *data; // array
   size_t size;
@@ -63,44 +57,13 @@ typedef struct SpjJSONData {
 } SpjJSONData;
 
 
-typedef enum SpjJSONTokenType {
-    SpjJSONTokenError,
-    SpjJSONTokenNumber,
-    SpjJSONTokenString,
-    SpjJSONTokenBool,     // true false
-    SpjJSONTokenNull,     // null
-    SpjJSONTokenObjectStart, // {
-    SpjJSONTokenArrayStart, // [
-    SpjJSONTokenObjectEnd,   // }
-    SpjJSONTokenArrayEnd,   // ]
-    SpjJSONTokenColon,    // : =
-    SpjJSONTokenComma,    // ,
-    SpjJSONTokenEOS //
-} SpjJSONTokenType;
-
-
-typedef struct spj_iterator_t {
-    const char *data;
-    const char *currentbyte;
-    size_t currentposition;
-    size_t datasize;
-} spj_iterator_t;
-
-
-typedef struct {
-    //char in;
-    union SpjJSONValue value;
-} spj_lexer_t;
-
-
-// Для всех лексем, кроме Object и Array лексер возвращает (в аргументе lex) значение, которое парсер просто копирует в элемент контейнера.
-SpjJSONTokenType spj_getoken (spj_iterator_t *iterator, spj_lexer_t *lexer);
+typedef enum {
+    SpjJSONParsingResultError = 0,
+    SpjJSONParsingResultSuccess = 0
+} SpjJSONParsingResult;
 
 
 // Jerror устанавливаем код возврата в curpos + 1 и начинаем просто возвращаться из рекурсии с ним.
-SpjJSONParsingResult spj_parse (const char *json_str, SpjJSONData *root);
-int spj_delete (SpjJSONData *object);
-
-
-
+SpjJSONParsingResult spj_parse (const char *jsonstring, SpjJSONData *jsondata);
+int spj_delete (SpjJSONData *jsondata);
 

@@ -41,8 +41,8 @@
 		86891E5A189D7E7A004A4558 /* spj */ = {
 			isa = PBXGroup;
 			children = (
-				86891E5B189D7E7A004A4558 /* spj.c */,
 				86891E5C189D7E7A004A4558 /* spj.h */,
+				86891E5B189D7E7A004A4558 /* spj.c */,
 			);
 			name = spj;
 			path = ../spj;
