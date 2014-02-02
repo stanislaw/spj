@@ -50,6 +50,7 @@ union SpjJSONValue {
     struct SpjObject object;
     struct SpjArray  array;
     struct SpjString string;
+    
     double number;   // Bool, Null, integer and real (all in one)
 };
 
@@ -63,6 +64,7 @@ typedef struct SpjJSONData {
 
 
 typedef enum SpjJSONTokenType {
+    SpjJSONTokenError,
     SpjJSONTokenNumber,
     SpjJSONTokenString,
     SpjJSONTokenBool,     // true false
@@ -73,13 +75,13 @@ typedef enum SpjJSONTokenType {
     SpjJSONTokenArrayEnd,   // ]
     SpjJSONTokenColon,    // : =
     SpjJSONTokenComma,    // ,
-    SpjJSONTokenError,
     SpjJSONTokenEOS //
 } SpjJSONTokenType;
 
 
 typedef struct spj_iterator_t {
     const char *data;
+    const char *currentbyte;
     size_t currentposition;
     size_t datasize;
 } spj_iterator_t;

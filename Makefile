@@ -1,4 +1,4 @@
-CC=gcc
+CC=clang
 CFLAGS=-g -Wall -Wextra -ansi -pedantic
 LDFLAGS=
 SOURCES=main.c
