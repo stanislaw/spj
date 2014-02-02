@@ -412,60 +412,55 @@ static SpjJSONParsingResult spj_parse_normal(spj_lexer_t *lexer, SpjJSONData *js
 
     spj_iterator_consume_whitespace(iterator);
 
-    while (spj_iterator_getc(iterator)) {
-        SpjJSONTokenType tokentype = spj_gettoken(lexer, error);
+    SpjJSONTokenType tokentype = spj_gettoken(lexer, error);
 
-        switch (tokentype) {
-            case SpjJSONTokenObjectStart: {
-                spj_parse_object(lexer, jsondata, error);
-                jsondata->type = SpjJSONValueObject;
+    switch (tokentype) {
+        case SpjJSONTokenObjectStart: {
+            spj_parse_object(lexer, jsondata, error);
+            jsondata->type = SpjJSONValueObject;
 
-                return result;
-            }
-
-            case SpjJSONTokenArrayStart: {
-                spj_parse_array(lexer, jsondata, error);
-                jsondata->type = SpjJSONValueArray;
-
-                return result;
-            }
-
-            case SpjJSONTokenNumber: {
-                // fill number into jsondata
-                jsondata->type = SpjJSONValueArray;
-                jsondata->value.number = lexer->value.number;
-
-                return result;
-            }
-
-            case SpjJSONTokenString: {
-                jsondata->type = SpjJSONValueString;
-                jsondata->value.string = lexer->value.string;
-
-                return result;
-            }
-
-
-            case SpjJSONTokenBool: {
-                jsondata->type = SpjJSONValueBool;
-                jsondata->value.number = lexer->value.number;
-
-                return result;
-            }
-
-
-            case SpjJSONTokenNull: {
-                jsondata->type = SpjJSONValueNull;
-
-                return result;
-            }
-
-
-            default:
-                printf("current byte is %c, %d of total %d", spj_iterator_getc(iterator), iterator->currentposition, iterator->datasize);
-                printf("what is the token %d\n", tokentype);
-                assert(0);
+            return result;
         }
+
+        case SpjJSONTokenArrayStart: {
+            spj_parse_array(lexer, jsondata, error);
+            jsondata->type = SpjJSONValueArray;
+
+            return result;
+        }
+
+        case SpjJSONTokenNumber: {
+            jsondata->type = SpjJSONValueArray;
+            jsondata->value.number = lexer->value.number;
+
+            return result;
+        }
+
+        case SpjJSONTokenString: {
+            jsondata->type = SpjJSONValueString;
+            jsondata->value.string = lexer->value.string;
+
+            return result;
+        }
+
+        case SpjJSONTokenBool: {
+            jsondata->type = SpjJSONValueBool;
+            jsondata->value.number = lexer->value.number;
+
+            return result;
+        }
+
+        case SpjJSONTokenNull: {
+            jsondata->type = SpjJSONValueNull;
+
+            return result;
+        }
+
+        default:
+            printf("current byte is %c, %d of total %d", spj_iterator_getc(iterator), iterator->currentposition, iterator->datasize);
+            printf("what is the token %d\n", tokentype);
+
+            assert(0);
     }
 
     return result;
