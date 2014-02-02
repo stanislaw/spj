@@ -490,35 +490,34 @@ SpjJSONParsingResult spj_parse(const char *jsonstring, SpjJSONData *jsondata) {
     spj_iterator_consume_whitespace(&iterator);
 
     char currentbyte;
-    while ((currentbyte = spj_iterator_getc(&iterator))) {
-        printf("spj_parse byte %c\n", currentbyte);
 
-        SpjJSONTokenType tokentype = spj_gettoken(&lexer);
+    printf("spj_parse byte %c\n", currentbyte);
 
-        switch (tokentype) {
-            case SpjJSONTokenObjectStart: {
-                jsondata->type = SpjJSONValueObject;
+    SpjJSONTokenType tokentype = spj_gettoken(&lexer);
 
-                result = spj_parse_object(&lexer, jsondata);
+    switch (tokentype) {
+        case SpjJSONTokenObjectStart: {
+            jsondata->type = SpjJSONValueObject;
 
-                return result;
-            }
+            result = spj_parse_object(&lexer, jsondata);
 
-            case SpjJSONTokenArrayStart: {
-                jsondata->type = SpjJSONValueArray;
-
-                result = spj_parse_array(&lexer, jsondata);
-
-                return result;
-            }
-
-            default:
-                assert(0);
-
-                result = SpjJSONParsingResultError;
-                
-                break;
+            return result;
         }
+
+        case SpjJSONTokenArrayStart: {
+            jsondata->type = SpjJSONValueArray;
+
+            result = spj_parse_array(&lexer, jsondata);
+
+            return result;
+        }
+
+        default:
+            assert(0);
+
+            result = SpjJSONParsingResultError;
+            
+            break;
     }
 
     return result;
