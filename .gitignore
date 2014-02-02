@@ -1,5 +1,7 @@
 main
 main.dSYM
+test
+test.dSYM
 
 # Object files
 *.o
