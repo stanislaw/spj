@@ -36,13 +36,13 @@ int test_empty() {
     memset(&jsondata, 0, sizeof(SpjJSONData));
     spj_parse(jsonbytes, &jsondata);
     check(jsondata.type == SpjJSONValueObject);
-    //check(jsondata.value.object.data == NULL);
+    check(jsondata.value.object.size == 0);
 
     jsonbytes = "[]";
     memset(&jsondata, 0, sizeof(SpjJSONData));
     spj_parse(jsonbytes, &jsondata);
     check(jsondata.type == SpjJSONValueArray);
-    //check(jsondata.value.array.data == NULL);
+    check(jsondata.value.array.size == 0);
 
     return 0;
 }

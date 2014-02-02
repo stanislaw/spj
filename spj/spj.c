@@ -301,8 +301,10 @@ static SpjJSONParsingResult spj_parse_object(spj_lexer_t *lexer, SpjJSONData *js
     assert(spj_iterator_getc(iterator) == '{');
     spj_iterator_increment(iterator);
 
+    size_t i = 0;
 
-    int i = 0;
+    spj_iterator_consume_whitespace(iterator); // eat whitespace before } or name
+
     while (spj_iterator_getc(iterator) != '}') {
         spj_iterator_consume_whitespace(iterator);
 
@@ -336,6 +338,7 @@ static SpjJSONParsingResult spj_parse_object(spj_lexer_t *lexer, SpjJSONData *js
         if (spj_iterator_getc(iterator) == ',') {
             spj_iterator_increment(iterator);
         }
+
         i++;
     }
 
@@ -344,7 +347,7 @@ static SpjJSONParsingResult spj_parse_object(spj_lexer_t *lexer, SpjJSONData *js
     SpjObject object;
 
     object.data = objects_data;
-    object.size = 0; // ??????
+    object.size = i;
 
     jsondata->value.object = object;
 
@@ -362,8 +365,8 @@ static SpjJSONParsingResult spj_parse_array(spj_lexer_t *lexer, SpjJSONData *jso
 
     spj_iterator_increment(iterator);
 
+    size_t i = 0;
 
-    int i = 0;
     while (spj_iterator_getc(iterator) != ']') {
         SpjJSONData object_data;
 
@@ -379,6 +382,7 @@ static SpjJSONParsingResult spj_parse_array(spj_lexer_t *lexer, SpjJSONData *jso
         if (spj_iterator_getc(iterator) == ',') {
             spj_iterator_increment(iterator);
         }
+
         i++;
     }
 
@@ -389,7 +393,7 @@ static SpjJSONParsingResult spj_parse_array(spj_lexer_t *lexer, SpjJSONData *jso
     SpjArray array;
 
     array.data = array_data;
-    array.size = 0; // ??????
+    array.size = i;
 
 
     jsondata->value.array = array;
