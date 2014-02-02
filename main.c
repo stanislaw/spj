@@ -29,6 +29,8 @@ int main() {
     spj_parse(jsonbytes, &jsondata);
 
 
+    spj_jsondata_debug(&jsondata);
+    
     
     printf("\n");
 

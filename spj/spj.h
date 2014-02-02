@@ -10,7 +10,7 @@ struct htab; // will be implemented sometime
 
 
 typedef enum SpjJSONValueType {
-  SpjJSONValueObject,
+  SpjJSONValueObject = 1,
   SpjJSONValueArray,
   SpjJSONValueString,
   SpjJSONValueNumber,
@@ -20,10 +20,10 @@ typedef enum SpjJSONValueType {
 
 
 typedef struct SpjObject {
-  struct SpjJSONData *data; // array
-  size_t size;
+    struct SpjJSONData *data; // array
+      size_t size;
 #ifdef USE_OBJ_DICT
-  struct htab *hash;
+      struct htab *hash;
 #endif
 } SpjObject;
 
@@ -65,4 +65,12 @@ typedef enum {
 
 SpjJSONParsingResult spj_parse (const char *jsonstring, SpjJSONData *jsondata);
 int spj_delete (SpjJSONData *jsondata);
+
+
+void spj_jsondata_debug(SpjJSONData *jsondata);
+
+
+
+
+
 
