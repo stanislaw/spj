@@ -505,6 +505,9 @@ SpjJSONParsingResult spj_parse(const char *jsonstring, SpjJSONData *jsondata, sp
         }
 
         default:
+            //*error.code = 0;
+            error->message = "JSON contains no valid root element (Object, Array)";
+
             return SpjJSONParsingResultError;
     }
 

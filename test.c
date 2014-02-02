@@ -52,8 +52,33 @@ int test_empty() {
     return 0;
 }
 
+int test_wrong_root_object() {
+    char *jsonbytes;
+    SpjJSONData jsondata;
+    spj_error_t error;
+
+    memset(&jsondata, 0, sizeof(SpjJSONData));
+    memset(&error, 0, sizeof(spj_error_t));
+
+    check(error.message == NULL);
+    jsonbytes = "";
+    spj_parse(jsonbytes, &jsondata, &error);
+    check(error.message != NULL);
+
+    memset(&jsondata, 0, sizeof(SpjJSONData));
+    memset(&error, 0, sizeof(spj_error_t));
+
+    check(error.message == NULL);
+    jsonbytes = "2";
+    spj_parse(jsonbytes, &jsondata, &error);
+    check(error.message != NULL);
+
+    return 0;
+}
+
 int main() {
     test(test_empty, "general test for a empty JSON objects/arrays");
+    test(test_wrong_root_object, "test for JSON not having valid root objects (Object, Array");
 
 
     printf("\nPASSED: %d\nFAILED: %d\n", test_passed, test_failed);
