@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-
+#include <errno.h>
 
 typedef struct {
     const char *data;
@@ -166,13 +166,28 @@ static SpjJSONTokenType spj_gettoken_number(spj_lexer_t *lexer, spj_error_t *err
         }
     }
 
-    const char *pointer1 = iterator->data + firstnumber_position;
-    const char *pointer2 = iterator->data + iterator->currentposition;
+    const char *firstchar = iterator->data + firstnumber_position;
+    const char *endpointer;
 
-    double number = strtod(pointer1, &pointer2);
+    double number = strtod(firstchar, &endpointer);
+
+    // TODO
+
+    int err = errno;
+    if (number == 0 && firstchar == endpointer) {
+        assert(0);
+    }
+
+    if (err == ERANGE) {
+        assert(0);
+    }
+
+    assert(endpointer == (iterator->data + iterator->currentposition));
+
 
     lexer->value.number = number;
 
+    
     printf("Token[Number] : %f\n", number);
 
     //printf("currentbyte %c\n", spj_iterator_peek(iterator));
