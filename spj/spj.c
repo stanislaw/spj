@@ -365,9 +365,6 @@ static SpjJSONParsingResult spj_parse_array(spj_lexer_t *lexer, SpjJSONData *jso
 
     int i = 0;
     while (spj_iterator_getc(iterator) != ']') {
-        spj_iterator_consume_whitespace(iterator);
-
-
         SpjJSONData object_data;
 
         SpjJSONParsingResult value_result = spj_parse_normal(lexer, &object_data);
@@ -483,8 +480,6 @@ SpjJSONParsingResult spj_parse(const char *jsonstring, SpjJSONData *jsondata) {
 
     iterator = spj_iterator_create(jsonstring, datasize);
     lexer.iterator = &iterator;
-
-    spj_iterator_consume_whitespace(&iterator);
 
     SpjJSONTokenType tokentype = spj_gettoken(&lexer);
 

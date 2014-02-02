@@ -21,7 +21,8 @@ typedef enum SpjJSONValueType {
 
 typedef struct SpjObject {
     struct SpjJSONData *data; // array
-      size_t size;
+    size_t size;
+
 #ifdef USE_OBJ_DICT
       struct htab *hash;
 #endif
