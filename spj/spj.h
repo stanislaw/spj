@@ -60,7 +60,7 @@ typedef struct SpjJSONData {
 
 typedef enum {
     SpjJSONParsingResultError = 0,
-    SpjJSONParsingResultSuccess = 0
+    SpjJSONParsingResultSuccess = 1
 } SpjJSONParsingResult;
 
 

@@ -98,22 +98,25 @@ int test_wrong_root_object() {
     char *jsonbytes;
     SpjJSONData jsondata;
     spj_error_t error;
+    SpjJSONParsingResult result;
 
     memset(&jsondata, 0, sizeof(SpjJSONData));
     memset(&error, 0, sizeof(spj_error_t));
 
     check(error.message == NULL);
     jsonbytes = "";
-    spj_parse(jsonbytes, &jsondata, &error);
+    result = spj_parse(jsonbytes, &jsondata, &error);
     check(error.message != NULL);
+    check(result == SpjJSONParsingResultError);
 
     memset(&jsondata, 0, sizeof(SpjJSONData));
     memset(&error, 0, sizeof(spj_error_t));
 
     check(error.message == NULL);
     jsonbytes = "2";
-    spj_parse(jsonbytes, &jsondata, &error);
+    result = spj_parse(jsonbytes, &jsondata, &error);
     check(error.message != NULL);
+    check(result == SpjJSONParsingResultError);
 
     return 0;
 }

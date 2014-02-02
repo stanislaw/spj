@@ -182,6 +182,7 @@ static SpjJSONTokenType spj_gettoken_number(spj_lexer_t *lexer, spj_error_t *err
         assert(0);
     }
 
+    
     assert(endpointer == (iterator->data + iterator->currentposition));
 
 
