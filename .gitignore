@@ -1,3 +1,6 @@
+main
+main.dSYM
+
 # Object files
 *.o
 *.ko
