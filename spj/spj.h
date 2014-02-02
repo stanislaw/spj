@@ -50,9 +50,9 @@ union SpjJSONValue {
 
 
 typedef struct SpjJSONData {
-    SpjJSONValueType type; // try to do it without flags
-    // struct jval *parent; // calculated AFTER the filling of the PARENT's container
-    char *name;            // name pairs (valid only for members of the object)
+    SpjJSONValueType type;
+    // struct jval *parent;   // calculated AFTER the filling of the PARENT's container
+    char *name;               // name pairs (valid only for members of the object)
     union SpjJSONValue value;
 } SpjJSONData;
 
@@ -63,7 +63,6 @@ typedef enum {
 } SpjJSONParsingResult;
 
 
-// Jerror устанавливаем код возврата в curpos + 1 и начинаем просто возвращаться из рекурсии с ним.
 SpjJSONParsingResult spj_parse (const char *jsonstring, SpjJSONData *jsondata);
 int spj_delete (SpjJSONData *jsondata);
 
