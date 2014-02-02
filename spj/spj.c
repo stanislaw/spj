@@ -187,7 +187,7 @@ static SpjJSONTokenType spj_gettoken_number(spj_lexer_t *lexer, spj_error_t *err
 
     lexer->value.number = number;
 
-    
+
     printf("Token[Number] : %f\n", number);
 
     //printf("currentbyte %c\n", spj_iterator_peek(iterator));
@@ -200,7 +200,6 @@ static SpjJSONTokenType spj_gettoken_number(spj_lexer_t *lexer, spj_error_t *err
 }
 
 
-// Для всех лексем, кроме Object и Array лексер возвращает (в аргументе lex) значение, которое парсер просто копирует в элемент контейнера.
 static SpjJSONTokenType spj_gettoken(spj_lexer_t *lexer, spj_error_t *error) {
     printf("spj_gettoken begins\n");
 
@@ -300,9 +299,10 @@ static SpjJSONTokenType spj_gettoken(spj_lexer_t *lexer, spj_error_t *error) {
 
 
     // We should not reach here
+
     assert(0);
 
-    return jtokentype;
+    return SpjJSONTokenError;
 }
 
 
