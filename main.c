@@ -26,7 +26,8 @@ int main() {
     printf("We can now iterate the whole string:\n");
 
 
-    spj_parse(jsonbytes, &jsondata);
+    spj_error_t error;
+    spj_parse(jsonbytes, &jsondata, &error);
 
 
     spj_jsondata_debug(&jsondata);

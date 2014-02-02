@@ -64,7 +64,13 @@ typedef enum {
 } SpjJSONParsingResult;
 
 
-SpjJSONParsingResult spj_parse (const char *jsonstring, SpjJSONData *jsondata);
+typedef struct {
+    int code;
+    char *message;
+} spj_error_t;
+
+
+SpjJSONParsingResult spj_parse(const char *jsonstring, SpjJSONData *jsondata, spj_error_t *error);
 int spj_delete (SpjJSONData *jsondata);
 
 

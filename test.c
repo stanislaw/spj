@@ -31,16 +31,21 @@ static void test(int (*func)(void), const char *name) {
 int test_empty() {
     char *jsonbytes;
     SpjJSONData jsondata;
+    spj_error_t error;
+
+    memset(&jsondata, 0, sizeof(SpjJSONData));
+    memset(&error, 0, sizeof(spj_error_t));
 
     jsonbytes = "{}";
-    memset(&jsondata, 0, sizeof(SpjJSONData));
-    spj_parse(jsonbytes, &jsondata);
+    spj_parse(jsonbytes, &jsondata, &error);
     check(jsondata.type == SpjJSONValueObject);
     check(jsondata.value.object.size == 0);
 
-    jsonbytes = "[]";
     memset(&jsondata, 0, sizeof(SpjJSONData));
-    spj_parse(jsonbytes, &jsondata);
+    memset(&error, 0, sizeof(spj_error_t));
+
+    jsonbytes = "[]";
+    spj_parse(jsonbytes, &jsondata, &error);
     check(jsondata.type == SpjJSONValueArray);
     check(jsondata.value.array.size == 0);
 
