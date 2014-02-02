@@ -8,16 +8,16 @@
 
 
 typedef struct {
-    //char in;
-    union SpjJSONValue value;
-} spj_lexer_t;
-
-
-typedef struct {
     const char *data;
     size_t currentposition;
     size_t datasize;
 } spj_iterator_t;
+
+
+typedef struct {
+    spj_iterator_t *iterator;
+    union SpjJSONValue value;
+} spj_lexer_t;
 
 
 typedef enum SpjJSONTokenType {
@@ -92,7 +92,9 @@ static char spj_iterator_peek(spj_iterator_t *iterator) {
 }
 
 
-SpjJSONTokenType spj_gettoken_string(spj_iterator_t *iterator, spj_lexer_t *lexer) {
+static SpjJSONTokenType spj_gettoken_string(spj_lexer_t *lexer) {
+    spj_iterator_t *iterator = lexer->iterator;
+
     char currentbyte = spj_iterator_getc(iterator);
     SpjString string;
 
@@ -105,9 +107,6 @@ SpjJSONTokenType spj_gettoken_string(spj_iterator_t *iterator, spj_lexer_t *lexe
     }
 
     char firstchar = iterator->data[firstchar_position];
-
-//    printf("--- %c %d\n", firstchar, firstchar_position);
-//    printf("--- %c %d\n", currentbyte, iterator->currentposition);
 
     string.data = (char *)malloc(iterator->currentposition - firstchar_position);
     string.size = iterator->currentposition - firstchar_position;
@@ -124,7 +123,9 @@ SpjJSONTokenType spj_gettoken_string(spj_iterator_t *iterator, spj_lexer_t *lexe
 }
 
 
-SpjJSONTokenType spj_gettoken_number(spj_iterator_t *iterator, spj_lexer_t *lexer) {
+static SpjJSONTokenType spj_gettoken_number(spj_lexer_t *lexer) {
+    spj_iterator_t *iterator = lexer->iterator;
+
     size_t firstnumber_position = iterator->currentposition;
 
     char currentbyte = spj_iterator_getc(iterator);
@@ -163,8 +164,10 @@ SpjJSONTokenType spj_gettoken_number(spj_iterator_t *iterator, spj_lexer_t *lexe
 
 
 // Для всех лексем, кроме Object и Array лексер возвращает (в аргументе lex) значение, которое парсер просто копирует в элемент контейнера.
-SpjJSONTokenType spj_gettoken(spj_iterator_t *iterator, spj_lexer_t *lexer) {
+static SpjJSONTokenType spj_gettoken(spj_lexer_t *lexer) {
     SpjJSONTokenType jtokentype;
+
+    spj_iterator_t *iterator = lexer->iterator;
 
     spj_iterator_consume_whitespace(iterator);
 
@@ -190,11 +193,11 @@ SpjJSONTokenType spj_gettoken(spj_iterator_t *iterator, spj_lexer_t *lexer) {
             return SpjJSONTokenComma;
 
         case '"':
-            return spj_gettoken_string(iterator, lexer);
+            return spj_gettoken_string(lexer);
     }
 
     if (isdigit(currentbyte) || currentbyte == '-') {
-        return spj_gettoken_number(iterator, lexer);
+        return spj_gettoken_number(lexer);
     }
 
     if (currentbyte == 't') {
@@ -253,7 +256,9 @@ SpjJSONTokenType spj_gettoken(spj_iterator_t *iterator, spj_lexer_t *lexer) {
 }
 
 
-SpjJSONParsingResult spj_parse_object(spj_iterator_t *iterator, SpjJSONData *jsondata) {
+static SpjJSONParsingResult spj_parse_object(spj_lexer_t *lexer, SpjJSONData *jsondata) {
+    spj_iterator_t *iterator = lexer->iterator;
+
     char currentbyte = spj_iterator_getc(iterator);
 
     assert(currentbyte == '{');
@@ -262,37 +267,33 @@ SpjJSONParsingResult spj_parse_object(spj_iterator_t *iterator, SpjJSONData *jso
 }
 
 
-SpjJSONParsingResult spj_parse_array(spj_iterator_t *iterator, SpjJSONData *jsondata) {
+static SpjJSONParsingResult spj_parse_array(spj_lexer_t *lexer, SpjJSONData *jsondata) {
+    spj_iterator_t *iterator = lexer->iterator;
 
     return 0;
 }
 
 
-SpjJSONParsingResult spj_parse(const char *jsonstring, SpjJSONData *jsondata) {
+static SpjJSONParsingResult spj_parse_normal(spj_lexer_t *lexer, SpjJSONData *jsondata) {
     SpjJSONParsingResult result = SpjJSONParsingResultSuccess;
 
-    printf("Original JSON: %s\n", jsonstring);
-    
-    size_t datasize = strlen(jsonstring);
+    spj_iterator_t *iterator = lexer->iterator;
 
-    spj_iterator_t iterator = spj_iterator_create(jsonstring, datasize);
-    spj_lexer_t lexer;
-
-    spj_iterator_consume_whitespace(&iterator);
+    spj_iterator_consume_whitespace(iterator);
 
     char currentbyte;
-    while ((currentbyte = spj_iterator_getc(&iterator))) {
-        //printf("%c", currentbyte);
+    while ((currentbyte = spj_iterator_getc(iterator))) {
+        SpjJSONTokenType tokentype = spj_gettoken(lexer);
 
-        switch (spj_gettoken(&iterator, &lexer)) {
+        switch (tokentype) {
             case SpjJSONTokenObjectStart: {
-                result = spj_parse_object(&iterator, jsondata);
+                result = spj_parse_object(lexer, jsondata);
 
                 break;
             }
 
-            case SpjJSONTokenObjectEnd: {
-                result = spj_parse_array(&iterator, jsondata);
+            case SpjJSONTokenArrayStart: {
+                result = spj_parse_array(lexer, jsondata);
 
                 break;
             }
@@ -301,11 +302,55 @@ SpjJSONParsingResult spj_parse(const char *jsonstring, SpjJSONData *jsondata) {
                 result = SpjJSONParsingResultError;
 
                 break;
-            // error если на верхнем уровне разрешены только Object и Array
         }
     }
 
-    return 0;
+    return result;
+}
+
+
+SpjJSONParsingResult spj_parse(const char *jsonstring, SpjJSONData *jsondata) {
+    SpjJSONParsingResult result = SpjJSONParsingResultSuccess;
+
+    spj_lexer_t lexer;
+    spj_iterator_t iterator;
+
+    printf("Original JSON: %s\n", jsonstring);
+    
+    size_t datasize = strlen(jsonstring);
+
+    iterator = spj_iterator_create(jsonstring, datasize);
+    lexer.iterator = &iterator;
+
+    spj_iterator_consume_whitespace(&iterator);
+
+    char currentbyte;
+    while ((currentbyte = spj_iterator_getc(&iterator))) {
+        SpjJSONTokenType tokentype = spj_gettoken(&lexer);
+
+        switch (tokentype) {
+            case SpjJSONTokenObjectStart: {
+                result = spj_parse_object(&lexer, jsondata);
+
+                break;
+            }
+
+            case SpjJSONTokenArrayStart: {
+                result = spj_parse_array(&lexer, jsondata);
+
+                break;
+            }
+
+            default:
+                assert(0);
+
+                result = SpjJSONParsingResultError;
+                
+                break;
+        }
+    }
+
+    return result;
 }
 
 
