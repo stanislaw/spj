@@ -41,7 +41,7 @@ static char spj_iterator_peek(spj_iterator_t *iterator);
 
 
 
-static SpjJSONTokenType spj_parse_default(spj_lexer_t *lexer, SpjJSONData *jsondata);
+static SpjJSONTokenType spj_parse_default(spj_lexer_t *lexer, SpjJSONData *jsondata, int inarray);
 
 
 
@@ -318,7 +318,7 @@ static SpjJSONParsingResult spj_parse_object(spj_lexer_t *lexer, SpjJSONData *js
         }
 
 
-        spj_parse_default(lexer, &object_data);
+        spj_parse_default(lexer, &object_data, 0);
 
         n++;
 
@@ -364,7 +364,7 @@ static SpjJSONParsingResult spj_parse_array(spj_lexer_t *lexer, SpjJSONData *jso
     for (n = 0;;) {
         SpjJSONData object_data;
 
-        token = spj_parse_default(lexer, &object_data);
+        token = spj_parse_default(lexer, &object_data, 1);
 
         if (token == SpjJSONTokenArrayEnd) {
             break;
@@ -398,8 +398,41 @@ static SpjJSONParsingResult spj_parse_array(spj_lexer_t *lexer, SpjJSONData *jso
 }
 
 
+SpjJSONValueType spj_value_for_token(SpjJSONTokenType token) {
+    switch (token) {
+        case SpjJSONTokenObjectStart: {
+            return SpjJSONValueObject;
+        }
+
+        case SpjJSONTokenArrayStart: {
+            return SpjJSONValueArray;
+        }
+
+        case SpjJSONTokenNumber: {
+            return SpjJSONValueNumber;
+        }
+
+        case SpjJSONTokenString: {
+            return SpjJSONValueString;
+        }
+
+        case SpjJSONTokenBool: {
+            return SpjJSONValueBool;
+        }
+
+        case SpjJSONTokenNull: {
+            return SpjJSONValueNull;
+        }
+
+        default:
+            assert(0);
+    }
+
+    return 0;
+}
+
 // Parses end data, but also skips to ], } and ,
-static SpjJSONTokenType spj_parse_default(spj_lexer_t *lexer, SpjJSONData *jsondata) {
+static SpjJSONTokenType spj_parse_default(spj_lexer_t *lexer, SpjJSONData *jsondata, int inarray) {
     //printf("spj_parse_normal begins\n");
 
     spj_iterator_t *iterator = lexer->iterator;
@@ -421,39 +454,16 @@ static SpjJSONTokenType spj_parse_default(spj_lexer_t *lexer, SpjJSONData *jsond
             break;
         }
 
-        case SpjJSONTokenNumber: {
-            jsondata->type = SpjJSONValueArray;
-            jsondata->value.number = lexer->value.number;
+        case SpjJSONTokenNumber: case SpjJSONTokenString: case SpjJSONTokenBool: case SpjJSONTokenNull: {
+            jsondata->type = spj_value_for_token(token);
+            jsondata->value = lexer->value;
 
             break;
         }
 
-        case SpjJSONTokenString: {
-            jsondata->type = SpjJSONValueString;
-            jsondata->value.string = lexer->value.string;
-
-            break;
-        }
-
-        case SpjJSONTokenBool: {
-            jsondata->type = SpjJSONValueBool;
-            jsondata->value.number = lexer->value.number;
-
-            break;
-        }
-
-        case SpjJSONTokenNull: {
-            jsondata->type = SpjJSONValueNull;
-
-            break;
-        }
-
-        case SpjJSONTokenObjectEnd: {
-            break;
-        }
-
+        // Legitimate exception for Empty Array not to perform lookups twice
         case SpjJSONTokenArrayEnd: {
-            break;
+            if (inarray) break;
         }
 
         default:
