@@ -69,7 +69,7 @@ typedef enum {
 typedef enum {
     SpjJSONParsingResultError = 0,
     SpjJSONParsingResultSuccess = 1
-} SpjJSONParsingResult;
+} spj_result_t;
 
 
 typedef struct {
@@ -78,7 +78,7 @@ typedef struct {
 } spj_error_t;
 
 
-SpjJSONParsingResult spj_parse(const char *jsonstring, SpjJSONData *jsondata, spj_error_t *error);
+spj_result_t spj_parse(const char *jsonstring, SpjJSONData *jsondata, spj_error_t *error);
 int spj_delete (SpjJSONData *jsondata);
 
 

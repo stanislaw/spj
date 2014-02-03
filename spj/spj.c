@@ -282,7 +282,7 @@ static SpjJSONTokenType spj_gettoken(spj_lexer_t *lexer) {
 }
 
 
-static SpjJSONParsingResult spj_parse_object(spj_lexer_t *lexer, SpjJSONData *jsondata) {
+static spj_result_t spj_parse_object(spj_lexer_t *lexer, SpjJSONData *jsondata) {
     //printf("spj_parse_object begins\n");
 
     size_t n;
@@ -348,7 +348,7 @@ static SpjJSONParsingResult spj_parse_object(spj_lexer_t *lexer, SpjJSONData *js
 }
 
 
-static SpjJSONParsingResult spj_parse_array(spj_lexer_t *lexer, SpjJSONData *jsondata) {
+static spj_result_t spj_parse_array(spj_lexer_t *lexer, SpjJSONData *jsondata) {
     //printf("spj_parse_array begins\n");
 
     spj_iterator_t *iterator = lexer->iterator;
@@ -477,8 +477,8 @@ static SpjJSONTokenType spj_parse_default(spj_lexer_t *lexer, SpjJSONData *jsond
 }
 
 
-SpjJSONParsingResult spj_parse(const char *jsonstring, SpjJSONData *jsondata, spj_error_t *error) {
-    SpjJSONParsingResult result;
+spj_result_t spj_parse(const char *jsonstring, SpjJSONData *jsondata, spj_error_t *error) {
+    spj_result_t result;
 
     spj_lexer_t lexer;
     spj_iterator_t iterator;
