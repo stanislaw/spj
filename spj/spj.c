@@ -111,11 +111,6 @@ static SpjJSONTokenType spj_gettoken_string(spj_lexer_t *lexer) {
         spj_iterator_increment(iterator);
     }
 
-    char firstchar = iterator->data[firstchar_position];
-
-
-    //printf("%d %d, %c %c\n", firstchar_position, iterator->currentposition, firstchar, spj_iterator_peek(iterator) );
-
     string.data = (char *)malloc(iterator->currentposition - firstchar_position + 1);
     string.size = iterator->currentposition - firstchar_position + 1;
 
@@ -187,7 +182,6 @@ static SpjJSONTokenType spj_gettoken_number(spj_lexer_t *lexer) {
 static SpjJSONTokenType spj_gettoken(spj_lexer_t *lexer) {
     //printf("spj_gettoken begins\n");
 
-    SpjJSONTokenType jtokentype;
     char currentbyte;
 
     spj_iterator_t *iterator = lexer->iterator;
@@ -286,17 +280,19 @@ static spj_result_t spj_parse_object(spj_lexer_t *lexer, SpjJSONData *jsondata) 
     //printf("spj_parse_object begins\n");
 
     size_t n;
-
-
-    SpjJSONData * objects_data = malloc(20 * sizeof(SpjJSONData)); // learn how to reallocate... VladD: "arena..."
-    spj_iterator_t *iterator = lexer->iterator;
-
     SpjJSONTokenType token;
+    spj_iterator_t *iterator;
+    SpjJSONData * objects_data;
 
-    //assert(spj_iterator_peek(iterator) == '{');
+
+    objects_data = malloc(20 * sizeof(SpjJSONData)); // learn how to reallocate... VladD: "arena..."
+    iterator = lexer->iterator;
+
+    // remove this later
+    assert(iterator->data[iterator->currentposition - 1] == '{');
 
 
-    for (n = 0;;) {
+    for (n = 0;; n++) {
         token = spj_gettoken(lexer);
 
         if (n == 0 && token == SpjJSONTokenObjectEnd) {
@@ -304,7 +300,7 @@ static spj_result_t spj_parse_object(spj_lexer_t *lexer, SpjJSONData *jsondata) 
         }
 
         if (token != SpjJSONTokenString) {
-            printf("expected strig %s\n", iterator->data + iterator->currentposition);
+            printf("expected string %s\n", iterator->data + iterator->currentposition);
 
             assert(0);
         }
@@ -319,8 +315,6 @@ static spj_result_t spj_parse_object(spj_lexer_t *lexer, SpjJSONData *jsondata) 
 
 
         spj_parse_default(lexer, &object_data, 0);
-
-        n++;
 
         objects_data[n] = object_data;
 
@@ -348,31 +342,65 @@ static spj_result_t spj_parse_object(spj_lexer_t *lexer, SpjJSONData *jsondata) 
 }
 
 
+static void spj_jsondata_array_add(SpjJSONData *jsondata, SpjJSONData *object_data, size_t index) {
+
+    assert(jsondata->type == SpjJSONValueArray); // remove later
+
+    // И да простят меня боги всего Олимпа (точно что-то не то делаю ;))
+
+    /*
+     TODO TODO TODO
+
+     SpjArray array;
+     const size_t slice = 10; ???
+
+    if (index == 0) {
+        SpjJSONData * array_data = malloc(slice * sizeof(SpjJSONData));
+
+        array.data = array_data;
+        array.size = 0;
+
+        jsondata->value.array = array;
+    }
+
+    array = jsondata->value.array;
+
+    // if (needrealloc) {
+    // }
+
+    jsondata->value.array.data[index] = *object_data;
+     
+     */
+}
+
+static void spj_jsondata_array_finalize(SpjJSONData *jsondata) {
+    /*
+     TODO
+     */
+}
+
 static spj_result_t spj_parse_array(spj_lexer_t *lexer, SpjJSONData *jsondata) {
-    //printf("spj_parse_array begins\n");
-
-    spj_iterator_t *iterator = lexer->iterator;
-
-    SpjJSONData * array_data = malloc(20 * sizeof(SpjJSONData)); // learn how to reallocate... VladD... arena....
-
+    size_t i;
+    spj_iterator_t *iterator;
     SpjJSONTokenType token;
 
+    iterator = lexer->iterator;
+
+
+    // remove this later
     assert(iterator->data[iterator->currentposition - 1] == '[');
 
-    size_t n;
 
-    for (n = 0;;) {
+    for (i = 0;; i++) {
         SpjJSONData object_data;
 
         token = spj_parse_default(lexer, &object_data, 1);
 
-        if (token == SpjJSONTokenArrayEnd) {
+        if (i == 0 && token == SpjJSONTokenArrayEnd) {
             break;
         }
 
-        n++;
-
-        array_data[n] = object_data;
+        spj_jsondata_array_add(jsondata, &object_data, i);
 
         token = spj_gettoken(lexer);
 
@@ -385,14 +413,9 @@ static spj_result_t spj_parse_array(spj_lexer_t *lexer, SpjJSONData *jsondata) {
         }
     }
 
-    SpjArray array;
-
-    array.data = array_data;
-    array.size = n;
-
-    jsondata->value.array = array;
-
     assert(iterator->data[iterator->currentposition - 1] == ']');
+
+    spj_jsondata_array_finalize(jsondata);
 
     return 0;
 }
@@ -441,15 +464,17 @@ static SpjJSONTokenType spj_parse_default(spj_lexer_t *lexer, SpjJSONData *jsond
 
     switch (token) {
         case SpjJSONTokenObjectStart: {
-            spj_parse_object(lexer, jsondata);
             jsondata->type = SpjJSONValueObject;
+
+            spj_parse_object(lexer, jsondata);
 
             break;
         }
 
         case SpjJSONTokenArrayStart: {
-            spj_parse_array(lexer, jsondata);
             jsondata->type = SpjJSONValueArray;
+
+            spj_parse_array(lexer, jsondata);
 
             break;
         }
@@ -467,7 +492,7 @@ static SpjJSONTokenType spj_parse_default(spj_lexer_t *lexer, SpjJSONData *jsond
         }
 
         default:
-            printf("current byte is %c, %d of total %d", spj_iterator_peek(iterator), iterator->currentposition, iterator->datasize);
+            printf("current byte is %c, %lu of total %lu", spj_iterator_peek(iterator), iterator->currentposition, iterator->datasize);
             printf("what is the token %d\n", token);
 
             assert(0);
@@ -479,7 +504,6 @@ static SpjJSONTokenType spj_parse_default(spj_lexer_t *lexer, SpjJSONData *jsond
 
 spj_result_t spj_parse(const char *jsonstring, SpjJSONData *jsondata, spj_error_t *error) {
     spj_result_t result;
-
     spj_lexer_t lexer;
     spj_iterator_t iterator;
     size_t datasize;
