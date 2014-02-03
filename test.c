@@ -67,7 +67,7 @@ int test_simple_root_objects() {
     jsonbytes = "[1]";
     spj_parse(jsonbytes, &jsondata, &error);
     check(jsondata.type == SpjJSONValueArray);
-    check(jsondata.value.object.size == 1);
+    check(jsondata.value.array.size == 1);
     check(error.message == NULL);
 
 
