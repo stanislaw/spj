@@ -59,13 +59,19 @@ typedef struct SpjJSONData {
 
 
 typedef enum {
+    SpjJSONNoError = 0,
+    SpjJSONErrorWrongRootObject
+} SpjJSONError;
+
+
+typedef enum {
     SpjJSONParsingResultError = 0,
     SpjJSONParsingResultSuccess = 1
 } SpjJSONParsingResult;
 
 
 typedef struct {
-    int code;
+    SpjJSONError code;
     char *message;
 } spj_error_t;
 

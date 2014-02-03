@@ -17,6 +17,7 @@ typedef struct {
 typedef struct {
     spj_iterator_t *iterator;
     union SpjJSONValue value;
+    spj_error_t *error;
 } spj_lexer_t;
 
 
@@ -40,7 +41,7 @@ static char spj_iterator_peek(spj_iterator_t *iterator);
 
 
 
-static SpjJSONParsingResult spj_parse_normal(spj_lexer_t *lexer, SpjJSONData *jsondata, spj_error_t *error);
+static SpjJSONParsingResult spj_parse_default(spj_lexer_t *lexer, SpjJSONData *jsondata);
 
 
 
@@ -108,7 +109,7 @@ static char spj_iterator_peek(spj_iterator_t *iterator) {
 }
 
 
-static SpjJSONTokenType spj_gettoken_string(spj_lexer_t *lexer, spj_error_t *error) {
+static SpjJSONTokenType spj_gettoken_string(spj_lexer_t *lexer) {
     printf("spj_gettoken_string begins\n");
 
     spj_iterator_t *iterator = lexer->iterator;
@@ -143,7 +144,7 @@ static SpjJSONTokenType spj_gettoken_string(spj_lexer_t *lexer, spj_error_t *err
 }
 
 
-static SpjJSONTokenType spj_gettoken_number(spj_lexer_t *lexer, spj_error_t *error) {
+static SpjJSONTokenType spj_gettoken_number(spj_lexer_t *lexer) {
     spj_iterator_t *iterator = lexer->iterator;
 
     printf("spj_gettoken_number begins %c: \n", spj_iterator_getc(iterator));
@@ -201,7 +202,7 @@ static SpjJSONTokenType spj_gettoken_number(spj_lexer_t *lexer, spj_error_t *err
 }
 
 
-static SpjJSONTokenType spj_gettoken(spj_lexer_t *lexer, spj_error_t *error) {
+static SpjJSONTokenType spj_gettoken(spj_lexer_t *lexer) {
     printf("spj_gettoken begins\n");
 
     SpjJSONTokenType jtokentype;
@@ -236,11 +237,11 @@ static SpjJSONTokenType spj_gettoken(spj_lexer_t *lexer, spj_error_t *error) {
             return SpjJSONTokenComma;
 
         case '"':
-            return spj_gettoken_string(lexer, error);
+            return spj_gettoken_string(lexer);
     }
 
     if (isdigit(currentbyte) || currentbyte == '-') {
-        return spj_gettoken_number(lexer, error);
+        return spj_gettoken_number(lexer);
     }
 
     if (currentbyte == 't') {
@@ -307,7 +308,7 @@ static SpjJSONTokenType spj_gettoken(spj_lexer_t *lexer, spj_error_t *error) {
 }
 
 
-static SpjJSONParsingResult spj_parse_object(spj_lexer_t *lexer, SpjJSONData *jsondata, spj_error_t *error) {
+static SpjJSONParsingResult spj_parse_object(spj_lexer_t *lexer, SpjJSONData *jsondata) {
     printf("spj_parse_object begins\n");
 
     SpjJSONData * objects_data = malloc(20 * sizeof(SpjJSONData)); // learn how to reallocate... VladD: "arena..."
@@ -326,7 +327,7 @@ static SpjJSONParsingResult spj_parse_object(spj_lexer_t *lexer, SpjJSONData *js
 
         assert(spj_iterator_getc(iterator) == '"');
 
-        SpjJSONTokenType tokentype = spj_gettoken_string(lexer, error);
+        SpjJSONTokenType tokentype = spj_gettoken_string(lexer);
 
         assert(tokentype == SpjJSONTokenString);
 
@@ -342,7 +343,7 @@ static SpjJSONParsingResult spj_parse_object(spj_lexer_t *lexer, SpjJSONData *js
 
 
         spj_iterator_increment(iterator);
-        SpjJSONParsingResult value_result = spj_parse_normal(lexer, &object_data, error);
+        SpjJSONParsingResult value_result = spj_parse_default(lexer, &object_data);
 
         objects_data[i] = object_data;
 
@@ -371,7 +372,7 @@ static SpjJSONParsingResult spj_parse_object(spj_lexer_t *lexer, SpjJSONData *js
 }
 
 
-static SpjJSONParsingResult spj_parse_array(spj_lexer_t *lexer, SpjJSONData *jsondata, spj_error_t *error) {
+static SpjJSONParsingResult spj_parse_array(spj_lexer_t *lexer, SpjJSONData *jsondata) {
     printf("spj_parse_array begins\n");
     spj_iterator_t *iterator = lexer->iterator;
 
@@ -386,7 +387,7 @@ static SpjJSONParsingResult spj_parse_array(spj_lexer_t *lexer, SpjJSONData *jso
     while (spj_iterator_getc(iterator) != ']') {
         SpjJSONData object_data;
 
-        SpjJSONParsingResult value_result = spj_parse_normal(lexer, &object_data, error);
+        SpjJSONParsingResult value_result = spj_parse_default(lexer, &object_data);
 
         array_data[i] = object_data;
 
@@ -419,7 +420,7 @@ static SpjJSONParsingResult spj_parse_array(spj_lexer_t *lexer, SpjJSONData *jso
 }
 
 
-static SpjJSONParsingResult spj_parse_normal(spj_lexer_t *lexer, SpjJSONData *jsondata, spj_error_t *error) {
+static SpjJSONParsingResult spj_parse_default(spj_lexer_t *lexer, SpjJSONData *jsondata) {
     printf("spj_parse_normal begins\n");
 
     SpjJSONParsingResult result = SpjJSONParsingResultSuccess;
@@ -428,18 +429,18 @@ static SpjJSONParsingResult spj_parse_normal(spj_lexer_t *lexer, SpjJSONData *js
 
     spj_iterator_consume_whitespace(iterator);
 
-    SpjJSONTokenType tokentype = spj_gettoken(lexer, error);
+    SpjJSONTokenType tokentype = spj_gettoken(lexer);
 
     switch (tokentype) {
         case SpjJSONTokenObjectStart: {
-            spj_parse_object(lexer, jsondata, error);
+            spj_parse_object(lexer, jsondata);
             jsondata->type = SpjJSONValueObject;
 
             return result;
         }
 
         case SpjJSONTokenArrayStart: {
-            spj_parse_array(lexer, jsondata, error);
+            spj_parse_array(lexer, jsondata);
             jsondata->type = SpjJSONValueArray;
 
             return result;
@@ -488,21 +489,22 @@ SpjJSONParsingResult spj_parse(const char *jsonstring, SpjJSONData *jsondata, sp
 
     spj_lexer_t lexer;
     spj_iterator_t iterator;
+    size_t datasize;
 
     printf("Original JSON: %s\n", jsonstring);
     
-    size_t datasize = strlen(jsonstring);
+    datasize = strlen(jsonstring);
 
     iterator = spj_iterator_create(jsonstring, datasize);
     lexer.iterator = &iterator;
 
-    SpjJSONTokenType tokentype = spj_gettoken(&lexer, error);
+    lexer.error = error;
 
-    switch (tokentype) {
+    switch (spj_gettoken(&lexer)) {
         case SpjJSONTokenObjectStart: {
             jsondata->type = SpjJSONValueObject;
 
-            result = spj_parse_object(&lexer, jsondata, error);
+            result = spj_parse_object(&lexer, jsondata);
 
             break;
         }
@@ -510,7 +512,7 @@ SpjJSONParsingResult spj_parse(const char *jsonstring, SpjJSONData *jsondata, sp
         case SpjJSONTokenArrayStart: {
             jsondata->type = SpjJSONValueArray;
 
-            result = spj_parse_array(&lexer, jsondata, error);
+            result = spj_parse_array(&lexer, jsondata);
 
             break;
         }
