@@ -98,7 +98,7 @@ int test_wrong_root_object() {
     char *jsonbytes;
     SpjJSONData jsondata;
     spj_error_t error;
-    SpjJSONParsingResult result;
+    spj_result_t result;
 
     memset(&jsondata, 0, sizeof(SpjJSONData));
     memset(&error, 0, sizeof(spj_error_t));
