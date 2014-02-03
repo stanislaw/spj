@@ -60,7 +60,9 @@ typedef struct SpjJSONData {
 
 typedef enum {
     SpjJSONNoError = 0,
-    SpjJSONErrorWrongRootObject
+    SpjJSONErrorWrongRootObject,
+    SpjJSONErrorOutOfMemory,
+    SpjJSONErrorUnexpectedEOS
 } SpjJSONError;
 
 

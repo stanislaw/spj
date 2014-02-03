@@ -84,7 +84,7 @@ int test_simple_root_objects() {
     memset(&jsondata, 0, sizeof(SpjJSONData));
     memset(&error, 0, sizeof(spj_error_t));
 
-    jsonbytes = "{\"\":\"\", \":\": 1}";
+    jsonbytes = "{\"\":\"\", \"\": 1}";
     spj_parse(jsonbytes, &jsondata, &error);
     check(jsondata.type == SpjJSONValueObject);
     check(jsondata.value.object.size == 2);
