@@ -312,26 +312,17 @@ static void spj_jsondata_init(SpjJSONData *jsondata, SpjJSONValueType type) {
 static void spj_jsondata_object_add(SpjJSONData *jsondata, SpjJSONData *object_data, size_t *capacity) {
     const size_t slice = 10;
 
+    SpjObject object;
+    SpjJSONData *objects_data;
+
     assert(jsondata->type == SpjJSONValueObject); // remove later
 
     // И да простят меня боги всего Олимпа (точно что-то не то делаю ;))
 
-    SpjObject object;
-    SpjJSONData *objects_data;
 
-    printf("objectwtf %lu\n", jsondata->value.object.size);
+    printf("objectwtf %lu %lu\n", jsondata->value.object.size, *capacity);
 
-    // Lazy initialization of jsondata - name is used to check it is new
-    if (jsondata->value.object.size == 0) {
-        objects_data = malloc(slice * sizeof(SpjJSONData));
-
-        object.data = objects_data;
-        object.size = 0;
-
-        jsondata->value.object = object;
-    } else if (jsondata->value.array.size == *capacity) {
-        assert(0);
-
+    if (jsondata->value.object.size == *capacity) {
         objects_data = jsondata->value.object.data;
 
         SpjJSONData *larger_objects_data = realloc(objects_data, *capacity += slice);
@@ -344,25 +335,16 @@ static void spj_jsondata_object_add(SpjJSONData *jsondata, SpjJSONData *object_d
 
 
 static void spj_jsondata_array_add(SpjJSONData *jsondata, SpjJSONData *object_data, size_t *capacity) {
-
     const size_t slice = 10;
+
+    SpjArray array;
+    SpjJSONData *array_data;
 
     assert(jsondata->type == SpjJSONValueArray); // remove later
 
     // И да простят меня боги всего Олимпа (точно что-то не то делаю ;))
 
-    SpjArray array;
-    SpjJSONData *array_data;
-
-    // Lazy initialization of jsondata - name is used to check it is new
-    if (jsondata->value.array.size == 0) {
-        array_data = malloc(slice * sizeof(SpjJSONData));
-
-        array.data = array_data;
-        array.size = 0;
-
-        jsondata->value.array = array;
-    } else if (jsondata->value.array.size == *capacity) {
+    if (jsondata->value.array.size == *capacity) {
         array_data = jsondata->value.array.data;
 
         SpjJSONData *larger_array_data = realloc(array_data, *capacity += slice);
@@ -376,10 +358,10 @@ static void spj_jsondata_array_add(SpjJSONData *jsondata, SpjJSONData *object_da
 
 
 static void spj_jsondata_object_finalize(SpjJSONData *jsondata, size_t *capacity) {
-    if (jsondata->value.object.size < *capacity) {
-        SpjJSONData *data = realloc(jsondata->value.object.data, jsondata->value.object.size);
-        jsondata->value.object.data = data;
-    }
+//    if (jsondata->value.object.size < *capacity) {
+//        SpjJSONData *data = realloc(jsondata->value.object.data, jsondata->value.object.size);
+//        jsondata->value.object.data = data;
+//    }
 }
 
 
@@ -397,11 +379,10 @@ static spj_result_t spj_parse_object(spj_lexer_t *lexer, SpjJSONData *jsondata) 
     size_t n, capacity;
     SpjJSONTokenType token;
     spj_iterator_t *iterator;
-    SpjJSONData object_data;
     SpjObject object;
 
 
-    capacity = 10; // initial capacity for object, to be modified by spj_jsondata_object_add
+    capacity = 0; // initial capacity, to be modified by spj_jsondata_object_add
 
 
     iterator = lexer->iterator;
@@ -425,6 +406,7 @@ static spj_result_t spj_parse_object(spj_lexer_t *lexer, SpjJSONData *jsondata) 
             assert(0);
         }
 
+        SpjJSONData object_data;
 
         spj_jsondata_init(&object_data, SpjJSONValueObject);
 
@@ -465,10 +447,11 @@ static spj_result_t spj_parse_array(spj_lexer_t *lexer, SpjJSONData *jsondata) {
     size_t i, capacity;
     spj_iterator_t *iterator;
     SpjJSONTokenType token;
+    SpjJSONData object_data;
 
     iterator = lexer->iterator;
 
-    capacity = 10; // initial capacity for array, to be modified by spj_jsondata_array_add
+    capacity = 0; // initial capacity for array, to be modified by spj_jsondata_array_add
 
     assert(jsondata->type == SpjJSONValueArray);
     assert(jsondata->value.array.size == 0);
@@ -478,6 +461,8 @@ static spj_result_t spj_parse_array(spj_lexer_t *lexer, SpjJSONData *jsondata) {
 
     for (i = 0;; i++) {
         SpjJSONData object_data;
+
+        spj_jsondata_init(&object_data, SpjJSONValueArray);
 
         token = spj_parse_default(lexer, &object_data, 1);
 
@@ -566,7 +551,7 @@ static SpjJSONTokenType spj_parse_default(spj_lexer_t *lexer, SpjJSONData *jsond
         }
 
         case SpjJSONTokenNumber: case SpjJSONTokenString: case SpjJSONTokenBool: case SpjJSONTokenNull: {
-            jsondata->type = spj_value_for_token(token);
+            spj_jsondata_init(jsondata, spj_value_for_token(token));
             jsondata->value = lexer->value;
 
             break;
@@ -637,13 +622,16 @@ int spj_delete (SpjJSONData *object) {
 
 
 void spj_jsondata_debug(SpjJSONData *jsondata) {
-
+    size_t i;
 
     switch (jsondata->type) {
         case SpjJSONValueArray:
             printf("[");
 
-            spj_jsondata_debug(jsondata->)
+            for (i = 0; i < jsondata->value.array.size; i++) {
+                spj_jsondata_debug(&jsondata->value.array.data[i]);
+            }
+
             printf("]");
 
             break;
@@ -651,6 +639,21 @@ void spj_jsondata_debug(SpjJSONData *jsondata) {
         case SpjJSONValueObject:
             printf("{");
 
+            if (jsondata->name) {
+                assert(0);
+                printf("\"%s\":", jsondata->name);
+            }
+
+            for (i = 0; i < jsondata->value.object.size; i++) {
+                SpjJSONData data = jsondata->value.object.data[i];
+
+
+//                printf("---- %lu\n", jsondata->value.object.size);
+//                printf("---- %lu\n", data.type);
+//                printf("---- %lu\n", data.value.array.size);
+
+                spj_jsondata_debug(&data);
+            }
 
             printf("}");
 
@@ -672,5 +675,5 @@ void spj_jsondata_debug(SpjJSONData *jsondata) {
             break;
     }
 
-    printf("\n");
+    //printf("\n");
 }
