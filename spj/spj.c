@@ -359,16 +359,10 @@ static void spj_jsondata_init(SpjJSONData *jsondata, SpjJSONValueType type) {
 static void spj_jsondata_object_add(SpjJSONData *jsondata, SpjJSONData *object_data, size_t *capacity) {
     const size_t slice = 10;
 
-    SpjJSONData *objects_data;
-
     assert(jsondata->type == SpjJSONValueObject); // remove later
 
     if (jsondata->value.object.size == *capacity) {
-        assert(jsondata->value.object.size == 0);
-
-        objects_data = jsondata->value.object.data;
-
-        SpjJSONData *larger_objects_data = realloc(objects_data, *capacity += slice);
+        SpjJSONData *larger_objects_data = realloc(jsondata->value.object.data, *capacity += slice);
 
         jsondata->value.object.data = larger_objects_data;
     }
@@ -378,10 +372,6 @@ static void spj_jsondata_object_add(SpjJSONData *jsondata, SpjJSONData *object_d
     printf("size is %lu\n", jsondata->value.object.size);
 
     for (size_t i = 0; i < jsondata->value.object.size; i++) {
-        SpjJSONData data = jsondata->value.object.data[i];
-
-        assert(data.type == SpjJSONValueString);
-        
         /*
          Original JSON: {"hello":"world", "key":"value", "number": "one"}
          Token[String] : hello(5, 5)
@@ -395,7 +385,7 @@ static void spj_jsondata_object_add(SpjJSONData *jsondata, SpjJSONData *object_d
          */
 
 
-        printf("%s\n", data.value.string.data);
+        printf("%s\n", jsondata->value.object.data[i].value.string.data);
     }
 }
 
@@ -403,16 +393,12 @@ static void spj_jsondata_object_add(SpjJSONData *jsondata, SpjJSONData *object_d
 static void spj_jsondata_array_add(SpjJSONData *jsondata, SpjJSONData *object_data, size_t *capacity) {
     const size_t slice = 10;
 
-    SpjJSONData *array_data;
-
     assert(jsondata->type == SpjJSONValueArray); // remove later
 
     if (jsondata->value.array.size == *capacity) {
         assert(jsondata->value.array.size == 0);
 
-        array_data = jsondata->value.array.data;
-
-        SpjJSONData *larger_array_data = realloc(array_data, *capacity += slice);
+        SpjJSONData *larger_array_data = realloc(jsondata->value.array.data, *capacity += slice);
 
         jsondata->value.object.data = larger_array_data;
     }
