@@ -104,7 +104,7 @@ static spj_iterator_t spj_iterator_create(const char *jsonbytes, size_t datasize
     iterator.data = jsonbytes;
     iterator.currentposition = 0;
     iterator.datasize = datasize;
-    
+
     return iterator;
 }
 
@@ -175,7 +175,7 @@ static SpjJSONTokenType spj_gettoken_string(spj_lexer_t *lexer) {
     string.size = iterator->currentposition - firstchar_position;
     string.data = (char *)malloc(string.size + 1);
 
-    printf("first pos: %lu, curr pos: %lu, size: %lu\n", firstchar_position, iterator->currentposition, string.size);
+    //printf("first pos: %lu, curr pos: %lu, size: %lu\n", firstchar_position, iterator->currentposition, string.size);
 
     const char *firstchar_ptr = iterator->data + firstchar_position;
 
@@ -186,7 +186,7 @@ static SpjJSONTokenType spj_gettoken_string(spj_lexer_t *lexer) {
 
     const char currentchar = iterator->data[iterator->currentposition];
 
-    printf("I want to see first and current chars: %c | %c\n", *firstchar_ptr, currentchar);
+    //printf("I want to see first and current chars: %c | %c\n", *firstchar_ptr, currentchar);
 
     lexer->value.string = string;
     
@@ -201,8 +201,6 @@ static SpjJSONTokenType spj_gettoken_string(spj_lexer_t *lexer) {
 static SpjJSONTokenType spj_gettoken_number(spj_lexer_t *lexer) {
     spj_iterator_t *iterator = lexer->iterator;
 
-    //printf("spj_gettoken_number begins %c: \n", spj_iterator_peek(iterator));
-
     size_t firstnumber_position = iterator->currentposition;
 
     char currentbyte = spj_iterator_peek(iterator);
@@ -212,8 +210,6 @@ static SpjJSONTokenType spj_gettoken_number(spj_lexer_t *lexer) {
     }
 
     while ((currentbyte = spj_iterator_peek(iterator))) {
-        //printf("--- currentbyte %c\n", currentbyte);
-
         if (isdigit(currentbyte) || currentbyte == '.') {
             spj_iterator_increment(iterator);
         } else {
@@ -250,8 +246,6 @@ static SpjJSONTokenType spj_gettoken_number(spj_lexer_t *lexer) {
 
 
 static SpjJSONTokenType spj_gettoken(spj_lexer_t *lexer) {
-    //printf("spj_gettoken begins\n");
-
     char currentbyte;
 
     spj_iterator_t *iterator = lexer->iterator;
@@ -369,17 +363,13 @@ static void spj_jsondata_init(SpjJSONData *jsondata, SpjJSONValueType type) {
 static void spj_jsondata_object_add(SpjJSONData *jsondata, SpjJSONData *object_data, size_t *capacity) {
     const size_t slice = 10;
 
-    SpjObject object;
     SpjJSONData *objects_data;
 
     assert(jsondata->type == SpjJSONValueObject); // remove later
 
-    // И да простят меня боги всего Олимпа (точно что-то не то делаю ;))
-
-
-    //printf("object %lu %lu\n", jsondata->value.object.size, *capacity);
-
     if (jsondata->value.object.size == *capacity) {
+        assert(jsondata->value.object.size == 0);
+
         objects_data = jsondata->value.object.data;
 
         SpjJSONData *larger_objects_data = realloc(objects_data, *capacity += slice);
@@ -387,41 +377,20 @@ static void spj_jsondata_object_add(SpjJSONData *jsondata, SpjJSONData *object_d
         jsondata->value.object.data = larger_objects_data;
     }
 
-    printf("[spj_jsondata_object_add]currentsize is %lu\n", jsondata->value.object.size);
-    printf("[spj_jsondata_object_add](before)\n");
-
-    spj_jsondata_debug(object_data);
-
-
-    if (jsondata->value.object.size == 0) {
-        //jsondata->value.object.data[jsondata->value.object.size++] = *object_data;
-    }
-
-
-    for (size_t i = 0; i < jsondata->value.object.size; i++) {
-        printf("[debugging what saved](size:%lu)\n", jsondata->value.object.size);
-        SpjJSONData data = jsondata->value.object.data[i];
-        spj_jsondata_debug(&data);
-    }
-
-    printf("[spj_jsondata_object_add](after)");
-    spj_jsondata_debug(object_data);
+    jsondata->value.object.data[jsondata->value.object.size++] = *object_data;
 }
 
 
 static void spj_jsondata_array_add(SpjJSONData *jsondata, SpjJSONData *object_data, size_t *capacity) {
     const size_t slice = 10;
 
-    SpjArray array;
     SpjJSONData *array_data;
 
     assert(jsondata->type == SpjJSONValueArray); // remove later
 
-    // И да простят меня боги всего Олимпа (точно что-то не то делаю ;))
-
-    //printf("array %lu %lu\n", jsondata->value.object.size, *capacity);
-
     if (jsondata->value.array.size == *capacity) {
+        assert(jsondata->value.array.size == 0);
+
         array_data = jsondata->value.array.data;
 
         SpjJSONData *larger_array_data = realloc(array_data, *capacity += slice);
@@ -430,7 +399,6 @@ static void spj_jsondata_array_add(SpjJSONData *jsondata, SpjJSONData *object_da
     }
 
     jsondata->value.array.data[jsondata->value.array.size++] = *object_data;
-
 }
 
 
@@ -460,7 +428,6 @@ static spj_result_t spj_parse_object(spj_lexer_t *lexer, SpjJSONData *jsondata) 
     size_t n, capacity;
     SpjJSONTokenType token;
     spj_iterator_t *iterator;
-    SpjObject object;
 
 
     capacity = 0; // initial capacity, to be modified by spj_jsondata_object_add
@@ -493,24 +460,15 @@ static spj_result_t spj_parse_object(spj_lexer_t *lexer, SpjJSONData *jsondata) 
 
         name = lexer->value.string.data;
 
-        printf("name when parsing: %s\n", name);
-
         if ((token = spj_gettoken(lexer)) != SpjJSONTokenColon) {
             assert(0);
         }
-
 
         spj_parse_default(lexer, &object_data, 0);
 
         object_data.name = name;
 
-        spj_jsondata_debug(&object_data);
-
         spj_jsondata_object_add(jsondata, &object_data, &capacity);
-
-        //SpjJSONData ddd = jsondata->value.object.data[0];
-        //spj_jsondata_debug(&object_data);
-        //spj_jsondata_debug(& ddd);
 
         token = spj_gettoken(lexer);
 
@@ -608,6 +566,7 @@ static SpjJSONTokenType spj_parse_default(spj_lexer_t *lexer, SpjJSONData *jsond
 
         case SpjJSONTokenNumber: case SpjJSONTokenString: case SpjJSONTokenBool: case SpjJSONTokenNull: {
             spj_jsondata_init(jsondata, spj_value_for_token(token));
+
             jsondata->value = lexer->value;
 
             break;
@@ -727,7 +686,7 @@ void spj_jsondata_debug(SpjJSONData *jsondata) {
 
             printf("%s", jsondata->value.string.data);
 
-            printf("\"\n");
+            printf("\"");
 
             break;
 
@@ -736,12 +695,21 @@ void spj_jsondata_debug(SpjJSONData *jsondata) {
 
             printf("%f", jsondata->value.number);
 
-            printf("\n");
-
-
             break;
 
         case SpjJSONValueNull:
+            printf("null");
+
+            break;
+
+        case SpjJSONValueBool:
+            if (jsondata->value.number == 1) {
+                printf("false");
+            } else {
+                printf("true");
+            }
+
+            break;
 
         default:
 
@@ -750,5 +718,5 @@ void spj_jsondata_debug(SpjJSONData *jsondata) {
             break;
     }
 
-    //printf("\n");
+    printf("\n");
 }
