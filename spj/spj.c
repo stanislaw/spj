@@ -378,9 +378,21 @@ static void spj_jsondata_object_add(SpjJSONData *jsondata, SpjJSONData *object_d
     printf("size is %lu\n", jsondata->value.object.size);
 
     for (size_t i = 0; i < jsondata->value.object.size; i++) {
-        SpjJSONData data = jsondata->value.object.data[i]; // <- Segmentation fault: 11 при size 2
+        SpjJSONData data = jsondata->value.object.data[i];
 
-        spj_jsondata_debug(&data);
+
+
+        /*
+         Original JSON: {"hello":"world", "key":"value", "number": 1}
+         Token[String] : hello(5, 5)
+         Token[String] : world(5, 5)
+         size is 1
+         [Debug] "hello":"world"
+         Token[String] : key(3, 3)
+         Token[String] : value(5, 5)
+         size is 2
+         */
+        spj_jsondata_debug(&data); // <- Segmentation fault: 11 при i = 0, size = 2
     }
 }
 
