@@ -320,7 +320,7 @@ static void spj_jsondata_object_add(SpjJSONData *jsondata, SpjJSONData *object_d
     // И да простят меня боги всего Олимпа (точно что-то не то делаю ;))
 
 
-    printf("objectwtf %lu %lu\n", jsondata->value.object.size, *capacity);
+    printf("object %lu %lu\n", jsondata->value.object.size, *capacity);
 
     if (jsondata->value.object.size == *capacity) {
         objects_data = jsondata->value.object.data;
@@ -344,6 +344,8 @@ static void spj_jsondata_array_add(SpjJSONData *jsondata, SpjJSONData *object_da
 
     // И да простят меня боги всего Олимпа (точно что-то не то делаю ;))
 
+    printf("array %lu %lu\n", jsondata->value.object.size, *capacity);
+
     if (jsondata->value.array.size == *capacity) {
         array_data = jsondata->value.array.data;
 
@@ -358,10 +360,10 @@ static void spj_jsondata_array_add(SpjJSONData *jsondata, SpjJSONData *object_da
 
 
 static void spj_jsondata_object_finalize(SpjJSONData *jsondata, size_t *capacity) {
-//    if (jsondata->value.object.size < *capacity) {
-//        SpjJSONData *data = realloc(jsondata->value.object.data, jsondata->value.object.size);
-//        jsondata->value.object.data = data;
-//    }
+    if (jsondata->value.object.size < *capacity) {
+        SpjJSONData *data = realloc(jsondata->value.object.data, jsondata->value.object.size);
+        jsondata->value.object.data = data;
+    }
 }
 
 
@@ -411,7 +413,6 @@ static spj_result_t spj_parse_object(spj_lexer_t *lexer, SpjJSONData *jsondata) 
         spj_jsondata_init(&object_data, SpjJSONValueObject);
 
         object_data.name = lexer->value.string.data;
-
 
         if ((token = spj_gettoken(lexer)) != SpjJSONTokenColon) {
             assert(0);
@@ -624,12 +625,19 @@ int spj_delete (SpjJSONData *object) {
 void spj_jsondata_debug(SpjJSONData *jsondata) {
     size_t i;
 
+    if (jsondata->name) {
+        assert(0);
+        printf("%s", jsondata->name);
+    }
+
     switch (jsondata->type) {
         case SpjJSONValueArray:
             printf("[");
 
             for (i = 0; i < jsondata->value.array.size; i++) {
-                spj_jsondata_debug(&jsondata->value.array.data[i]);
+                SpjJSONData data = jsondata->value.array.data[i];
+
+                spj_jsondata_debug(&data);
             }
 
             printf("]");
@@ -647,11 +655,6 @@ void spj_jsondata_debug(SpjJSONData *jsondata) {
             for (i = 0; i < jsondata->value.object.size; i++) {
                 SpjJSONData data = jsondata->value.object.data[i];
 
-
-//                printf("---- %lu\n", jsondata->value.object.size);
-//                printf("---- %lu\n", data.type);
-//                printf("---- %lu\n", data.value.array.size);
-
                 spj_jsondata_debug(&data);
             }
 
@@ -660,18 +663,22 @@ void spj_jsondata_debug(SpjJSONData *jsondata) {
             break;
 
         case SpjJSONValueString:
+            assert(0);
 
             break;
 
         case SpjJSONValueNumber:
+            assert(0);
+            printf("%f", jsondata->value.number);
 
             break;
 
         case SpjJSONValueNull:
 
-            break;
-
         default:
+
+            assert(0);
+
             break;
     }
 
