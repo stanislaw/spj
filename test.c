@@ -68,8 +68,7 @@ int test_simple_root_objects() {
     spj_parse(jsonbytes, &jsondata, &error);
     check(jsondata.type == SpjJSONValueArray);
 
-    // TODO
-    // check(jsondata.value.array.size == 1);
+    check(jsondata.value.array.size == 1);
     check(error.message == NULL);
 
 
@@ -80,8 +79,7 @@ int test_simple_root_objects() {
     spj_parse(jsonbytes, &jsondata, &error);
     check(jsondata.type == SpjJSONValueArray);
 
-    // TODO
-    // check(jsondata.value.array.size == 4);
+    check(jsondata.value.array.size == 4);
     check(error.message == NULL);
 
 
@@ -92,8 +90,7 @@ int test_simple_root_objects() {
     spj_parse(jsonbytes, &jsondata, &error);
     check(jsondata.type == SpjJSONValueObject);
 
-    // TODO
-    // check(jsondata.value.object.size == 2);
+    check(jsondata.value.object.size == 2);
 
 
     return 0;
