@@ -97,21 +97,37 @@ int test_simple_root_objects() {
     memset(&jsondata, 0, sizeof(SpjJSONData));
     memset(&error, 0, sizeof(spj_error_t));
 
-    jsonbytes = "{\"hello\":\"world\", \"number\": 1}";
+    printf("\nCRITICAL\n\n");
+
+    jsonbytes = "{\"hello\":\"world\", \"key\":\"value\", \"number\": 1}";
     spj_parse(jsonbytes, &jsondata, &error);
     check(error.message == NULL);
 
     check(jsondata.name == NULL);
 
     check(jsondata.type == SpjJSONValueObject);
-    check(jsondata.value.object.size == 2);
+    check(jsondata.value.object.size == 3);
 
     value = jsondata.value.object.data[0];
     check(value.type == SpjJSONValueString);
+    check(strcmp(value.name, "hello") == 0);
 
-    printf("expected value to have name: %s\n", value.name);
+    check(value.value.string.size == 5);
 
-    check(strcmp(value.name, "hello") != 0);
+    printf("test.c: before crash (%d)\n", __LINE__);
+
+    spj_jsondata_debug(&value);
+    //printf("test.c: expected value to have value: %s\n", value.value.string.data);
+
+    //check(0);
+
+    //check(strcmp(value.value.string.data, "world"));
+
+    value = jsondata.value.object.data[1];
+    check(value.type == SpjJSONValueNumber);
+    check(value.value.number == 1.0);
+
+    spj_jsondata_debug(&value);
 
     return 0;
 }
