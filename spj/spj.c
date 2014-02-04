@@ -24,6 +24,7 @@
 #define print_callstack() ((void)0)
 #endif
 
+
 typedef struct {
     const char *data;
     size_t currentposition;
@@ -354,6 +355,7 @@ static void spj_jsondata_init(SpjJSONData *jsondata, SpjJSONValueType type) {
     jsondata->value.object.size = 0;
 }
 
+
 static void spj_jsondata_object_add(SpjJSONData *jsondata, SpjJSONData *object_data, size_t *capacity) {
     const size_t slice = 10;
 
@@ -372,6 +374,14 @@ static void spj_jsondata_object_add(SpjJSONData *jsondata, SpjJSONData *object_d
     }
 
     jsondata->value.object.data[jsondata->value.object.size++] = *object_data;
+
+    printf("size is %lu\n", jsondata->value.object.size);
+
+    for (size_t i = 0; i < jsondata->value.object.size; i++) {
+        SpjJSONData data = jsondata->value.object.data[i]; // <- Segmentation fault: 11 при size 2
+
+        spj_jsondata_debug(&data);
+    }
 }
 
 
