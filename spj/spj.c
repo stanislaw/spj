@@ -364,7 +364,11 @@ static void spj_jsondata_object_add(SpjJSONData *jsondata, SpjJSONData *object_d
     if (jsondata->value.object.size == *capacity) {
         SpjJSONData *larger_objects_data = realloc(jsondata->value.object.data, *capacity += slice);
 
-        jsondata->value.object.data = larger_objects_data;
+        if (larger_objects_data != NULL) {
+            jsondata->value.object.data = larger_objects_data;
+        } else {
+            assert(0); // TODO
+        }
     }
 
     jsondata->value.object.data[jsondata->value.object.size++] = *object_data;
@@ -396,11 +400,13 @@ static void spj_jsondata_array_add(SpjJSONData *jsondata, SpjJSONData *object_da
     assert(jsondata->type == SpjJSONValueArray); // remove later
 
     if (jsondata->value.array.size == *capacity) {
-        assert(jsondata->value.array.size == 0);
-
         SpjJSONData *larger_array_data = realloc(jsondata->value.array.data, *capacity += slice);
 
-        jsondata->value.object.data = larger_array_data;
+        if (larger_array_data != NULL) {
+            jsondata->value.object.data = larger_array_data;
+        } else {
+            assert(0); // TODO
+        }
     }
 
     jsondata->value.array.data[jsondata->value.array.size++] = *object_data;
