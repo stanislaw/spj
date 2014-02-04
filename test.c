@@ -60,16 +60,23 @@ int test_simple_root_objects() {
     char *jsonbytes;
     SpjJSONData jsondata;
     spj_error_t error;
+    SpjJSONData value;
 
     memset(&jsondata, 0, sizeof(SpjJSONData));
     memset(&error, 0, sizeof(spj_error_t));
 
     jsonbytes = "[1]";
     spj_parse(jsonbytes, &jsondata, &error);
+    check(error.message == NULL);
+
     check(jsondata.type == SpjJSONValueArray);
 
     check(jsondata.value.array.size == 1);
-    check(error.message == NULL);
+
+    value = jsondata.value.array.data[0];
+    check(value.type == SpjJSONValueNumber);
+    check(value.value.number == 1);
+
 
 
     memset(&jsondata, 0, sizeof(SpjJSONData));
@@ -77,21 +84,34 @@ int test_simple_root_objects() {
 
     jsonbytes = "[1, 2, 3, 4]";
     spj_parse(jsonbytes, &jsondata, &error);
-    check(jsondata.type == SpjJSONValueArray);
-
-    check(jsondata.value.array.size == 4);
     check(error.message == NULL);
+
+    check(jsondata.type == SpjJSONValueArray);
+    check(jsondata.value.array.size == 4);
+
+    value = jsondata.value.array.data[3];
+    check(value.type == SpjJSONValueNumber);
+    check(value.value.number == 4);
 
 
     memset(&jsondata, 0, sizeof(SpjJSONData));
     memset(&error, 0, sizeof(spj_error_t));
 
-    jsonbytes = "{\"\":\"\", \"\": 1}";
+    jsonbytes = "{\"hello\":\"world\", \"number\": 1}";
     spj_parse(jsonbytes, &jsondata, &error);
-    check(jsondata.type == SpjJSONValueObject);
+    check(error.message == NULL);
 
+    check(jsondata.name == NULL);
+
+    check(jsondata.type == SpjJSONValueObject);
     check(jsondata.value.object.size == 2);
 
+    value = jsondata.value.object.data[0];
+    check(value.type == SpjJSONValueString);
+
+    printf("expected value to have name: %s\n", value.name);
+
+    check(strcmp(value.name, "hello") != 0);
 
     return 0;
 }
