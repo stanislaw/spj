@@ -4,7 +4,12 @@
 #include "spj/spj.h"
 
 int main() {
-    char *jsonbytes =
+    spj_error_t error;
+    SpjJSONData jsondata;
+    char *jsonbytes;
+
+
+    jsonbytes =
     "{ \
         \"data\": [ \
              { \
@@ -21,12 +26,11 @@ int main() {
         ] \
     }";
 
-    SpjJSONData jsondata;
+
 
     printf("We can now iterate the whole string:\n");
 
 
-    spj_error_t error;
     spj_parse(jsonbytes, &jsondata, &error);
 
 

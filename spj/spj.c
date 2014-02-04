@@ -380,19 +380,22 @@ static void spj_jsondata_object_add(SpjJSONData *jsondata, SpjJSONData *object_d
     for (size_t i = 0; i < jsondata->value.object.size; i++) {
         SpjJSONData data = jsondata->value.object.data[i];
 
-
-
+        assert(data.type == SpjJSONValueString);
+        
         /*
-         Original JSON: {"hello":"world", "key":"value", "number": 1}
+         Original JSON: {"hello":"world", "key":"value", "number": "one"}
          Token[String] : hello(5, 5)
          Token[String] : world(5, 5)
          size is 1
-         [Debug] "hello":"world"
+         world
          Token[String] : key(3, 3)
          Token[String] : value(5, 5)
          size is 2
+         make: *** [test] Segmentation fault: 11  <- Segmentation fault: 11 при i = 0, size = 2
          */
-        spj_jsondata_debug(&data); // <- Segmentation fault: 11 при i = 0, size = 2
+
+
+        printf("%s\n", data.value.string.data);
     }
 }
 
@@ -444,6 +447,7 @@ static spj_result_t spj_parse_object(spj_lexer_t *lexer, SpjJSONData *jsondata) 
     size_t n, capacity;
     SpjJSONTokenType token;
     spj_iterator_t *iterator;
+    SpjJSONData object_data;
 
 
     capacity = 0; // initial capacity, to be modified by spj_jsondata_object_add
@@ -458,6 +462,7 @@ static spj_result_t spj_parse_object(spj_lexer_t *lexer, SpjJSONData *jsondata) 
     assert(jsondata->value.object.size == 0);
 
     for (n = 0;; n++) {
+
         char *name;
 
         token = spj_gettoken(lexer);
@@ -472,7 +477,6 @@ static spj_result_t spj_parse_object(spj_lexer_t *lexer, SpjJSONData *jsondata) 
             assert(0);
         }
 
-        SpjJSONData object_data;
 
         name = lexer->value.string.data;
 
@@ -487,6 +491,26 @@ static spj_result_t spj_parse_object(spj_lexer_t *lexer, SpjJSONData *jsondata) 
         spj_jsondata_object_add(jsondata, &object_data, &capacity);
 
         token = spj_gettoken(lexer);
+
+
+//        for (size_t i = 0; i < jsondata->value.object.size; i++) {
+//            SpjJSONData data = jsondata->value.object.data[i];
+//
+//
+//
+//            /*
+//             Original JSON: {"hello":"world", "key":"value", "number": 1}
+//             Token[String] : hello(5, 5)
+//             Token[String] : world(5, 5)
+//             size is 1
+//             [Debug] "hello":"world"
+//             Token[String] : key(3, 3)
+//             Token[String] : value(5, 5)
+//             size is 2
+//             */
+//            spj_jsondata_debug(&data); // <- Segmentation fault: 11 при i = 0, size = 2
+//            printf("\n");
+//        }
 
         if (token == SpjJSONTokenObjectEnd) {
             break;
