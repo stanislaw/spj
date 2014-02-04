@@ -6,6 +6,23 @@
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
+#include <execinfo.h>
+
+#ifdef __APPLE__
+// https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man3/backtrace.3.html
+#define print_callstack() { \
+    void *callstack[128]; \
+    int i, frames = backtrace(callstack, 128); \
+    char **strs = backtrace_symbols(callstack, frames); \
+    printf("Callstack:\n"); \
+    for (i = 0; i < frames; ++i) { \
+        printf("%s\n", strs[i]); \
+    } \
+    free(strs); \
+}
+#else
+#define print_callstack() ((void)0)
+#endif
 
 typedef struct {
     const char *data;
@@ -38,7 +55,6 @@ typedef enum SpjJSONTokenType {
 
 
 static char spj_iterator_peek(spj_iterator_t *iterator);
-
 
 
 static SpjJSONTokenType spj_parse_default(spj_lexer_t *lexer, SpjJSONData *jsondata, int inarray);
@@ -88,13 +104,19 @@ static spj_iterator_t spj_iterator_create(const char *jsonbytes, size_t datasize
     iterator.data = jsonbytes;
     iterator.currentposition = 0;
     iterator.datasize = datasize;
-
+    
     return iterator;
 }
 
 
 static void spj_iterator_increment(spj_iterator_t *iterator) {
     iterator->currentposition++;
+
+    // Check datasize = 0 case later
+    if (iterator->currentposition == (iterator->datasize + 1) && iterator->datasize > 0) {
+        print_callstack();
+        assert(0);
+    }
 }
 
 
@@ -112,7 +134,7 @@ static char spj_iterator_getc(spj_iterator_t *iterator) {
 }
 
 
-static size_t __attribute__((unused)) spj_iterator_seek(spj_iterator_t *iterator, int offset) {
+static size_t spj_iterator_seek(spj_iterator_t *iterator, int offset) {
     if (offset > 0) {
         iterator->currentposition += offset;
 
@@ -368,15 +390,16 @@ static void spj_jsondata_object_add(SpjJSONData *jsondata, SpjJSONData *object_d
     printf("[spj_jsondata_object_add]currentsize is %lu\n", jsondata->value.object.size);
     printf("[spj_jsondata_object_add](before)\n");
 
+    spj_jsondata_debug(object_data);
 
-    //spj_jsondata_debug(object_data);
 
-
-    jsondata->value.object.data[jsondata->value.object.size++] = *object_data;
+    if (jsondata->value.object.size == 0) {
+        //jsondata->value.object.data[jsondata->value.object.size++] = *object_data;
+    }
 
 
     for (size_t i = 0; i < jsondata->value.object.size; i++) {
-        printf("[debugging what saved]\n");
+        printf("[debugging what saved](size:%lu)\n", jsondata->value.object.size);
         SpjJSONData data = jsondata->value.object.data[i];
         spj_jsondata_debug(&data);
     }
