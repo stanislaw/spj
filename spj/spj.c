@@ -175,18 +175,12 @@ static SpjJSONTokenType spj_gettoken_string(spj_lexer_t *lexer) {
     string.size = iterator->currentposition - firstchar_position;
     string.data = (char *)malloc(string.size + 1);
 
-    //printf("first pos: %lu, curr pos: %lu, size: %lu\n", firstchar_position, iterator->currentposition, string.size);
-
     const char *firstchar_ptr = iterator->data + firstchar_position;
 
     memcpy(string.data, firstchar_ptr, string.size);
     string.data[string.size] = '\0';
 
     printf("Token[String] : %s(%lu, %lu)\n", string.data, strlen(string.data), string.size);
-
-    const char currentchar = iterator->data[iterator->currentposition];
-
-    //printf("I want to see first and current chars: %c | %c\n", *firstchar_ptr, currentchar);
 
     lexer->value.string = string;
     
