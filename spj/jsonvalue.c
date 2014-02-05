@@ -150,19 +150,29 @@ void spj_jsonvalue_enumerate_reverse(SpjJSONValue *jsonvalue, int (*function)(Sp
 }
 
 int spj_jsonvalue_free(SpjJSONValue *jsonvalue) {
+    size_t i;
+
     if (jsonvalue == NULL) {
         return 0;
     }
 
     switch (jsonvalue->type) {
         case SpjJSONValueObject:
-            // здесь нужно вызывать spj_jsonvalue_delete рекурсивно? (для краткости лучше тут нужна функция траверса)
+            for (i = 0; i < jsonvalue->object.size; i++) {
+                spj_jsonvalue_enumerate_reverse(& jsonvalue->object.data[i], spj_jsonvalue_free);
+            }
+
+            jsonvalue->object = SpjObjectZero;
 
             break;
 
         case SpjJSONValueArray:
-            // здесь нужно вызывать spj_jsonvalue_delete рекурсивно? (для краткости лучше тут нужна функция траверса)
-            
+            for (i = 0; i < jsonvalue->array.size; i++) {
+                spj_jsonvalue_enumerate_reverse(& jsonvalue->array.data[i], spj_jsonvalue_free);
+            }
+
+            jsonvalue->array = SpjArrayZero;
+
             break;
 
         case SpjJSONValueString:
