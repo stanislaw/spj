@@ -14,3 +14,4 @@ void spj_jsonvalue_object_finalize(SpjJSONValue *jsonvalue, size_t *capacity);
 void spj_jsonvalue_array_finalize(SpjJSONValue *jsonvalue, size_t *capacity);
 
 #endif
+

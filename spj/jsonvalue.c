@@ -35,24 +35,10 @@ void spj_jsonvalue_object_add(SpjJSONValue *jsonvalue, SpjJSONNamedValue *child_
 
     jsonvalue->object.data[jsonvalue->object.size++] = *child_jsonvalue;
 
-    printf("size ----> %lu %s\n", jsonvalue->object.size, child_jsonvalue->value.string.data);
-
     for (size_t i = 0; i < jsonvalue->object.size; i++) {
-        /*
-         Original JSON: {"hello":"world", "key":"value", "number": "one"}
-         Token[String] : hello(5, 5)
-         Token[String] : world(5, 5)
-         size is 1 world
-         world
-         Token[String] : key(3, 3)
-         Token[String] : value(5, 5)
-         size is 2
-         make: *** [test] Segmentation fault: 11
-         */
-
-        assert(jsonvalue->object.data[i].value.type == SpjJSONValueString);
-
-        printf("string ----> %s\n", jsonvalue->object.data[i].value.string.data); // <- Segmentation fault: 11
+//        if (jsonvalue->object.data[i].value.type == SpjJSONValueString) {
+//            printf("string ----> %s\n", jsonvalue->object.data[i].value.string.data); // <- Segmentation fault: 11
+//        }
     }
 }
 
