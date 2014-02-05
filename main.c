@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "spj/spj.h"
 
@@ -35,7 +36,8 @@ int main() {
 
 
     spj_jsonvalue_debug(&jsonvalue);
-    
+
+    //spj_jsonvalue_free(&jsonvalue);
     
     printf("\n");
 

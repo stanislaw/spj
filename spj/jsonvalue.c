@@ -149,6 +149,7 @@ void spj_jsonvalue_enumerate_reverse(SpjJSONValue *jsonvalue, int (*function)(Sp
     function(jsonvalue);
 }
 
+
 int spj_jsonvalue_free(SpjJSONValue *jsonvalue) {
     size_t i;
 
@@ -156,10 +157,16 @@ int spj_jsonvalue_free(SpjJSONValue *jsonvalue) {
         return 0;
     }
 
+    // Нужно ли тут хоть где-то использовать free, я запутался в объяснениях про heap и stack на Stackoverflow и думаю, что не нужно.
+
     switch (jsonvalue->type) {
         case SpjJSONValueObject:
             for (i = 0; i < jsonvalue->object.size; i++) {
-                spj_jsonvalue_enumerate_reverse(& jsonvalue->object.data[i], spj_jsonvalue_free);
+                SpjJSONNamedValue namedvalue = jsonvalue->object.data[i];
+
+                spj_jsonvalue_enumerate_reverse(& namedvalue.value, spj_jsonvalue_free);
+
+                namedvalue.name = SpjStringZero; // Нужно?
             }
 
             jsonvalue->object = SpjObjectZero;
@@ -176,6 +183,8 @@ int spj_jsonvalue_free(SpjJSONValue *jsonvalue) {
             break;
 
         case SpjJSONValueString:
+            free(jsonvalue->string.data);
+
             jsonvalue->string = SpjStringZero;
 
             break;
