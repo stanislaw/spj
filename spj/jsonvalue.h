@@ -16,6 +16,7 @@ void spj_jsonvalue_array_finalize(SpjJSONValue *jsonvalue, size_t *capacity);
 
 // TODO TODO TODO
 void spj_jsonvalue_enumerate(SpjJSONValue *jsonvalue, int (*function)(SpjJSONValue *jsonvalue));
+void spj_jsonvalue_enumerate_reverse(SpjJSONValue *jsonvalue, int (*function)(SpjJSONValue *jsonvalue));
 
 int spj_jsonvalue_free(SpjJSONValue *jsonvalue);
 

@@ -98,48 +98,55 @@ void spj_jsonvalue_array_finalize(SpjJSONValue *jsonvalue, size_t *capacity) {
 void spj_jsonvalue_enumerate(SpjJSONValue *jsonvalue, int (*function)(SpjJSONValue *jsonvalue)) {
     size_t i;
 
+    function(jsonvalue);
+
     switch (jsonvalue->type) {
         case SpjJSONValueArray:
             for (i = 0; i < jsonvalue->array.size; i++) {
-                SpjJSONValue data = jsonvalue->array.data[i];
-
-                function(&data);
+                spj_jsonvalue_enumerate(& jsonvalue->array.data[i], function);
             }
 
             break;
 
         case SpjJSONValueObject:
             for (i = 0; i < jsonvalue->object.size; i++) {
-                //SpjJSONNamedValue data = jsonvalue->object.data[i];
-
-                //function(&data);
+                spj_jsonvalue_enumerate(& jsonvalue->object.data[i], function);
             }
 
             break;
 
-        case SpjJSONValueString:
-            //function(data);
-
-            break;
-
-        case SpjJSONValueNumber:
-
-            break;
-
-        case SpjJSONValueNull:
-
-            break;
-            
-        case SpjJSONValueBool:
-
-            break;
-            
         default:
-            
-            assert(0);
+            // Do not "enumerate" leaves
+
+            break;
+    }
+}
+
+void spj_jsonvalue_enumerate_reverse(SpjJSONValue *jsonvalue, int (*function)(SpjJSONValue *jsonvalue)) {
+    size_t i;
+
+    switch (jsonvalue->type) {
+        case SpjJSONValueArray:
+            for (i = 0; i < jsonvalue->array.size; i++) {
+                spj_jsonvalue_enumerate_reverse(& jsonvalue->array.data[i], function);
+            }
+
+            break;
+
+        case SpjJSONValueObject:
+            for (i = 0; i < jsonvalue->object.size; i++) {
+                spj_jsonvalue_enumerate_reverse(& jsonvalue->object.data[i], function);
+            }
+
+            break;
+
+        default:
+            // Do not "enumerate" leaves
             
             break;
     }
+
+    function(jsonvalue);
 }
 
 int spj_jsonvalue_free(SpjJSONValue *jsonvalue) {
