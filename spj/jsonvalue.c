@@ -8,13 +8,35 @@
 void spj_jsonvalue_init(SpjJSONValue *jsonvalue, SpjJSONValueType type) {
     jsonvalue->type = type;
 
-    jsonvalue->object.data = NULL;
-    jsonvalue->object.size = 0;
+    switch (type) {
+        case SpjJSONValueObject:
+            jsonvalue->object = (SpjObject){ .data = NULL, .size = 0};
 
-    jsonvalue->array.data = NULL;
-    jsonvalue->array.size = 0;
+            break;
 
-    jsonvalue->number = 0;
+        case SpjJSONValueArray:
+            jsonvalue->array = (SpjArray){ .data = NULL, .size = 0};
+
+            break;
+
+        case SpjJSONValueString:
+            jsonvalue->string = (SpjString){ .data = NULL, .size = 0};
+
+            break;
+
+        case SpjJSONValueNumber:
+            jsonvalue->number = 0;
+
+            break;
+
+        case SpjJSONValueBool:
+            jsonvalue->number = 0;
+
+            break;
+
+        default:
+            break;
+    }
 }
 
 
@@ -36,9 +58,9 @@ void spj_jsonvalue_object_add(SpjJSONValue *jsonvalue, SpjJSONNamedValue *child_
     jsonvalue->object.data[jsonvalue->object.size++] = *child_jsonvalue;
 
     for (size_t i = 0; i < jsonvalue->object.size; i++) {
-//        if (jsonvalue->object.data[i].value.type == SpjJSONValueString) {
-//            printf("string ----> %s\n", jsonvalue->object.data[i].value.string.data); // <- Segmentation fault: 11
-//        }
+        if (jsonvalue->object.data[i].value.type == SpjJSONValueString) {
+            printf("string ----> %s\n", jsonvalue->object.data[i].value.string.data); // <- Segmentation fault: 11
+        }
     }
 }
 
