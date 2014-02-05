@@ -6,9 +6,7 @@ OUT=-o main
 
 INCLUDE_PATHS:= -Ispj
 
-run: all exec
-
-all: o lib main
+run: o lib main exec
 
 o:
 	$(CC) $(CFLAGS) $(INCLUDE_PATHS) -c spj/spj.c -o spj.o
@@ -33,5 +31,5 @@ _test:
 runtests:
 	./test
 
-.PHONY: test run
+.PHONY: o lib main exec test _test runtests
 

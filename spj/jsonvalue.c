@@ -3,7 +3,7 @@
 #import "jsonvalue.h"
 
 #include <assert.h>
-
+#include <stdlib.h>
 
 void spj_jsonvalue_init(SpjJSONValue *jsonvalue, SpjJSONValueType type) {
     jsonvalue->type = type;
@@ -24,7 +24,7 @@ void spj_jsonvalue_object_add(SpjJSONValue *jsonvalue, SpjJSONNamedValue *child_
     assert(jsonvalue->type == SpjJSONValueObject); // remove later
 
     if (jsonvalue->object.size == *capacity) {
-        SpjJSONNamedValue *larger_objects_data = realloc(jsonvalue->object.data, *capacity += slice);
+        SpjJSONNamedValue *larger_objects_data = realloc(jsonvalue->object.data, (*capacity += slice) * sizeof(SpjJSONNamedValue));
 
         if (larger_objects_data != NULL) {
             jsonvalue->object.data = larger_objects_data;
@@ -63,7 +63,7 @@ void spj_jsonvalue_array_add(SpjJSONValue *jsonvalue, SpjJSONValue *child_jsonva
     assert(jsonvalue->type == SpjJSONValueArray); // remove later
 
     if (jsonvalue->array.size == *capacity) {
-        SpjJSONValue *larger_array_data = realloc(jsonvalue->array.data, *capacity += slice);
+        SpjJSONValue *larger_array_data = realloc(jsonvalue->array.data, (*capacity += slice) * sizeof(SpjJSONValue));
 
         if (larger_array_data != NULL) {
             jsonvalue->array.data = larger_array_data;

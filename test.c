@@ -104,23 +104,18 @@ int test_simple_root_objects() {
     spj_parse(jsonbytes, &jsonvalue, &error);
     check(error.message == NULL);
 
-    /*check(jsonvalue.type == SpjJSONValueObject);*/
-    /*check(jsonvalue.object.size == 3);*/
+    check(jsonvalue.type == SpjJSONValueObject);
+    check(jsonvalue.object.size == 3);
 
-    /*namedvalue = jsonvalue.object.data[0];*/
-    /*check(namedvalue.value.type == SpjJSONValueString);*/
-    /*check(strcmp(namedvalue.name.data, "hello") == 0);*/
+    namedvalue = jsonvalue.object.data[0];
+    check(namedvalue.value.type == SpjJSONValueString);
 
-    /*check(namedvalue.value.string.size == 5);*/
+    printf("size %lu", namedvalue.value.string.size);
+    check(namedvalue.value.string.size == 5);
 
-    printf("test.c: before crash (%d)\n", __LINE__);
+    //check(strcmp(namedvalue.name.data, "hello") == 0);
 
-    spj_jsonvalue_debug(&value);
-    //printf("test.c: expected value to have value: %s\n", value.value.string.data);
-
-    //check(0);
-
-    //check(strcmp(value.value.string.data, "world"));
+    /*check(strcmp(value.string.data, "world"));*/
 
     /*value = jsonvalue.value.object.data[1];*/
     /*check(value.type == SpjJSONValueNumber);*/
