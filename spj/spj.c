@@ -17,7 +17,6 @@ static spj_result_t spj_parse_object(spj_lexer_t *lexer, SpjJSONValue *jsonvalue
 
     size_t n, capacity;
     SpjJSONTokenType token;
-    spj_iterator_t *iterator;
     SpjJSONNamedValue child_jsonvalue;
     SpjJSONValue child_jsonvalue_value;
 
@@ -25,10 +24,8 @@ static spj_result_t spj_parse_object(spj_lexer_t *lexer, SpjJSONValue *jsonvalue
     capacity = 0; // initial capacity, to be modified by spj_jsonvalue_object_add
 
 
-    iterator = lexer->iterator;
-
     // remove this later
-    assert(iterator->data[iterator->currentposition - 1] == '{');
+    assert(lexer->data[lexer->currentposition - 1] == '{');
 
     assert(jsonvalue->type == SpjJSONValueObject);
     assert(jsonvalue->object.size == 0);
@@ -41,7 +38,7 @@ static spj_result_t spj_parse_object(spj_lexer_t *lexer, SpjJSONValue *jsonvalue
         }
 
         if (token != SpjJSONTokenString) {
-            printf("expected string %s\n", iterator->data + iterator->currentposition);
+            printf("expected string %s\n", lexer->data + lexer->currentposition);
 
             assert(0);
         }
@@ -71,7 +68,7 @@ static spj_result_t spj_parse_object(spj_lexer_t *lexer, SpjJSONValue *jsonvalue
         }
     }
 
-    assert(iterator->data[iterator->currentposition - 1] == '}');
+    assert(lexer->data[lexer->currentposition - 1] == '}');
 
     spj_jsonvalue_object_finalize(jsonvalue, &capacity);
 
@@ -81,11 +78,8 @@ static spj_result_t spj_parse_object(spj_lexer_t *lexer, SpjJSONValue *jsonvalue
 
 static spj_result_t spj_parse_array(spj_lexer_t *lexer, SpjJSONValue *jsonvalue) {
     size_t i, capacity;
-    spj_iterator_t *iterator;
     SpjJSONTokenType token;
     SpjJSONValue child_jsonvalue;
-
-    iterator = lexer->iterator;
 
     capacity = 0; // initial capacity for array, to be modified by spj_jsonvalue_array_add
 
@@ -93,7 +87,7 @@ static spj_result_t spj_parse_array(spj_lexer_t *lexer, SpjJSONValue *jsonvalue)
     assert(jsonvalue->array.size == 0);
 
     // remove this later
-    assert(iterator->data[iterator->currentposition - 1] == '[');
+    assert(lexer->data[lexer->currentposition - 1] == '[');
 
     for (i = 0;; i++) {
         SpjJSONValue object_data;
@@ -120,7 +114,7 @@ static spj_result_t spj_parse_array(spj_lexer_t *lexer, SpjJSONValue *jsonvalue)
     }
 
     // remove this later
-    assert(iterator->data[iterator->currentposition - 1] == ']');
+    assert(lexer->data[lexer->currentposition - 1] == ']');
 
     spj_jsonvalue_array_finalize(jsonvalue, &capacity);
 
@@ -130,8 +124,6 @@ static spj_result_t spj_parse_array(spj_lexer_t *lexer, SpjJSONValue *jsonvalue)
 
 static SpjJSONTokenType spj_parse_default(spj_lexer_t *lexer, SpjJSONValue *jsonvalue, int inarray) {
     //printf("spj_parse_normal begins\n");
-
-    spj_iterator_t *iterator = lexer->iterator;
 
     SpjJSONTokenType token = spj_gettoken(lexer);
 
@@ -164,9 +156,7 @@ static SpjJSONTokenType spj_parse_default(spj_lexer_t *lexer, SpjJSONValue *json
         }
             
         default:
-            printf("current byte is %c, %lu of total %lu", spj_iterator_peek(iterator), iterator->currentposition, iterator->datasize);
-            printf("what is the token %d\n", token);
-            
+            // TODO
             assert(0);
     }
     
@@ -181,16 +171,14 @@ static SpjJSONTokenType spj_parse_default(spj_lexer_t *lexer, SpjJSONValue *json
 spj_result_t spj_parse(const char *jsonstring, SpjJSONValue *jsonvalue, spj_error_t *error) {
     spj_result_t result;
     spj_lexer_t lexer;
-    spj_iterator_t iterator;
     size_t datasize;
 
     printf("Original JSON: %s\n", jsonstring);
     
     datasize = strlen(jsonstring);
 
-    iterator = spj_iterator_create(jsonstring, datasize);
-    lexer.iterator = &iterator;
-
+    lexer = spj_lexer_create(jsonstring, datasize);
+    
     lexer.error = error;
 
     switch (spj_gettoken(&lexer)) {

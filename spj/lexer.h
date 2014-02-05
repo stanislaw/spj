@@ -26,18 +26,15 @@ typedef struct {
     const char *data;
     size_t currentposition;
     size_t datasize;
-} spj_iterator_t;
 
-
-typedef struct {
-    spj_iterator_t *iterator;
     SpjJSONValue value;
+
     spj_error_t *error;
 } spj_lexer_t;
 
 
-char spj_iterator_peek(spj_iterator_t *iterator);
-spj_iterator_t spj_iterator_create(const char *jsonbytes, size_t datasize);
+char spj_lexer_peek(spj_lexer_t *lexer);
+spj_lexer_t spj_lexer_create(const char *jsonbytes, size_t datasize);
 
 
 SpjJSONTokenType spj_gettoken_string(spj_lexer_t *lexer);

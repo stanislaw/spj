@@ -44,64 +44,61 @@
 */
 
 
-#pragma mark
-#pragma mark Iterator
+spj_lexer_t spj_lexer_create(const char *jsonbytes, size_t datasize) {
+    spj_lexer_t lexer;
 
+    lexer.data = jsonbytes;
+    lexer.currentposition = 0;
+    lexer.datasize = datasize;
+    lexer.error = NULL;
 
-spj_iterator_t spj_iterator_create(const char *jsonbytes, size_t datasize) {
-    spj_iterator_t iterator;
-
-    iterator.data = jsonbytes;
-    iterator.currentposition = 0;
-    iterator.datasize = datasize;
-
-    return iterator;
+    return lexer;
 }
 
 
-static void spj_iterator_increment(spj_iterator_t *iterator) {
-    iterator->currentposition++;
+static void spj_lexer_increment(spj_lexer_t *lexer) {
+    lexer->currentposition++;
 
     // Check datasize = 0 case later
-    if (iterator->currentposition == (iterator->datasize + 1) && iterator->datasize > 0) {
+    if (lexer->currentposition == (lexer->datasize + 1) && lexer->datasize > 0) {
         print_callstack();
         assert(0);
     }
 }
 
 
-char spj_iterator_peek(spj_iterator_t *iterator) {
-    return iterator->data[iterator->currentposition];
+char spj_lexer_peek(spj_lexer_t *lexer) {
+    return lexer->data[lexer->currentposition];
 }
 
 
-static char spj_iterator_getc(spj_iterator_t *iterator) {
-    char c = iterator->data[iterator->currentposition];
+static char spj_lexer_getc(spj_lexer_t *lexer) {
+    char c = lexer->data[lexer->currentposition];
 
-    spj_iterator_increment(iterator);
+    spj_lexer_increment(lexer);
 
     return c;
 }
 
 
-static size_t spj_iterator_seek(spj_iterator_t *iterator, int offset) {
+static size_t spj_lexer_seek(spj_lexer_t *lexer, int offset) {
     if (offset > 0) {
-        iterator->currentposition += offset;
+        lexer->currentposition += offset;
 
-        if (iterator->currentposition > iterator->datasize - 1) {
-            iterator->currentposition = iterator->datasize - 1;
+        if (lexer->currentposition > lexer->datasize - 1) {
+            lexer->currentposition = lexer->datasize - 1;
         }
     } else if (offset < 0) {
         unsigned int uoffset = (unsigned int)(-offset);
 
-        if (iterator->currentposition > uoffset) {
-            iterator->currentposition -= uoffset;
+        if (lexer->currentposition > uoffset) {
+            lexer->currentposition -= uoffset;
         } else {
-            iterator->currentposition = 0;
+            lexer->currentposition = 0;
         }
     }
 
-    return iterator->currentposition;
+    return lexer->currentposition;
 }
 
 
@@ -110,22 +107,20 @@ static size_t spj_iterator_seek(spj_iterator_t *iterator, int offset) {
 
 
 SpjJSONTokenType spj_gettoken_string(spj_lexer_t *lexer) {
-    spj_iterator_t *iterator = lexer->iterator;
-
     SpjString string;
 
-    assert(iterator->data[iterator->currentposition - 1] == '"');
+    assert(lexer->data[lexer->currentposition - 1] == '"');
 
-    size_t firstchar_position = iterator->currentposition;
+    size_t firstchar_position = lexer->currentposition;
 
-    while (spj_iterator_peek(iterator) != '"') {
-        spj_iterator_increment(iterator);
+    while (spj_lexer_peek(lexer) != '"') {
+        spj_lexer_increment(lexer);
     }
 
-    string.size = iterator->currentposition - firstchar_position;
+    string.size = lexer->currentposition - firstchar_position;
     string.data = (char *)malloc(string.size + 1);
 
-    const char *firstchar_ptr = iterator->data + firstchar_position;
+    const char *firstchar_ptr = lexer->data + firstchar_position;
 
     memcpy(string.data, firstchar_ptr, string.size);
     string.data[string.size] = '\0';
@@ -135,34 +130,32 @@ SpjJSONTokenType spj_gettoken_string(spj_lexer_t *lexer) {
     lexer->value.string = string;
     lexer->value.type = SpjJSONValueString;
 
-    assert(spj_iterator_peek(iterator) == '"');
+    assert(spj_lexer_peek(lexer) == '"');
 
-    spj_iterator_increment(iterator);
+    spj_lexer_increment(lexer);
 
     return SpjJSONTokenString;
 }
 
 
 SpjJSONTokenType spj_gettoken_number(spj_lexer_t *lexer) {
-    spj_iterator_t *iterator = lexer->iterator;
+    size_t firstnumber_position = lexer->currentposition;
 
-    size_t firstnumber_position = iterator->currentposition;
-
-    char currentbyte = spj_iterator_peek(iterator);
+    char currentbyte = spj_lexer_peek(lexer);
 
     if ((isdigit(currentbyte) || currentbyte == '-') == 0) {
         return SpjJSONTokenError;
     }
 
-    while ((currentbyte = spj_iterator_peek(iterator))) {
+    while ((currentbyte = spj_lexer_peek(lexer))) {
         if (isdigit(currentbyte) || currentbyte == '.') {
-            spj_iterator_increment(iterator);
+            spj_lexer_increment(lexer);
         } else {
             break;
         }
     }
 
-    const char *firstchar = iterator->data + firstnumber_position;
+    const char *firstchar = lexer->data + firstnumber_position;
     char *endpointer;
 
     double number = strtod(firstchar, &endpointer);
@@ -178,14 +171,14 @@ SpjJSONTokenType spj_gettoken_number(spj_lexer_t *lexer) {
         assert(0);
     }
 
-    assert(endpointer == (iterator->data + iterator->currentposition));
+    assert(endpointer == (lexer->data + lexer->currentposition));
 
     lexer->value.number = number;
     lexer->value.type = SpjJSONValueNumber;
 
     printf("Token[Number] : %f\n", number);
 
-    assert(isdigit(spj_iterator_peek(iterator)) == 0);
+    assert(isdigit(spj_lexer_peek(lexer)) == 0);
 
     return SpjJSONTokenNumber;
 }
@@ -194,9 +187,7 @@ SpjJSONTokenType spj_gettoken_number(spj_lexer_t *lexer) {
 SpjJSONTokenType spj_gettoken(spj_lexer_t *lexer) {
     char currentbyte;
 
-    spj_iterator_t *iterator = lexer->iterator;
-
-    while (isspace(currentbyte = spj_iterator_getc(iterator)));
+    while (isspace(currentbyte = spj_lexer_getc(lexer)));
 
     switch (currentbyte) {
         case '\0':
@@ -225,15 +216,15 @@ SpjJSONTokenType spj_gettoken(spj_lexer_t *lexer) {
     }
 
     if (isdigit(currentbyte) || currentbyte == '-') {
-        spj_iterator_seek(iterator, -1);
+        spj_lexer_seek(lexer, -1);
 
         return spj_gettoken_number(lexer);
     }
 
     if (currentbyte == 't') {
-        if (spj_iterator_getc(iterator) == 'r' &&
-            spj_iterator_getc(iterator) == 'u' &&
-            spj_iterator_getc(iterator) == 'e') {
+        if (spj_lexer_getc(lexer) == 'r' &&
+            spj_lexer_getc(lexer) == 'u' &&
+            spj_lexer_getc(lexer) == 'e') {
 
             printf("Token[Bool] : true\n");
 
@@ -248,10 +239,10 @@ SpjJSONTokenType spj_gettoken(spj_lexer_t *lexer) {
     }
 
     if (currentbyte == 'f') {
-        if (spj_iterator_getc(iterator) == 'a' &&
-            spj_iterator_getc(iterator) == 'l' &&
-            spj_iterator_getc(iterator) == 's' &&
-            spj_iterator_getc(iterator) == 'e') {
+        if (spj_lexer_getc(lexer) == 'a' &&
+            spj_lexer_getc(lexer) == 'l' &&
+            spj_lexer_getc(lexer) == 's' &&
+            spj_lexer_getc(lexer) == 'e') {
 
             printf("Token[Bool] : false\n");
 
@@ -266,9 +257,9 @@ SpjJSONTokenType spj_gettoken(spj_lexer_t *lexer) {
     }
 
     if (currentbyte == 'n') {
-        if (spj_iterator_getc(iterator) == 'u' &&
-            spj_iterator_getc(iterator) == 'l' &&
-            spj_iterator_getc(iterator) == 'l') {
+        if (spj_lexer_getc(lexer) == 'u' &&
+            spj_lexer_getc(lexer) == 'l' &&
+            spj_lexer_getc(lexer) == 'l') {
             
             printf("Token[Null]\n");
             
