@@ -9,6 +9,10 @@ git clone git@github.com:stanislaw/spj.git
 cd spj/
 make # Компиляция и запуск.
 make test # Тесты.
+
+# Для получения нового с Git
+cd spj/ # в уже склонированной директории spj
+git pull
 ```
 
 ## Первичные концепция, ТЗ и Черновик API в одном разделе

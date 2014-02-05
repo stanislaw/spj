@@ -110,18 +110,11 @@ int test_simple_root_objects() {
     namedvalue = jsonvalue.object.data[0];
     check(namedvalue.value.type == SpjJSONValueString);
 
-    printf("size %lu", namedvalue.value.string.size);
+    check(namedvalue.name.size == 5);
     check(namedvalue.value.string.size == 5);
 
-    //check(strcmp(namedvalue.name.data, "hello") == 0);
-
-    /*check(strcmp(value.string.data, "world"));*/
-
-    /*value = jsonvalue.value.object.data[1];*/
-    /*check(value.type == SpjJSONValueNumber);*/
-    /*check(value.value.number == 1.0);*/
-
-    /*spj_jsonvalue_debug(&value);*/
+    check(strcmp(namedvalue.name.data, "hello") == 0);
+    check(strcmp(namedvalue.value.string.data, "world") == 0);
 
     return 0;
 }

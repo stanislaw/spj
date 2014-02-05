@@ -46,6 +46,8 @@ static spj_result_t spj_parse_object(spj_lexer_t *lexer, SpjJSONValue *jsonvalue
             assert(0);
         }
 
+        child_jsonvalue.name = (SpjString){.data = NULL, .size = 0};
+
         child_jsonvalue.name = lexer->value.string;
 
         if ((token = spj_gettoken(lexer)) != SpjJSONTokenColon) {

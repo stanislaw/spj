@@ -2,19 +2,21 @@
 #include "debug.h"
 #include <assert.h>
 
-void spj_jsonvalue_debug(SpjJSONValue *jsonvalue) {
+static void spj_jsonvalue_debug_internal(SpjJSONValue *jsonvalue) {
     size_t i;
-
-    printf("[Debug] ");
 
     switch (jsonvalue->type) {
         case SpjJSONValueArray:
             printf("[");
 
             for (i = 0; i < jsonvalue->array.size; i++) {
+                if (i > 0) {
+                    printf(", ");
+                }
+
                 SpjJSONValue data = jsonvalue->array.data[i];
 
-                spj_jsonvalue_debug(&data);
+                spj_jsonvalue_debug_internal(&data);
             }
 
             printf("]");
@@ -25,13 +27,21 @@ void spj_jsonvalue_debug(SpjJSONValue *jsonvalue) {
             printf("{");
 
             for (i = 0; i < jsonvalue->object.size; i++) {
+                if (i > 0) {
+                    printf(", ");
+                }
+
                 SpjJSONNamedValue data = jsonvalue->object.data[i];
 
-                printf("%s:-----", data.name.data);
+                printf("\"");
 
-                // TODO TODO TODO
-                assert(0);
-                //spj_jsonvalue_debug(&data);
+                printf("%s", data.name.data);
+
+                printf("\"");
+
+                printf(":");
+
+                spj_jsonvalue_debug_internal(&data);
             }
 
             printf("}");
@@ -75,6 +85,14 @@ void spj_jsonvalue_debug(SpjJSONValue *jsonvalue) {
             break;
     }
     
-    printf("\n");
 }
 
+
+void spj_jsonvalue_debug(SpjJSONValue *jsonvalue) {
+    printf("[Debug] ");
+
+    spj_jsonvalue_debug_internal(jsonvalue);
+
+    printf("\n");
+
+}

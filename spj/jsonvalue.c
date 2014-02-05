@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <stdlib.h>
 
+
 void spj_jsonvalue_init(SpjJSONValue *jsonvalue, SpjJSONValueType type) {
     jsonvalue->type = type;
 
@@ -56,12 +57,6 @@ void spj_jsonvalue_object_add(SpjJSONValue *jsonvalue, SpjJSONNamedValue *child_
     }
 
     jsonvalue->object.data[jsonvalue->object.size++] = *child_jsonvalue;
-
-    for (size_t i = 0; i < jsonvalue->object.size; i++) {
-        if (jsonvalue->object.data[i].value.type == SpjJSONValueString) {
-            printf("string ----> %s\n", jsonvalue->object.data[i].value.string.data); // <- Segmentation fault: 11
-        }
-    }
 }
 
 
@@ -86,7 +81,7 @@ void spj_jsonvalue_array_add(SpjJSONValue *jsonvalue, SpjJSONValue *child_jsonva
 
 void spj_jsonvalue_object_finalize(SpjJSONValue *jsonvalue, size_t *capacity) {
     if (jsonvalue->object.size < *capacity) {
-        SpjJSONNamedValue *data = realloc(jsonvalue->object.data, jsonvalue->object.size);
+        SpjJSONNamedValue *data = realloc(jsonvalue->object.data, jsonvalue->object.size * sizeof(SpjJSONNamedValue));
         jsonvalue->object.data = data;
     }
 }
@@ -94,7 +89,7 @@ void spj_jsonvalue_object_finalize(SpjJSONValue *jsonvalue, size_t *capacity) {
 
 void spj_jsonvalue_array_finalize(SpjJSONValue *jsonvalue, size_t *capacity) {
     if (jsonvalue->array.size < *capacity) {
-        SpjJSONValue *data = realloc(jsonvalue->array.data, jsonvalue->array.size);
+        SpjJSONValue *data = realloc(jsonvalue->array.data, jsonvalue->array.size * sizeof(SpjJSONValue));
         jsonvalue->array.data = data;
     }
 }
