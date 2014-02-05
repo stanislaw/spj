@@ -576,8 +576,6 @@ static SpjJSONTokenType spj_parse_default(spj_lexer_t *lexer, SpjJSONValue *json
         }
 
         case SpjJSONTokenNumber: case SpjJSONTokenString: case SpjJSONTokenBool: case SpjJSONTokenNull: {
-            spj_jsonvalue_init(jsonvalue, spj_value_for_token(token));
-
             *jsonvalue = lexer->value;
 
             break;
@@ -677,6 +675,8 @@ void spj_jsonvalue_debug(SpjJSONValue *jsonvalue) {
                 SpjJSONNamedValue data = jsonvalue->object.data[i];
 
                 printf("%s:-----", data.name.data);
+
+                // TODO TODO TODO
                 assert(0);
                 //spj_jsonvalue_debug(&data);
             }
