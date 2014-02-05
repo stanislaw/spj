@@ -10,6 +10,10 @@
 		86891E66189D8AF4004A4558 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 86891E59189D7E7A004A4558 /* main.c */; };
 		86891E67189D8AF4004A4558 /* spj.c in Sources */ = {isa = PBXBuildFile; fileRef = 86891E5B189D7E7A004A4558 /* spj.c */; };
 		86891E6D18A023DF004A4558 /* test.c in Sources */ = {isa = PBXBuildFile; fileRef = 86891E6C18A023DF004A4558 /* test.c */; };
+		86891E7018A28146004A4558 /* lexer.c in Sources */ = {isa = PBXBuildFile; fileRef = 86891E6F18A28146004A4558 /* lexer.c */; };
+		86891E7518A2817E004A4558 /* jsonvalue.c in Sources */ = {isa = PBXBuildFile; fileRef = 86891E7118A2817E004A4558 /* jsonvalue.c */; };
+		86891E7618A2817E004A4558 /* jsonvalue.h in Headers */ = {isa = PBXBuildFile; fileRef = 86891E7218A2817E004A4558 /* jsonvalue.h */; };
+		86891E7C18A2892E004A4558 /* debug.c in Sources */ = {isa = PBXBuildFile; fileRef = 86891E7B18A2892D004A4558 /* debug.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -18,6 +22,13 @@
 		86891E5C189D7E7A004A4558 /* spj.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = spj.h; sourceTree = "<group>"; };
 		86891E61189D8AD9004A4558 /* libSpj.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSpj.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		86891E6C18A023DF004A4558 /* test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = test.c; path = ../test.c; sourceTree = "<group>"; };
+		86891E6E18A28138004A4558 /* lexer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = lexer.h; path = ../../../../../stanislaw/Work/Pods/spj/spj/lexer.h; sourceTree = "<group>"; };
+		86891E6F18A28146004A4558 /* lexer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lexer.c; path = ../../../../../stanislaw/Work/Pods/spj/spj/lexer.c; sourceTree = "<group>"; };
+		86891E7118A2817E004A4558 /* jsonvalue.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jsonvalue.c; path = ../../../../../stanislaw/Work/Pods/spj/spj/jsonvalue.c; sourceTree = "<group>"; };
+		86891E7218A2817E004A4558 /* jsonvalue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jsonvalue.h; path = ../../../../../stanislaw/Work/Pods/spj/spj/jsonvalue.h; sourceTree = "<group>"; };
+		86891E7918A28367004A4558 /* types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = types.h; path = ../../../../../stanislaw/Work/Pods/spj/spj/types.h; sourceTree = "<group>"; };
+		86891E7A18A283F1004A4558 /* debug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = debug.h; path = ../../../../../stanislaw/Work/Pods/spj/spj/debug.h; sourceTree = "<group>"; };
+		86891E7B18A2892D004A4558 /* debug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = debug.c; path = ../../../../../stanislaw/Work/Pods/spj/spj/debug.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,8 +55,15 @@
 		86891E5A189D7E7A004A4558 /* spj */ = {
 			isa = PBXGroup;
 			children = (
+				86891E7218A2817E004A4558 /* jsonvalue.h */,
+				86891E7118A2817E004A4558 /* jsonvalue.c */,
 				86891E5C189D7E7A004A4558 /* spj.h */,
 				86891E5B189D7E7A004A4558 /* spj.c */,
+				86891E6E18A28138004A4558 /* lexer.h */,
+				86891E6F18A28146004A4558 /* lexer.c */,
+				86891E7918A28367004A4558 /* types.h */,
+				86891E7A18A283F1004A4558 /* debug.h */,
+				86891E7B18A2892D004A4558 /* debug.c */,
 			);
 			name = spj;
 			path = ../spj;
@@ -66,6 +84,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				86891E7618A2817E004A4558 /* jsonvalue.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -119,7 +138,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				86891E7018A28146004A4558 /* lexer.c in Sources */,
+				86891E7518A2817E004A4558 /* jsonvalue.c in Sources */,
 				86891E6D18A023DF004A4558 /* test.c in Sources */,
+				86891E7C18A2892E004A4558 /* debug.c in Sources */,
 				86891E66189D8AF4004A4558 /* main.c in Sources */,
 				86891E67189D8AF4004A4558 /* spj.c in Sources */,
 			);
