@@ -55,7 +55,9 @@ typedef struct SpjJSONNamedValue { // was: SpjJSONValue
     struct SpjString name;
 } SpjJSONNamedValue;
 
+
 typedef enum {
+    // TODO
     SpjJSONNoError = 0,
     SpjJSONErrorWrongRootObject,
     SpjJSONErrorOutOfMemory,

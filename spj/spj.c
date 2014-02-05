@@ -369,7 +369,7 @@ static void spj_jsonvalue_object_add(SpjJSONValue *jsonvalue, SpjJSONNamedValue 
         if (larger_objects_data != NULL) {
             jsonvalue->object.data = larger_objects_data;
         } else {
-            assert(0); // TODO
+            assert(0); // TODO nomem
         }
     }
 
@@ -391,7 +391,7 @@ static void spj_jsonvalue_object_add(SpjJSONValue *jsonvalue, SpjJSONNamedValue 
          */
 
 
-        printf("%s\n", jsonvalue->object.data[i].value.string.data);
+        printf("%s\n", jsonvalue->object.data[i].value.string.data); // <- Segmentation fault: 11
     }
 }
 
