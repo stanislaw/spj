@@ -11,17 +11,17 @@ void spj_jsonvalue_init(SpjJSONValue *jsonvalue, SpjJSONValueType type) {
 
     switch (type) {
         case SpjJSONValueObject:
-            jsonvalue->object = (SpjObject){ .data = NULL, .size = 0};
+            jsonvalue->object = SpjObjectZero;
 
             break;
 
         case SpjJSONValueArray:
-            jsonvalue->array = (SpjArray){ .data = NULL, .size = 0};
+            jsonvalue->array = SpjArrayZero;
 
             break;
 
         case SpjJSONValueString:
-            jsonvalue->string = (SpjString){ .data = NULL, .size = 0};
+            jsonvalue->string = SpjStringZero;
 
             break;
 
@@ -95,6 +95,53 @@ void spj_jsonvalue_array_finalize(SpjJSONValue *jsonvalue, size_t *capacity) {
 }
 
 
+void spj_jsonvalue_enumerate(SpjJSONValue *jsonvalue, int (*function)(SpjJSONValue *jsonvalue)) {
+    size_t i;
+
+    switch (jsonvalue->type) {
+        case SpjJSONValueArray:
+            for (i = 0; i < jsonvalue->array.size; i++) {
+                SpjJSONValue data = jsonvalue->array.data[i];
+
+                function(&data);
+            }
+
+            break;
+
+        case SpjJSONValueObject:
+            for (i = 0; i < jsonvalue->object.size; i++) {
+                //SpjJSONNamedValue data = jsonvalue->object.data[i];
+
+                //function(&data);
+            }
+
+            break;
+
+        case SpjJSONValueString:
+            //function(data);
+
+            break;
+
+        case SpjJSONValueNumber:
+
+            break;
+
+        case SpjJSONValueNull:
+
+            break;
+            
+        case SpjJSONValueBool:
+
+            break;
+            
+        default:
+            
+            assert(0);
+            
+            break;
+    }
+}
+
 int spj_jsonvalue_free(SpjJSONValue *jsonvalue) {
     if (jsonvalue == NULL) {
         return 0;
@@ -102,17 +149,17 @@ int spj_jsonvalue_free(SpjJSONValue *jsonvalue) {
 
     switch (jsonvalue->type) {
         case SpjJSONValueObject:
-            // здесь нужно вызывать spj_jsonvalue_delete рекурсивно? (нужна функция траверса)
+            // здесь нужно вызывать spj_jsonvalue_delete рекурсивно? (для краткости лучше тут нужна функция траверса)
 
             break;
 
         case SpjJSONValueArray:
-            // здесь нужно вызывать spj_jsonvalue_delete рекурсивно? (нужна функция траверса)
+            // здесь нужно вызывать spj_jsonvalue_delete рекурсивно? (для краткости лучше тут нужна функция траверса)
             
             break;
 
         case SpjJSONValueString:
-            jsonvalue->string = (SpjString){ .data = NULL, .size = 0};
+            jsonvalue->string = SpjStringZero;
 
             break;
 

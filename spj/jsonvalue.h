@@ -13,6 +13,10 @@ void spj_jsonvalue_array_add(SpjJSONValue *jsonvalue, SpjJSONValue *child_jsonva
 void spj_jsonvalue_object_finalize(SpjJSONValue *jsonvalue, size_t *capacity);
 void spj_jsonvalue_array_finalize(SpjJSONValue *jsonvalue, size_t *capacity);
 
+
+// TODO TODO TODO
+void spj_jsonvalue_enumerate(SpjJSONValue *jsonvalue, int (*function)(SpjJSONValue *jsonvalue));
+
 int spj_jsonvalue_free(SpjJSONValue *jsonvalue);
 
 #endif

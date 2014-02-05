@@ -38,6 +38,11 @@ typedef struct SpjString {
 } SpjString;
 
 
+static const SpjObject SpjObjectZero = { NULL, 0 };
+static const SpjArray  SpjArrayZero  = { NULL, 0 };
+static const SpjString SpjStringZero = { NULL, 0 };
+
+
 typedef struct SpjJSONValue {
     SpjJSONValueType type;
     union
