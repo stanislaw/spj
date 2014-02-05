@@ -1,9 +1,6 @@
 #include <stdio.h>
 
 
-struct SpjJSONData;
-
-
 #ifdef USE_OBJ_DICT
 struct htab; // will be implemented sometime
 #endif
@@ -20,7 +17,7 @@ typedef enum SpjJSONValueType {
 
 
 typedef struct SpjObject {
-    struct SpjJSONData *data; // array
+    struct SpjJSONNamedValue *data; // array
     size_t size;
 
 #ifdef USE_OBJ_DICT
@@ -30,7 +27,7 @@ typedef struct SpjObject {
 
 
 typedef struct SpjArray {
-    struct SpjJSONData *data; // array
+    struct SpjJSONValue *data; // array
     size_t size;
 } SpjArray;
 
@@ -41,22 +38,22 @@ typedef struct SpjString {
 } SpjString;
 
 
-union SpjJSONValue {
-    struct SpjObject object;
-    struct SpjArray  array;
-    struct SpjString string;
-    
-    double number;   // Bool, Null, integer and real (all in one)
-};
-
-
-typedef struct SpjJSONData {
+typedef struct SpjJSONValue {
     SpjJSONValueType type;
-    // struct jval *parent;   // calculated AFTER the filling of the PARENT's container
-    char *name;               // name pairs (valid only for members of the object)
-    union SpjJSONValue value;
-} SpjJSONData;
+    union
+    {
+        struct SpjObject object;
+        struct SpjArray  array;
+        struct SpjString string;
+        double number;   // Bool, Null, integer and real (all in one)
+    };
+} SpjJSONValue;
 
+
+typedef struct SpjJSONNamedValue { // was: SpjJSONValue
+    struct SpjJSONValue value;
+    struct SpjString name;
+} SpjJSONNamedValue;
 
 typedef enum {
     SpjJSONNoError = 0,
@@ -78,11 +75,11 @@ typedef struct {
 } spj_error_t;
 
 
-spj_result_t spj_parse(const char *jsonstring, SpjJSONData *jsondata, spj_error_t *error);
-int spj_delete (SpjJSONData *jsondata);
+spj_result_t spj_parse(const char *jsonstring, SpjJSONValue *jsonvalue, spj_error_t *error);
+int spj_delete (SpjJSONValue *jsonvalue);
 
 
-void spj_jsondata_debug(SpjJSONData *jsondata);
+void spj_jsonvalue_debug(SpjJSONValue *jsonvalue);
 
 
 

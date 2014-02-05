@@ -5,7 +5,7 @@
 
 int main() {
     spj_error_t error;
-    SpjJSONData jsondata;
+    SpjJSONValue jsonvalue;
     char *jsonbytes;
 
 
@@ -31,10 +31,10 @@ int main() {
     printf("We can now iterate the whole string:\n");
 
 
-    spj_parse(jsonbytes, &jsondata, &error);
+    spj_parse(jsonbytes, &jsonvalue, &error);
 
 
-    spj_jsondata_debug(&jsondata);
+    spj_jsonvalue_debug(&jsonvalue);
     
     
     printf("\n");
