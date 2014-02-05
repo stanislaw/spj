@@ -1,6 +1,7 @@
 
 #include "debug.h"
 #include <assert.h>
+#include "jsonvalue.h"
 
 static void spj_jsonvalue_debug_internal(SpjJSONValue *jsonvalue) {
     size_t i;
@@ -96,3 +97,4 @@ void spj_jsonvalue_debug(SpjJSONValue *jsonvalue) {
     printf("\n");
 
 }
+

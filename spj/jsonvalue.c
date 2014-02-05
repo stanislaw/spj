@@ -94,3 +94,42 @@ void spj_jsonvalue_array_finalize(SpjJSONValue *jsonvalue, size_t *capacity) {
     }
 }
 
+
+int spj_jsonvalue_free(SpjJSONValue *jsonvalue) {
+    if (jsonvalue == NULL) {
+        return 0;
+    }
+
+    switch (jsonvalue->type) {
+        case SpjJSONValueObject:
+            // здесь нужно вызывать spj_jsonvalue_delete рекурсивно? (нужна функция траверса)
+
+            break;
+
+        case SpjJSONValueArray:
+            // здесь нужно вызывать spj_jsonvalue_delete рекурсивно? (нужна функция траверса)
+            
+            break;
+
+        case SpjJSONValueString:
+            jsonvalue->string = (SpjString){ .data = NULL, .size = 0};
+
+            break;
+
+        case SpjJSONValueNumber:
+            jsonvalue->number = 0;
+
+            break;
+
+        case SpjJSONValueBool:
+            jsonvalue->number = 0;
+
+            break;
+
+        default:
+            break;
+    }
+
+    return 0;
+}
+

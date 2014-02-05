@@ -1,7 +1,7 @@
 
-
 #ifndef spj_types_h
 #define spj_types_h
+
 
 #include <stdio.h>
 
@@ -45,12 +45,12 @@ typedef struct SpjJSONValue {
         struct SpjObject object;
         struct SpjArray  array;
         struct SpjString string;
-        double number;   // Bool, Null, integer and real (all in one)
+        double number;
     };
 } SpjJSONValue;
 
 
-typedef struct SpjJSONNamedValue { // was: SpjJSONValue
+typedef struct SpjJSONNamedValue {
     struct SpjJSONValue value;
     struct SpjString name;
 } SpjJSONNamedValue;

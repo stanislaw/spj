@@ -3,11 +3,12 @@
 #ifndef spj_debug_h
 #define spj_debug_h
 
-#include "jsonvalue.h"
-#include <execinfo.h>
+#include "types.h"
 
 
 #ifdef __APPLE__
+#include <execinfo.h>
+
 // https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man3/backtrace.3.html
 #define print_callstack() { \
     void *callstack[128]; \

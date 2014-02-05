@@ -13,5 +13,7 @@ void spj_jsonvalue_array_add(SpjJSONValue *jsonvalue, SpjJSONValue *child_jsonva
 void spj_jsonvalue_object_finalize(SpjJSONValue *jsonvalue, size_t *capacity);
 void spj_jsonvalue_array_finalize(SpjJSONValue *jsonvalue, size_t *capacity);
 
+int spj_jsonvalue_free(SpjJSONValue *jsonvalue);
+
 #endif
 

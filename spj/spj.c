@@ -208,7 +208,3 @@ spj_result_t spj_parse(const char *jsonstring, SpjJSONValue *jsonvalue, spj_erro
     return result;
 }
 
-
-int spj_delete (SpjJSONValue *object) {
-    return 0;
-}
