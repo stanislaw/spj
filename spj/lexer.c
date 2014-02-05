@@ -118,7 +118,7 @@ SpjJSONTokenType spj_gettoken_string(spj_lexer_t *lexer) {
     }
 
     string.size = lexer->currentposition - firstchar_position;
-    string.data = (char *)malloc(string.size + 1);
+    string.data = (char *)malloc((string.size + 1) * sizeof(char)); // memento
 
     const char *firstchar_ptr = lexer->data + firstchar_position;
 
