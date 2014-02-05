@@ -375,7 +375,7 @@ static void spj_jsonvalue_object_add(SpjJSONValue *jsonvalue, SpjJSONNamedValue 
 
     jsonvalue->object.data[jsonvalue->object.size++] = *child_jsonvalue;
 
-    printf("size is %lu %s\n", jsonvalue->object.size, child_jsonvalue->value.string.data);
+    printf("size ----> %lu %s\n", jsonvalue->object.size, child_jsonvalue->value.string.data);
 
     for (size_t i = 0; i < jsonvalue->object.size; i++) {
         /*
@@ -390,8 +390,9 @@ static void spj_jsonvalue_object_add(SpjJSONValue *jsonvalue, SpjJSONNamedValue 
          make: *** [test] Segmentation fault: 11
          */
 
+        assert(jsonvalue->object.data[i].value.type == SpjJSONValueString);
 
-        printf("%s\n", jsonvalue->object.data[i].value.string.data); // <- Segmentation fault: 11
+        printf("string ----> %s\n", jsonvalue->object.data[i].value.string.data); // <- Segmentation fault: 11
     }
 }
 
@@ -495,7 +496,6 @@ static spj_result_t spj_parse_object(spj_lexer_t *lexer, SpjJSONValue *jsonvalue
     assert(iterator->data[iterator->currentposition - 1] == '}');
 
     spj_jsonvalue_object_finalize(jsonvalue, &capacity);
-
 
     return 0;
 }
