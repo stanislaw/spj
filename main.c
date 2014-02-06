@@ -37,7 +37,7 @@ int main() {
 
     spj_jsonvalue_debug(&jsonvalue);
 
-    //spj_jsonvalue_free(&jsonvalue);
+    spj_jsonvalue_free(&jsonvalue);
     
     printf("\n");
 
