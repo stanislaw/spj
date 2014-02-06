@@ -60,8 +60,6 @@ int test_simple_root_objects() {
     char *jsonbytes;
     SpjJSONValue jsonvalue;
     spj_error_t error;
-    SpjJSONValue value;
-    SpjJSONNamedValue namedvalue;
 
     memset(&jsonvalue, 0, sizeof(SpjJSONValue));
     memset(&error, 0, sizeof(spj_error_t));
@@ -74,10 +72,8 @@ int test_simple_root_objects() {
 
     check(jsonvalue.value.array.size == 1);
 
-    value = jsonvalue.value.array.data[0];
-    check(value.type == SpjJSONValueNumber);
-    check(value.value.number == 1);
-
+    check(jsonvalue.value.array.data[0].type == SpjJSONValueNumber);
+    check(jsonvalue.value.array.data[0].value.number == 1);
 
 
     memset(&jsonvalue, 0, sizeof(SpjJSONValue));
@@ -90,9 +86,8 @@ int test_simple_root_objects() {
     check(jsonvalue.type == SpjJSONValueArray);
     check(jsonvalue.value.array.size == 4);
 
-    value = jsonvalue.value.array.data[3];
-    check(value.type == SpjJSONValueNumber);
-    check(value.value.number == 4);
+    check(jsonvalue.value.array.data[3].type == SpjJSONValueNumber);
+    check(jsonvalue.value.array.data[3].value.number == 4);
 
 
     memset(&jsonvalue, 0, sizeof(SpjJSONValue));
@@ -105,25 +100,23 @@ int test_simple_root_objects() {
     check(jsonvalue.type == SpjJSONValueObject);
     check(jsonvalue.value.object.size == 3);
 
-    namedvalue = jsonvalue.value.object.data[0];
-    check(namedvalue.value.type == SpjJSONValueString);
+    check(jsonvalue.value.object.data[0].value.type == SpjJSONValueString);
 
-    check(namedvalue.name.size == 5);
-    check(namedvalue.value.value.string.size == 5);
+    check(jsonvalue.value.object.data[0].name.size == 5);
+    check(jsonvalue.value.object.data[0].value.value.string.size == 5);
 
-    check(strcmp(namedvalue.name.data, "hello") == 0);
-    check(strcmp(namedvalue.value.value.string.data, "world") == 0);
+    check(strcmp(jsonvalue.value.object.data[0].name.data, "hello") == 0);
+    check(strcmp(jsonvalue.value.object.data[0].value.value.string.data, "world") == 0);
 
     return 0;
 }
 
 
-int test_simple_root_objects_with_one_level_nesting() {
+int test_simple_root_objects_one_level_nesting() {
     char *jsonbytes;
     SpjJSONValue jsonvalue;
     spj_error_t error;
-    SpjJSONValue value;
-    SpjJSONNamedValue namedvalue;
+
 
     memset(&jsonvalue, 0, sizeof(SpjJSONValue));
     memset(&error, 0, sizeof(spj_error_t));
@@ -136,16 +129,15 @@ int test_simple_root_objects_with_one_level_nesting() {
 
     check(jsonvalue.value.array.size == 1);
 
-    value = jsonvalue.value.array.data[0];
-    check(value.type == SpjJSONValueObject);
-    check(value.value.object.size == 0);
-    check(value.value.object.data == NULL);
+    check(jsonvalue.value.array.data[0].type == SpjJSONValueObject);
+    check(jsonvalue.value.array.data[0].value.object.size == 0);
+    check(jsonvalue.value.array.data[0].value.object.data == NULL);
 
 
     memset(&jsonvalue, 0, sizeof(SpjJSONValue));
     memset(&error, 0, sizeof(spj_error_t));
 
-    jsonbytes = "{\"array\":[]}";
+    jsonbytes = "{\"array\":[1, 2, 3]}";
     spj_parse(jsonbytes, &jsonvalue, &error);
     check(error.message == NULL);
 
@@ -153,15 +145,51 @@ int test_simple_root_objects_with_one_level_nesting() {
 
     check(jsonvalue.value.object.size == 1);
 
-    namedvalue = jsonvalue.value.object.data[0];
-    check(strcmp(namedvalue.name.data, "array") == 0);
-    value = namedvalue.value;
-    check(value.type == SpjJSONValueArray);
-    check(value.value.array.size == 0);
+    check(strcmp(jsonvalue.value.object.data[0].name.data, "array") == 0);
+    check(jsonvalue.value.object.data[0].value.type == SpjJSONValueArray);
+    check(jsonvalue.value.object.data[0].value.value.array.size == 3);
+
+
+    check(jsonvalue.value.object.data[0].value.value.array.data[0].type == SpjJSONValueNumber);
+    check(jsonvalue.value.object.data[0].value.value.array.data[1].type == SpjJSONValueNumber);
+    check(jsonvalue.value.object.data[0].value.value.array.data[2].type == SpjJSONValueNumber);
+
+    check(jsonvalue.value.object.data[0].value.value.array.data[0].value.number == 1);
+    check(jsonvalue.value.object.data[0].value.value.array.data[1].value.number == 2);
+    check(jsonvalue.value.object.data[0].value.value.array.data[2].value.number == 3);
+
 
   return 0;
 }
 
+
+int test_simple_root_objects_two_level_nesting() {
+    char *jsonbytes;
+    SpjJSONValue jsonvalue;
+    spj_error_t error;
+
+
+    memset(&jsonvalue, 0, sizeof(SpjJSONValue));
+    memset(&error, 0, sizeof(spj_error_t));
+
+    jsonbytes = "[[{\"hello\":\"world\"}]]";
+    spj_parse(jsonbytes, &jsonvalue, &error);
+    check(error.message == NULL);
+
+    check(jsonvalue.type == SpjJSONValueArray);
+
+    check(jsonvalue.value.array.size == 1);
+
+    check(jsonvalue.value.array.data[0].type == SpjJSONValueArray);
+    check(jsonvalue.value.array.data[0].value.array.size == 1);
+
+    check(jsonvalue.value.array.data[0].value.array.data[0].value.object.data[0].name.data);
+    check(strcmp(jsonvalue.value.array.data[0].value.array.data[0].value.object.data[0].name.data, "hello") == 0);
+    check(strcmp(jsonvalue.value.array.data[0].value.array.data[0].value.object.data[0].value.value.string.data, "world") == 0);
+
+
+  return 0;
+}
 int test_wrong_root_object() {
     char *jsonbytes;
     SpjJSONValue jsonvalue;
@@ -193,7 +221,8 @@ int test_wrong_root_object() {
 int main() {
     test(test_empty, "general test for a empty JSON objects/arrays");
     test(test_simple_root_objects, "general test for JSON having correct simple objects/arrays");
-    test(test_simple_root_objects_with_one_level_nesting, "general test for JSON having correct simple objects/arrays containing another objects/arrays (1 level of nesting)");
+    test(test_simple_root_objects_one_level_nesting, "general test for JSON having correct simple objects/arrays containing another objects/arrays (1 level of nesting)");
+    test(test_simple_root_objects_one_level_nesting, "general test for JSON having correct simple objects/arrays containing another objects/arrays (2 level of nesting)");
 
     test(test_wrong_root_object, "test for JSON not having valid root objects (Object, Array");
 
