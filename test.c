@@ -98,8 +98,6 @@ int test_simple_root_objects() {
     memset(&jsonvalue, 0, sizeof(SpjJSONValue));
     memset(&error, 0, sizeof(spj_error_t));
 
-    printf("\nCRITICAL\n\n");
-
     jsonbytes = "{\"hello\":\"world\", \"key\":\"value\", \"number\": \"one\"}";
     spj_parse(jsonbytes, &jsonvalue, &error);
     check(error.message == NULL);
@@ -119,6 +117,50 @@ int test_simple_root_objects() {
     return 0;
 }
 
+
+int test_simple_root_objects_with_one_level_nesting() {
+    char *jsonbytes;
+    SpjJSONValue jsonvalue;
+    spj_error_t error;
+    SpjJSONValue value;
+    SpjJSONNamedValue namedvalue;
+
+    memset(&jsonvalue, 0, sizeof(SpjJSONValue));
+    memset(&error, 0, sizeof(spj_error_t));
+
+    jsonbytes = "[{}]";
+    spj_parse(jsonbytes, &jsonvalue, &error);
+    check(error.message == NULL);
+
+    check(jsonvalue.type == SpjJSONValueArray);
+
+    check(jsonvalue.value.array.size == 1);
+
+    value = jsonvalue.value.array.data[0];
+    check(value.type == SpjJSONValueObject);
+    check(value.value.object.size == 0);
+    check(value.value.object.data == NULL);
+
+
+    memset(&jsonvalue, 0, sizeof(SpjJSONValue));
+    memset(&error, 0, sizeof(spj_error_t));
+
+    jsonbytes = "{\"array\":[]}";
+    spj_parse(jsonbytes, &jsonvalue, &error);
+    check(error.message == NULL);
+
+    check(jsonvalue.type == SpjJSONValueObject);
+
+    check(jsonvalue.value.object.size == 1);
+
+    namedvalue = jsonvalue.value.object.data[0];
+    check(strcmp(namedvalue.name.data, "array") == 0);
+    value = namedvalue.value;
+    check(value.type == SpjJSONValueArray);
+    check(value.value.array.size == 0);
+
+  return 0;
+}
 
 int test_wrong_root_object() {
     char *jsonbytes;
@@ -151,7 +193,7 @@ int test_wrong_root_object() {
 int main() {
     test(test_empty, "general test for a empty JSON objects/arrays");
     test(test_simple_root_objects, "general test for JSON having correct simple objects/arrays");
-
+    test(test_simple_root_objects_with_one_level_nesting, "general test for JSON having correct simple objects/arrays containing another objects/arrays (1 level of nesting)");
 
     test(test_wrong_root_object, "test for JSON not having valid root objects (Object, Array");
 
