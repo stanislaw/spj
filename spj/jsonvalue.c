@@ -96,25 +96,29 @@ void spj_jsonvalue_array_finalize(SpjJSONValue *jsonvalue, size_t *capacity) {
 
 
 void spj_jsonvalue_enumerate(SpjJSONValue *jsonvalue, int (*function)(SpjJSONValue *jsonvalue)) {
-    size_t i;
-
     function(jsonvalue);
 
     switch (jsonvalue->type) {
-        case SpjJSONValueArray:
+        case SpjJSONValueArray: {
+            size_t i;
+
             for (i = 0; i < jsonvalue->value.array.size; i++) {
                 spj_jsonvalue_enumerate(& jsonvalue->value.array.data[i], function);
             }
 
             break;
+        }
 
-        case SpjJSONValueObject:
+        case SpjJSONValueObject: {
+            size_t i;
+
             for (i = 0; i < jsonvalue->value.object.size; i++) {
                 spj_jsonvalue_enumerate(& jsonvalue->value.object.data[i].value, function);
             }
 
             break;
-
+        }
+            
         default:
             /* Do not "enumerate" leaves */
 

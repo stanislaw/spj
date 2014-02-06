@@ -43,6 +43,8 @@ int test_empty() {
     spj_parse(jsonbytes, &jsonvalue, &error);
     check(jsonvalue.type == SpjJSONValueObject);
     check(jsonvalue.value.object.size == 0);
+    check(error.message == NULL);
+    check(error.code == SpjJSONNoError);
 
     memset(&jsonvalue, 0, sizeof(SpjJSONValue));
     memset(&error, 0, sizeof(spj_error_t));
@@ -51,6 +53,8 @@ int test_empty() {
     spj_parse(jsonbytes, &jsonvalue, &error);
     check(jsonvalue.type == SpjJSONValueArray);
     check(jsonvalue.value.array.size == 0);
+    check(error.message == NULL);
+    check(error.code == SpjJSONNoError);
 
     return 0;
 }
@@ -66,7 +70,9 @@ int test_simple_root_objects() {
 
     jsonbytes = "[1]";
     spj_parse(jsonbytes, &jsonvalue, &error);
+
     check(error.message == NULL);
+    check(error.code == SpjJSONNoError);
 
     check(jsonvalue.type == SpjJSONValueArray);
 
@@ -82,6 +88,7 @@ int test_simple_root_objects() {
     jsonbytes = "[1, 2, 3, 4]";
     spj_parse(jsonbytes, &jsonvalue, &error);
     check(error.message == NULL);
+    check(error.code == SpjJSONNoError);
 
     check(jsonvalue.type == SpjJSONValueArray);
     check(jsonvalue.value.array.size == 4);
@@ -96,6 +103,7 @@ int test_simple_root_objects() {
     jsonbytes = "{\"hello\":\"world\", \"key\":\"value\", \"number\": \"one\"}";
     spj_parse(jsonbytes, &jsonvalue, &error);
     check(error.message == NULL);
+    check(error.code == SpjJSONNoError);
 
     check(jsonvalue.type == SpjJSONValueObject);
     check(jsonvalue.value.object.size == 3);
@@ -124,6 +132,7 @@ int test_simple_root_objects_one_level_nesting() {
     jsonbytes = "[{}]";
     spj_parse(jsonbytes, &jsonvalue, &error);
     check(error.message == NULL);
+    check(error.code == SpjJSONNoError);
 
     check(jsonvalue.type == SpjJSONValueArray);
 
@@ -140,6 +149,7 @@ int test_simple_root_objects_one_level_nesting() {
     jsonbytes = "{\"array\":[1, 2, 3]}";
     spj_parse(jsonbytes, &jsonvalue, &error);
     check(error.message == NULL);
+    check(error.code == SpjJSONNoError);
 
     check(jsonvalue.type == SpjJSONValueObject);
 
@@ -175,6 +185,7 @@ int test_simple_root_objects_two_level_nesting() {
     jsonbytes = "[[{\"hello\":\"world\"}]]";
     spj_parse(jsonbytes, &jsonvalue, &error);
     check(error.message == NULL);
+    check(error.code == SpjJSONNoError);
 
     check(jsonvalue.type == SpjJSONValueArray);
 
