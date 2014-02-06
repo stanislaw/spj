@@ -181,6 +181,8 @@ void spj_jsonvalue_free(SpjJSONValue *jsonvalue) {
                 spj_jsonvalue_free(&array.data[i]);
             }
 
+            free(jsonvalue->array.data);
+
             break;
         }
 
