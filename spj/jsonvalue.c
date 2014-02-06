@@ -150,52 +150,42 @@ void spj_jsonvalue_enumerate_reverse(SpjJSONValue *jsonvalue, int (*function)(Sp
 }
 
 
-int spj_jsonvalue_free(SpjJSONValue *jsonvalue) {
+void spj_jsonvalue_free(SpjJSONValue *jsonvalue) {
     size_t i;
 
     if (jsonvalue == NULL) {
-        return 0;
+        return;
     }
 
-    // Нужно ли тут хоть где-то использовать free, я запутался в объяснениях про heap и stack на Stackoverflow и думаю, что не нужно.
-
     switch (jsonvalue->type) {
-        case SpjJSONValueObject:
-            for (i = 0; i < jsonvalue->object.size; i++) {
-                SpjJSONNamedValue namedvalue = jsonvalue->object.data[i];
+        case SpjJSONValueObject: {
+            SpjObject object = jsonvalue->object;
+            
+            for (i = 0; i < object.size; i++) {
+                spj_jsonvalue_free(&object.data[i].value);
 
-                spj_jsonvalue_enumerate_reverse(& namedvalue.value, spj_jsonvalue_free);
+                free(jsonvalue->object.data[i].name.data);
 
-                namedvalue.name = SpjStringZero; // Нужно?
+                jsonvalue->object.data[i].name = SpjStringZero; // нужно?
             }
 
-            jsonvalue->object = SpjObjectZero;
+            free(jsonvalue->object.data);
 
             break;
+        }
 
-        case SpjJSONValueArray:
-            for (i = 0; i < jsonvalue->array.size; i++) {
-                spj_jsonvalue_enumerate_reverse(& jsonvalue->array.data[i], spj_jsonvalue_free);
+        case SpjJSONValueArray: {
+            SpjArray array = jsonvalue->array;
+
+            for (i = 0; i < array.size; i++) {
+                spj_jsonvalue_free(&array.data[i]);
             }
 
-            jsonvalue->array = SpjArrayZero;
-
             break;
+        }
 
         case SpjJSONValueString:
             free(jsonvalue->string.data);
-
-            jsonvalue->string = SpjStringZero;
-
-            break;
-
-        case SpjJSONValueNumber:
-            jsonvalue->number = 0;
-
-            break;
-
-        case SpjJSONValueBool:
-            jsonvalue->number = 0;
 
             break;
 
@@ -203,6 +193,6 @@ int spj_jsonvalue_free(SpjJSONValue *jsonvalue) {
             break;
     }
 
-    return 0;
+    spj_jsonvalue_init(jsonvalue, jsonvalue->type);
 }
 

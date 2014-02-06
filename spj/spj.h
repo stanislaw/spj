@@ -10,7 +10,7 @@
 // Public API
 
 spj_result_t spj_parse(const char *jsonstring, SpjJSONValue *jsonvalue, spj_error_t *error);
-extern int spj_jsonvalue_free(SpjJSONValue *jsonvalue);
+void spj_jsonvalue_free(SpjJSONValue *jsonvalue);
 
 
 #endif
