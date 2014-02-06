@@ -45,13 +45,12 @@ static const SpjString SpjStringZero = { NULL, 0 };
 
 typedef struct SpjJSONValue {
     SpjJSONValueType type;
-    union
-    {
+    union {
         struct SpjObject object;
         struct SpjArray  array;
         struct SpjString string;
         double number;
-    };
+    } value;
 } SpjJSONValue;
 
 
@@ -83,3 +82,4 @@ typedef struct {
 
 
 #endif
+

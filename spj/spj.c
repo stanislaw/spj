@@ -28,7 +28,7 @@ static spj_result_t spj_parse_object(spj_lexer_t *lexer, SpjJSONValue *jsonvalue
     assert(lexer->data[lexer->currentposition - 1] == '{');
 
     assert(jsonvalue->type == SpjJSONValueObject);
-    assert(jsonvalue->object.size == 0);
+    assert(jsonvalue->value.object.size == 0);
 
     for (n = 0;; n++) {
         token = spj_gettoken(lexer);
@@ -43,9 +43,9 @@ static spj_result_t spj_parse_object(spj_lexer_t *lexer, SpjJSONValue *jsonvalue
             assert(0);
         }
 
-        child_jsonvalue.name = (SpjString){.data = NULL, .size = 0};
+        child_jsonvalue.name = SpjStringZero;
 
-        child_jsonvalue.name = lexer->value.string;
+        child_jsonvalue.name = lexer->value.value.string;
 
         if ((token = spj_gettoken(lexer)) != SpjJSONTokenColon) {
             assert(0);
@@ -84,7 +84,7 @@ static spj_result_t spj_parse_array(spj_lexer_t *lexer, SpjJSONValue *jsonvalue)
     capacity = 0; // initial capacity for array, to be modified by spj_jsonvalue_array_add
 
     assert(jsonvalue->type == SpjJSONValueArray);
-    assert(jsonvalue->array.size == 0);
+    assert(jsonvalue->value.array.size == 0);
 
     // remove this later
     assert(lexer->data[lexer->currentposition - 1] == '[');

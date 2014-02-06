@@ -11,27 +11,27 @@ void spj_jsonvalue_init(SpjJSONValue *jsonvalue, SpjJSONValueType type) {
 
     switch (type) {
         case SpjJSONValueObject:
-            jsonvalue->object = SpjObjectZero;
+            jsonvalue->value.object = SpjObjectZero;
 
             break;
 
         case SpjJSONValueArray:
-            jsonvalue->array = SpjArrayZero;
+            jsonvalue->value.array = SpjArrayZero;
 
             break;
 
         case SpjJSONValueString:
-            jsonvalue->string = SpjStringZero;
+            jsonvalue->value.string = SpjStringZero;
 
             break;
 
         case SpjJSONValueNumber:
-            jsonvalue->number = 0;
+            jsonvalue->value.number = 0;
 
             break;
 
         case SpjJSONValueBool:
-            jsonvalue->number = 0;
+            jsonvalue->value.number = 0;
 
             break;
 
@@ -46,17 +46,17 @@ void spj_jsonvalue_object_add(SpjJSONValue *jsonvalue, SpjJSONNamedValue *child_
 
     assert(jsonvalue->type == SpjJSONValueObject); // remove later
 
-    if (jsonvalue->object.size == *capacity) {
-        SpjJSONNamedValue *larger_objects_data = realloc(jsonvalue->object.data, (*capacity += slice) * sizeof(SpjJSONNamedValue));
+    if (jsonvalue->value.object.size == *capacity) {
+        SpjJSONNamedValue *larger_objects_data = realloc(jsonvalue->value.object.data, (*capacity += slice) * sizeof(SpjJSONNamedValue));
 
         if (larger_objects_data != NULL) {
-            jsonvalue->object.data = larger_objects_data;
+            jsonvalue->value.object.data = larger_objects_data;
         } else {
             assert(0); // TODO nomem
         }
     }
 
-    jsonvalue->object.data[jsonvalue->object.size++] = *child_jsonvalue;
+    jsonvalue->value.object.data[jsonvalue->value.object.size++] = *child_jsonvalue;
 }
 
 
@@ -65,32 +65,32 @@ void spj_jsonvalue_array_add(SpjJSONValue *jsonvalue, SpjJSONValue *child_jsonva
 
     assert(jsonvalue->type == SpjJSONValueArray); // remove later
 
-    if (jsonvalue->array.size == *capacity) {
-        SpjJSONValue *larger_array_data = realloc(jsonvalue->array.data, (*capacity += slice) * sizeof(SpjJSONValue));
+    if (jsonvalue->value.array.size == *capacity) {
+        SpjJSONValue *larger_array_data = realloc(jsonvalue->value.array.data, (*capacity += slice) * sizeof(SpjJSONValue));
 
         if (larger_array_data != NULL) {
-            jsonvalue->array.data = larger_array_data;
+            jsonvalue->value.array.data = larger_array_data;
         } else {
             assert(0); // TODO
         }
     }
 
-    jsonvalue->array.data[jsonvalue->array.size++] = *child_jsonvalue;
+    jsonvalue->value.array.data[jsonvalue->value.array.size++] = *child_jsonvalue;
 }
 
 
 void spj_jsonvalue_object_finalize(SpjJSONValue *jsonvalue, size_t *capacity) {
-    if (jsonvalue->object.size < *capacity) {
-        SpjJSONNamedValue *data = realloc(jsonvalue->object.data, jsonvalue->object.size * sizeof(SpjJSONNamedValue));
-        jsonvalue->object.data = data;
+    if (jsonvalue->value.object.size < *capacity) {
+        SpjJSONNamedValue *data = realloc(jsonvalue->value.object.data, jsonvalue->value.object.size * sizeof(SpjJSONNamedValue));
+        jsonvalue->value.object.data = data;
     }
 }
 
 
 void spj_jsonvalue_array_finalize(SpjJSONValue *jsonvalue, size_t *capacity) {
-    if (jsonvalue->array.size < *capacity) {
-        SpjJSONValue *data = realloc(jsonvalue->array.data, jsonvalue->array.size * sizeof(SpjJSONValue));
-        jsonvalue->array.data = data;
+    if (jsonvalue->value.array.size < *capacity) {
+        SpjJSONValue *data = realloc(jsonvalue->value.array.data, jsonvalue->value.array.size * sizeof(SpjJSONValue));
+        jsonvalue->value.array.data = data;
     }
 }
 
@@ -102,15 +102,15 @@ void spj_jsonvalue_enumerate(SpjJSONValue *jsonvalue, int (*function)(SpjJSONVal
 
     switch (jsonvalue->type) {
         case SpjJSONValueArray:
-            for (i = 0; i < jsonvalue->array.size; i++) {
-                spj_jsonvalue_enumerate(& jsonvalue->array.data[i], function);
+            for (i = 0; i < jsonvalue->value.array.size; i++) {
+                spj_jsonvalue_enumerate(& jsonvalue->value.array.data[i], function);
             }
 
             break;
 
         case SpjJSONValueObject:
-            for (i = 0; i < jsonvalue->object.size; i++) {
-                spj_jsonvalue_enumerate(& jsonvalue->object.data[i], function);
+            for (i = 0; i < jsonvalue->value.object.size; i++) {
+                spj_jsonvalue_enumerate(& jsonvalue->value.object.data[i], function);
             }
 
             break;
@@ -127,22 +127,20 @@ void spj_jsonvalue_enumerate_reverse(SpjJSONValue *jsonvalue, int (*function)(Sp
 
     switch (jsonvalue->type) {
         case SpjJSONValueArray:
-            for (i = 0; i < jsonvalue->array.size; i++) {
-                spj_jsonvalue_enumerate_reverse(& jsonvalue->array.data[i], function);
+            for (i = 0; i < jsonvalue->value.array.size; i++) {
+                spj_jsonvalue_enumerate_reverse(& jsonvalue->value.array.data[i], function);
             }
 
             break;
 
         case SpjJSONValueObject:
-            for (i = 0; i < jsonvalue->object.size; i++) {
-                spj_jsonvalue_enumerate_reverse(& jsonvalue->object.data[i], function);
+            for (i = 0; i < jsonvalue->value.object.size; i++) {
+                spj_jsonvalue_enumerate_reverse(& jsonvalue->value.object.data[i], function);
             }
 
             break;
 
         default:
-            // Do not "enumerate" leaves
-            
             break;
     }
 
@@ -159,31 +157,31 @@ void spj_jsonvalue_free(SpjJSONValue *jsonvalue) {
 
     switch (jsonvalue->type) {
         case SpjJSONValueObject: {
-            for (i = 0; i < jsonvalue->object.size; i++) {
-                spj_jsonvalue_free(& jsonvalue->object.data[i].value);
+            for (i = 0; i < jsonvalue->value.object.size; i++) {
+                spj_jsonvalue_free(& jsonvalue->value.object.data[i].value);
 
-                free(jsonvalue->object.data[i].name.data);
+                free(jsonvalue->value.object.data[i].name.data);
 
-                jsonvalue->object.data[i].name = SpjStringZero; // нужно?
+                jsonvalue->value.object.data[i].name = SpjStringZero; // нужно?
             }
 
-            free(jsonvalue->object.data);
+            free(jsonvalue->value.object.data);
 
             break;
         }
 
         case SpjJSONValueArray: {
-            for (i = 0; i < jsonvalue->array.size; i++) {
-                spj_jsonvalue_free(&jsonvalue->array.data[i]);
+            for (i = 0; i < jsonvalue->value.array.size; i++) {
+                spj_jsonvalue_free(&jsonvalue->value.array.data[i]);
             }
 
-            free(jsonvalue->array.data);
+            free(jsonvalue->value.array.data);
 
             break;
         }
 
         case SpjJSONValueString:
-            free(jsonvalue->string.data);
+            free(jsonvalue->value.string.data);
 
             break;
 

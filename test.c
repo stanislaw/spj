@@ -42,7 +42,7 @@ int test_empty() {
     jsonbytes = "{}";
     spj_parse(jsonbytes, &jsonvalue, &error);
     check(jsonvalue.type == SpjJSONValueObject);
-    check(jsonvalue.object.size == 0);
+    check(jsonvalue.value.object.size == 0);
 
     memset(&jsonvalue, 0, sizeof(SpjJSONValue));
     memset(&error, 0, sizeof(spj_error_t));
@@ -50,7 +50,7 @@ int test_empty() {
     jsonbytes = "[]";
     spj_parse(jsonbytes, &jsonvalue, &error);
     check(jsonvalue.type == SpjJSONValueArray);
-    check(jsonvalue.array.size == 0);
+    check(jsonvalue.value.array.size == 0);
 
     return 0;
 }
@@ -72,11 +72,11 @@ int test_simple_root_objects() {
 
     check(jsonvalue.type == SpjJSONValueArray);
 
-    check(jsonvalue.array.size == 1);
+    check(jsonvalue.value.array.size == 1);
 
-    value = jsonvalue.array.data[0];
+    value = jsonvalue.value.array.data[0];
     check(value.type == SpjJSONValueNumber);
-    check(value.number == 1);
+    check(value.value.number == 1);
 
 
 
@@ -88,11 +88,11 @@ int test_simple_root_objects() {
     check(error.message == NULL);
 
     check(jsonvalue.type == SpjJSONValueArray);
-    check(jsonvalue.array.size == 4);
+    check(jsonvalue.value.array.size == 4);
 
-    value = jsonvalue.array.data[3];
+    value = jsonvalue.value.array.data[3];
     check(value.type == SpjJSONValueNumber);
-    check(value.number == 4);
+    check(value.value.number == 4);
 
 
     memset(&jsonvalue, 0, sizeof(SpjJSONValue));
@@ -105,16 +105,16 @@ int test_simple_root_objects() {
     check(error.message == NULL);
 
     check(jsonvalue.type == SpjJSONValueObject);
-    check(jsonvalue.object.size == 3);
+    check(jsonvalue.value.object.size == 3);
 
-    namedvalue = jsonvalue.object.data[0];
+    namedvalue = jsonvalue.value.object.data[0];
     check(namedvalue.value.type == SpjJSONValueString);
 
     check(namedvalue.name.size == 5);
-    check(namedvalue.value.string.size == 5);
+    check(namedvalue.value.value.string.size == 5);
 
     check(strcmp(namedvalue.name.data, "hello") == 0);
-    check(strcmp(namedvalue.value.string.data, "world") == 0);
+    check(strcmp(namedvalue.value.value.string.data, "world") == 0);
 
     return 0;
 }
