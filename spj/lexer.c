@@ -153,6 +153,7 @@ SpjJSONTokenType spj_gettoken_number(spj_lexer_t *lexer) {
     char currentbyte;
     const char *firstchar;
     char *endpointer = NULL;
+    int fractional;
     int err;
 
     spj_jsonvalue_init(&jsonvalue, SpjJSONValueNumber);
@@ -162,11 +163,17 @@ SpjJSONTokenType spj_gettoken_number(spj_lexer_t *lexer) {
     currentbyte = spj_lexer_peek(lexer);
 
     if ((isdigit(currentbyte) || currentbyte == '-') == 0) {
+        assert(0);
         return SpjJSONTokenError;
     }
 
+    fractional = 0;
+    
     while ((currentbyte = spj_lexer_peek(lexer))) {
-        if (isdigit(currentbyte) || currentbyte == '.') {
+        if (fractional == 0 && currentbyte == '.') {
+            fractional = 1;
+            spj_lexer_increment(lexer);
+        } else if (isdigit(currentbyte)) {
             spj_lexer_increment(lexer);
         } else {
             break;
@@ -175,7 +182,11 @@ SpjJSONTokenType spj_gettoken_number(spj_lexer_t *lexer) {
 
     firstchar = lexer->data + firstnumber_position;
 
-    jsonvalue.value.number = strtod(firstchar, &endpointer);
+    if (fractional == 0) {
+        jsonvalue.value.number = strtol(firstchar, &endpointer, 10);
+    } else {
+        jsonvalue.value.number = strtod(firstchar, &endpointer);
+    }
 
     /* TODO */
 

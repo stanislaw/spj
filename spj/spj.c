@@ -167,7 +167,7 @@ spj_result_t spj_parse(const char *jsonstring, SpjJSONValue *jsonvalue, spj_erro
     spj_lexer_t lexer;
     size_t datasize;
 
-    printf("Original JSON: %s\n", jsonstring);
+    /* printf("Original JSON: %s\n", jsonstring); */
     
     datasize = strlen(jsonstring);
 
