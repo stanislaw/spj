@@ -22,6 +22,10 @@ int main() {
     char *jsonbytes;
 
 
+    int N, i;
+    double initial_time;
+
+
     jsonbytes =
     "{ \
         \"data\": [ \
@@ -40,11 +44,12 @@ int main() {
     }";
 
 
-    int N = 100;
+    N = 1;
 
-    double initial_time = get_time();
 
-    for (int i = 0; i < N; i++) {
+    initial_time = get_time();
+
+    for (i = 0; i < N; i++) {
         spj_parse(jsonbytes, &jsonvalue, &error);
     }
 
@@ -52,11 +57,11 @@ int main() {
 
 
 
-    //spj_jsonvalue_debug(&jsonvalue);
+    /*spj_jsonvalue_debug(&jsonvalue);*/
 
     spj_jsonvalue_free(&jsonvalue);
     
-    //printf("\n");
+    /*printf("\n");*/
 
     return 0;
 }

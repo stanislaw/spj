@@ -17,7 +17,7 @@ typedef enum SpjJSONValueType {
 
 
 typedef struct SpjObject {
-    struct SpjJSONNamedValue *data; // array
+    struct SpjJSONNamedValue *data;
     size_t size;
 
 #ifdef USE_OBJ_DICT
@@ -27,13 +27,13 @@ typedef struct SpjObject {
 
 
 typedef struct SpjArray {
-    struct SpjJSONValue *data; // array
+    struct SpjJSONValue *data;
     size_t size;
 } SpjArray;
 
 
 typedef struct SpjString {
-    char *data; // nil terminating
+    char *data;
     size_t size;
 } SpjString;
 
@@ -61,7 +61,7 @@ typedef struct SpjJSONNamedValue {
 
 
 typedef enum {
-    // TODO
+    /* TODO */
     SpjJSONNoError = 0,
     SpjJSONErrorWrongRootObject,
     SpjJSONErrorOutOfMemory,

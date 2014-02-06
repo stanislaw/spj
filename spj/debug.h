@@ -9,7 +9,7 @@
 #ifdef __APPLE__
 #include <execinfo.h>
 
-// https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man3/backtrace.3.html
+/* https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man3/backtrace.3.html */
 #define print_callstack() { \
     void *callstack[128]; \
     int i, frames = backtrace(callstack, 128); \
@@ -28,7 +28,7 @@
 void spj_jsonvalue_debug(SpjJSONValue *jsonvalue);
 
 
-// http://stackoverflow.com/questions/2349776/how-can-i-benchmark-c-code-easily
+/* http://stackoverflow.com/questions/2349776/how-can-i-benchmark-c-code-easily */
 #include <sys/time.h>
 #include <sys/resource.h>
 

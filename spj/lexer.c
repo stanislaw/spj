@@ -2,10 +2,13 @@
 
 #include "lexer.h"
 #include "debug.h"
+#include "jsonvalue.h"
 
-#include <stdlib.h>
 #include <assert.h>
+#include <ctype.h>
 #include <errno.h>
+#include <stdlib.h>
+#include <string.h>
 
 
 /*
@@ -59,7 +62,7 @@ spj_lexer_t spj_lexer_create(const char *jsonbytes, size_t datasize) {
 static void spj_lexer_increment(spj_lexer_t *lexer) {
     lexer->currentposition++;
 
-    // Check datasize = 0 case later
+    /* Check datasize = 0 case later */
     if (lexer->currentposition == (lexer->datasize + 1) && lexer->datasize > 0) {
         print_callstack();
         assert(0);
@@ -107,30 +110,31 @@ static size_t spj_lexer_seek(spj_lexer_t *lexer, int offset) {
 
 
 SpjJSONTokenType spj_gettoken_string(spj_lexer_t *lexer) {
+    SpjJSONValue jsonvalue;
     SpjString string;
+    size_t firstchar_position;
+    const char *firstchar_ptr;
 
     assert(lexer->data[lexer->currentposition - 1] == '"');
 
-    size_t firstchar_position = lexer->currentposition;
+    firstchar_position = lexer->currentposition;
 
     while (spj_lexer_peek(lexer) != '"') {
         spj_lexer_increment(lexer);
     }
 
     string.size = lexer->currentposition - firstchar_position;
-    string.data = (char *)malloc((string.size + 1) * sizeof(char)); // memento
+    string.data = (char *)malloc((string.size + 1) * sizeof(char));
 
-    const char *firstchar_ptr = lexer->data + firstchar_position;
+    firstchar_ptr = lexer->data + firstchar_position;
 
     memcpy(string.data, firstchar_ptr, string.size);
     string.data[string.size] = '\0';
 
-    //printf("Token[String] : %s(%lu, %lu)\n", string.data, strlen(string.data), string.size);
+    /* printf("Token[String] : %s(%lu, %lu)\n", string.data, strlen(string.data), string.size); */
 
-    SpjJSONValue jsonvalue;
     spj_jsonvalue_init(&jsonvalue, SpjJSONValueString);
 
-    jsonvalue.type = SpjJSONValueString;
     jsonvalue.value.string = string;
 
     lexer->value = jsonvalue;
@@ -145,12 +149,17 @@ SpjJSONTokenType spj_gettoken_string(spj_lexer_t *lexer) {
 
 SpjJSONTokenType spj_gettoken_number(spj_lexer_t *lexer) {
     SpjJSONValue jsonvalue;
+    size_t firstnumber_position;
+    char currentbyte;
+    const char *firstchar;
+    char *endpointer = NULL;
+    int err;
 
     spj_jsonvalue_init(&jsonvalue, SpjJSONValueNumber);
 
-    size_t firstnumber_position = lexer->currentposition;
+    firstnumber_position = lexer->currentposition;
 
-    char currentbyte = spj_lexer_peek(lexer);
+    currentbyte = spj_lexer_peek(lexer);
 
     if ((isdigit(currentbyte) || currentbyte == '-') == 0) {
         return SpjJSONTokenError;
@@ -164,14 +173,13 @@ SpjJSONTokenType spj_gettoken_number(spj_lexer_t *lexer) {
         }
     }
 
-    const char *firstchar = lexer->data + firstnumber_position;
-    char *endpointer;
+    firstchar = lexer->data + firstnumber_position;
 
     jsonvalue.value.number = strtod(firstchar, &endpointer);
 
-    // TODO
+    /* TODO */
 
-    int err = errno;
+    err = errno;
     if (jsonvalue.value.number == 0 && firstchar == endpointer) {
         assert(0);
     }
@@ -184,7 +192,7 @@ SpjJSONTokenType spj_gettoken_number(spj_lexer_t *lexer) {
 
     lexer->value = jsonvalue;
 
-    //printf("Token[Number] : %f\n", jsonvalue.value.number);
+    /* printf("Token[Number] : %f\n", jsonvalue.value.number); */
 
     assert(isdigit(spj_lexer_peek(lexer)) == 0);
 
@@ -234,7 +242,7 @@ SpjJSONTokenType spj_gettoken(spj_lexer_t *lexer) {
             spj_lexer_getc(lexer) == 'u' &&
             spj_lexer_getc(lexer) == 'e') {
 
-            //printf("Token[Bool] : true\n");
+            /* printf("Token[Bool] : true\n"); */
 
             SpjJSONValue jsonvalue;
             spj_jsonvalue_init(&jsonvalue, SpjJSONValueBool);
@@ -256,7 +264,7 @@ SpjJSONTokenType spj_gettoken(spj_lexer_t *lexer) {
             spj_lexer_getc(lexer) == 's' &&
             spj_lexer_getc(lexer) == 'e') {
 
-            //printf("Token[Bool] : false\n");
+            /* printf("Token[Bool] : false\n"); */
 
             SpjJSONValue jsonvalue;
             spj_jsonvalue_init(&jsonvalue, SpjJSONValueBool);
@@ -277,7 +285,7 @@ SpjJSONTokenType spj_gettoken(spj_lexer_t *lexer) {
             spj_lexer_getc(lexer) == 'l' &&
             spj_lexer_getc(lexer) == 'l') {
             
-            //printf("Token[Null]\n");
+            /* printf("Token[Null]\n"); */
 
             SpjJSONValue jsonvalue;
             spj_jsonvalue_init(&jsonvalue, SpjJSONValueNull);
@@ -292,7 +300,7 @@ SpjJSONTokenType spj_gettoken(spj_lexer_t *lexer) {
     }
     
     
-    // We should not reach here
+    /* We should not reach here */
     
     assert(0);
     

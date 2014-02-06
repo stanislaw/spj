@@ -13,19 +13,15 @@
 static SpjJSONTokenType spj_parse_default(spj_lexer_t *lexer, SpjJSONValue *jsonvalue, int inarray);
 
 static spj_result_t spj_parse_object(spj_lexer_t *lexer, SpjJSONValue *jsonvalue) {
-    //printf("spj_parse_object begins\n");
-
     size_t n, capacity;
     SpjJSONTokenType token;
     SpjJSONNamedValue child_jsonvalue;
     SpjJSONValue child_jsonvalue_value;
 
 
-    capacity = 0; // initial capacity, to be modified by spj_jsonvalue_object_add
+    capacity = 0;
 
-
-    // remove this later
-    assert(lexer->data[lexer->currentposition - 1] == '{');
+    assert(lexer->data[lexer->currentposition - 1] == '{'); /* remove this later */
 
     assert(jsonvalue->type == SpjJSONValueObject);
     assert(jsonvalue->value.object.size == 0);
@@ -81,12 +77,11 @@ static spj_result_t spj_parse_array(spj_lexer_t *lexer, SpjJSONValue *jsonvalue)
     SpjJSONTokenType token;
     SpjJSONValue child_jsonvalue;
 
-    capacity = 0; // initial capacity for array, to be modified by spj_jsonvalue_array_add
+    capacity = 0;
 
     assert(jsonvalue->type == SpjJSONValueArray);
     assert(jsonvalue->value.array.size == 0);
 
-    // remove this later
     assert(lexer->data[lexer->currentposition - 1] == '[');
 
     for (i = 0;; i++) {
@@ -115,7 +110,6 @@ static spj_result_t spj_parse_array(spj_lexer_t *lexer, SpjJSONValue *jsonvalue)
         }
     }
 
-    // remove this later
     assert(lexer->data[lexer->currentposition - 1] == ']');
 
     spj_jsonvalue_array_finalize(jsonvalue, &capacity);
@@ -125,8 +119,6 @@ static spj_result_t spj_parse_array(spj_lexer_t *lexer, SpjJSONValue *jsonvalue)
 
 
 static SpjJSONTokenType spj_parse_default(spj_lexer_t *lexer, SpjJSONValue *jsonvalue, int inarray) {
-    //printf("spj_parse_normal begins\n");
-
     SpjJSONTokenType token = spj_gettoken(lexer);
 
     switch (token) {
@@ -152,13 +144,13 @@ static SpjJSONTokenType spj_parse_default(spj_lexer_t *lexer, SpjJSONValue *json
             break;
         }
 
-            // Legitimate exception for Empty Array not to perform lookups twice
+        /* Legitimate exception for Empty Array not to perform lookups twice */
         case SpjJSONTokenArrayEnd: {
             if (inarray) break;
         }
             
         default:
-            // TODO
+            /* TODO */
             assert(0);
     }
     
@@ -175,7 +167,7 @@ spj_result_t spj_parse(const char *jsonstring, SpjJSONValue *jsonvalue, spj_erro
     spj_lexer_t lexer;
     size_t datasize;
 
-    //printf("Original JSON: %s\n", jsonstring);
+    printf("Original JSON: %s\n", jsonstring);
     
     datasize = strlen(jsonstring);
 
@@ -201,7 +193,6 @@ spj_result_t spj_parse(const char *jsonstring, SpjJSONValue *jsonvalue, spj_erro
         }
 
         default:
-            //*error.code = 0;
             error->message = "JSON contains no valid root element (Object, Array)";
 
             return SpjJSONParsingResultError;

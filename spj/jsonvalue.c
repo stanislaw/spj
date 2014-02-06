@@ -1,6 +1,6 @@
 
 
-#import "jsonvalue.h"
+#include "jsonvalue.h"
 
 #include <assert.h>
 #include <stdlib.h>
@@ -44,7 +44,7 @@ void spj_jsonvalue_init(SpjJSONValue *jsonvalue, SpjJSONValueType type) {
 void spj_jsonvalue_object_add(SpjJSONValue *jsonvalue, SpjJSONNamedValue *child_jsonvalue, size_t *capacity) {
     const size_t slice = 10;
 
-    assert(jsonvalue->type == SpjJSONValueObject); // remove later
+    assert(jsonvalue->type == SpjJSONValueObject); /* remove later */
 
     if (jsonvalue->value.object.size == *capacity) {
         SpjJSONNamedValue *larger_objects_data = realloc(jsonvalue->value.object.data, (*capacity += slice) * sizeof(SpjJSONNamedValue));
@@ -52,7 +52,7 @@ void spj_jsonvalue_object_add(SpjJSONValue *jsonvalue, SpjJSONNamedValue *child_
         if (larger_objects_data != NULL) {
             jsonvalue->value.object.data = larger_objects_data;
         } else {
-            assert(0); // TODO nomem
+            assert(0); /* TODO nomem */
         }
     }
 
@@ -63,7 +63,7 @@ void spj_jsonvalue_object_add(SpjJSONValue *jsonvalue, SpjJSONNamedValue *child_
 void spj_jsonvalue_array_add(SpjJSONValue *jsonvalue, SpjJSONValue *child_jsonvalue, size_t *capacity) {
     const size_t slice = 10;
 
-    assert(jsonvalue->type == SpjJSONValueArray); // remove later
+    assert(jsonvalue->type == SpjJSONValueArray); /* remove later */
 
     if (jsonvalue->value.array.size == *capacity) {
         SpjJSONValue *larger_array_data = realloc(jsonvalue->value.array.data, (*capacity += slice) * sizeof(SpjJSONValue));
@@ -71,7 +71,7 @@ void spj_jsonvalue_array_add(SpjJSONValue *jsonvalue, SpjJSONValue *child_jsonva
         if (larger_array_data != NULL) {
             jsonvalue->value.array.data = larger_array_data;
         } else {
-            assert(0); // TODO
+            assert(0); /* TODO */
         }
     }
 
@@ -110,13 +110,13 @@ void spj_jsonvalue_enumerate(SpjJSONValue *jsonvalue, int (*function)(SpjJSONVal
 
         case SpjJSONValueObject:
             for (i = 0; i < jsonvalue->value.object.size; i++) {
-                spj_jsonvalue_enumerate(& jsonvalue->value.object.data[i], function);
+                spj_jsonvalue_enumerate(& jsonvalue->value.object.data[i].value, function);
             }
 
             break;
 
         default:
-            // Do not "enumerate" leaves
+            /* Do not "enumerate" leaves */
 
             break;
     }
@@ -135,7 +135,7 @@ void spj_jsonvalue_enumerate_reverse(SpjJSONValue *jsonvalue, int (*function)(Sp
 
         case SpjJSONValueObject:
             for (i = 0; i < jsonvalue->value.object.size; i++) {
-                spj_jsonvalue_enumerate_reverse(& jsonvalue->value.object.data[i], function);
+                spj_jsonvalue_enumerate_reverse(& jsonvalue->value.object.data[i].value, function);
             }
 
             break;
@@ -162,7 +162,7 @@ void spj_jsonvalue_free(SpjJSONValue *jsonvalue) {
 
                 free(jsonvalue->value.object.data[i].name.data);
 
-                jsonvalue->value.object.data[i].name = SpjStringZero; // нужно?
+                jsonvalue->value.object.data[i].name = SpjStringZero; /* нужно? */
             }
 
             free(jsonvalue->value.object.data);

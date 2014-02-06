@@ -4,7 +4,7 @@
 #define spj_jsonvalue_h
 
 
-#import "types.h"
+#include "types.h"
 
 
 void spj_jsonvalue_init(SpjJSONValue *jsonvalue, SpjJSONValueType type);
