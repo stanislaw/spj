@@ -109,6 +109,8 @@ static spj_result_t spj_parse_array(spj_lexer_t *lexer, SpjJSONValue *jsonvalue)
         }
 
         if (token != SpjJSONTokenComma) {
+            printf("fail on symbol %d %c\n", token, spj_lexer_peek(lexer));
+            
             assert(0);
         }
     }
@@ -173,7 +175,7 @@ spj_result_t spj_parse(const char *jsonstring, SpjJSONValue *jsonvalue, spj_erro
     spj_lexer_t lexer;
     size_t datasize;
 
-    printf("Original JSON: %s\n", jsonstring);
+    //printf("Original JSON: %s\n", jsonstring);
     
     datasize = strlen(jsonstring);
 

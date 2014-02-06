@@ -125,7 +125,7 @@ SpjJSONTokenType spj_gettoken_string(spj_lexer_t *lexer) {
     memcpy(string.data, firstchar_ptr, string.size);
     string.data[string.size] = '\0';
 
-    printf("Token[String] : %s(%lu, %lu)\n", string.data, strlen(string.data), string.size);
+    //printf("Token[String] : %s(%lu, %lu)\n", string.data, strlen(string.data), string.size);
 
     SpjJSONValue jsonvalue;
     spj_jsonvalue_init(&jsonvalue, SpjJSONValueString);
@@ -184,7 +184,7 @@ SpjJSONTokenType spj_gettoken_number(spj_lexer_t *lexer) {
 
     lexer->value = jsonvalue;
 
-    printf("Token[Number] : %f\n", jsonvalue.value.number);
+    //printf("Token[Number] : %f\n", jsonvalue.value.number);
 
     assert(isdigit(spj_lexer_peek(lexer)) == 0);
 
@@ -207,9 +207,9 @@ SpjJSONTokenType spj_gettoken(spj_lexer_t *lexer) {
         case ']':
             return SpjJSONTokenArrayEnd;
 
-        case '{': {
+        case '{':
             return SpjJSONTokenObjectStart;
-        }
+        
         case '}':
             return SpjJSONTokenObjectEnd;
 
@@ -234,7 +234,7 @@ SpjJSONTokenType spj_gettoken(spj_lexer_t *lexer) {
             spj_lexer_getc(lexer) == 'u' &&
             spj_lexer_getc(lexer) == 'e') {
 
-            printf("Token[Bool] : true\n");
+            //printf("Token[Bool] : true\n");
 
             SpjJSONValue jsonvalue;
             spj_jsonvalue_init(&jsonvalue, SpjJSONValueBool);
@@ -256,7 +256,7 @@ SpjJSONTokenType spj_gettoken(spj_lexer_t *lexer) {
             spj_lexer_getc(lexer) == 's' &&
             spj_lexer_getc(lexer) == 'e') {
 
-            printf("Token[Bool] : false\n");
+            //printf("Token[Bool] : false\n");
 
             SpjJSONValue jsonvalue;
             spj_jsonvalue_init(&jsonvalue, SpjJSONValueBool);
@@ -277,7 +277,7 @@ SpjJSONTokenType spj_gettoken(spj_lexer_t *lexer) {
             spj_lexer_getc(lexer) == 'l' &&
             spj_lexer_getc(lexer) == 'l') {
             
-            printf("Token[Null]\n");
+            //printf("Token[Null]\n");
 
             SpjJSONValue jsonvalue;
             spj_jsonvalue_init(&jsonvalue, SpjJSONValueNull);

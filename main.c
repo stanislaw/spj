@@ -4,6 +4,18 @@
 
 #include "spj/spj.h"
 
+#include <sys/time.h>
+#include <sys/resource.h>
+
+double get_time()
+{
+    struct timeval t;
+    struct timezone tzp;
+    gettimeofday(&t, &tzp);
+    return t.tv_sec + t.tv_usec*1e-6;
+}
+
+
 int main() {
     spj_error_t error;
     SpjJSONValue jsonvalue;
@@ -28,18 +40,23 @@ int main() {
     }";
 
 
+    int N = 100;
 
-    printf("We can now iterate the whole string:\n");
+    double initial_time = get_time();
+
+    for (int i = 0; i < N; i++) {
+        spj_parse(jsonbytes, &jsonvalue, &error);
+    }
+
+    printf("time elapsed: %f seconds\n", get_time() - initial_time);
 
 
-    spj_parse(jsonbytes, &jsonvalue, &error);
 
-
-    spj_jsonvalue_debug(&jsonvalue);
+    //spj_jsonvalue_debug(&jsonvalue);
 
     spj_jsonvalue_free(&jsonvalue);
     
-    printf("\n");
+    //printf("\n");
 
     return 0;
 }

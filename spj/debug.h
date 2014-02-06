@@ -27,4 +27,11 @@
 
 void spj_jsonvalue_debug(SpjJSONValue *jsonvalue);
 
+
+// http://stackoverflow.com/questions/2349776/how-can-i-benchmark-c-code-easily
+#include <sys/time.h>
+#include <sys/resource.h>
+
+double get_time();
+
 #endif
