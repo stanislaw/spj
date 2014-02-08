@@ -89,7 +89,7 @@ static size_t spj_lexer_seek(spj_lexer_t *lexer, int offset) {
 
 spj_jsontoken_type_t spj_gettoken_string(spj_lexer_t *lexer) {
     spj_jsonvalue_t jsonvalue;
-    SpjString string;
+    spj_string_t string;
     size_t firstchar_position;
     const char *firstchar_ptr;
 
