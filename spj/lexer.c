@@ -88,7 +88,7 @@ static size_t spj_lexer_seek(spj_lexer_t *lexer, int offset) {
 
 
 spj_jsontoken_type_t spj_gettoken_string(spj_lexer_t *lexer) {
-    SpjJSONValue jsonvalue;
+    spj_jsonvalue_t jsonvalue;
     SpjString string;
     size_t firstchar_position;
     const char *firstchar_ptr;
@@ -126,7 +126,7 @@ spj_jsontoken_type_t spj_gettoken_string(spj_lexer_t *lexer) {
 
 
 spj_jsontoken_type_t spj_gettoken_number(spj_lexer_t *lexer) {
-    SpjJSONValue jsonvalue;
+    spj_jsonvalue_t jsonvalue;
     char currentbyte;
     const char *firstbyte;
     char *endpointer = NULL;
@@ -211,7 +211,7 @@ spj_jsontoken_type_t spj_gettoken(spj_lexer_t *lexer) {
 
             /* printf("Token[Bool] : true\n"); */
 
-            SpjJSONValue jsonvalue;
+            spj_jsonvalue_t jsonvalue;
             spj_jsonvalue_init(&jsonvalue, SpjJSONValueBool);
 
             jsonvalue.value.number = 1;
@@ -233,7 +233,7 @@ spj_jsontoken_type_t spj_gettoken(spj_lexer_t *lexer) {
 
             /* printf("Token[Bool] : false\n"); */
 
-            SpjJSONValue jsonvalue;
+            spj_jsonvalue_t jsonvalue;
             spj_jsonvalue_init(&jsonvalue, SpjJSONValueBool);
 
             jsonvalue.value.number = 0;
@@ -254,7 +254,7 @@ spj_jsontoken_type_t spj_gettoken(spj_lexer_t *lexer) {
             
             /* printf("Token[Null]\n"); */
 
-            SpjJSONValue jsonvalue;
+            spj_jsonvalue_t jsonvalue;
             spj_jsonvalue_init(&jsonvalue, SpjJSONValueNull);
 
             lexer->value = jsonvalue;

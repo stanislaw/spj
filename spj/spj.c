@@ -10,13 +10,13 @@
 #include <ctype.h>
 
 
-static spj_jsontoken_type_t spj_parse_default(spj_lexer_t *lexer, SpjJSONValue *jsonvalue, int inarray);
+static spj_jsontoken_type_t spj_parse_default(spj_lexer_t *lexer, spj_jsonvalue_t *jsonvalue, int inarray);
 
-static spj_result_t spj_parse_object(spj_lexer_t *lexer, SpjJSONValue *jsonvalue) {
+static spj_result_t spj_parse_object(spj_lexer_t *lexer, spj_jsonvalue_t *jsonvalue) {
     size_t n, capacity;
     spj_jsontoken_type_t token;
-    SpjJSONNamedValue child_jsonvalue;
-    SpjJSONValue child_jsonvalue_value;
+    spj_jsonnamedvalue_t child_jsonvalue;
+    spj_jsonvalue_t child_jsonvalue_value;
 
 
     capacity = 0;
@@ -72,17 +72,17 @@ static spj_result_t spj_parse_object(spj_lexer_t *lexer, SpjJSONValue *jsonvalue
 }
 
 
-static spj_result_t spj_parse_array(spj_lexer_t *lexer, SpjJSONValue *jsonvalue) {
+static spj_result_t spj_parse_array(spj_lexer_t *lexer, spj_jsonvalue_t *jsonvalue) {
     size_t i, capacity;
     spj_jsontoken_type_t token;
-    SpjJSONValue child_jsonvalue;
+    spj_jsonvalue_t child_jsonvalue;
 
     capacity = 0;
 
     assert(lexer->data[lexer->currentposition - 1] == '[');
 
     for (i = 0;; i++) {
-        SpjJSONValue object_data;
+        spj_jsonvalue_t object_data;
 
         spj_jsonvalue_init(&object_data, SpjJSONValueArray);
 
@@ -115,7 +115,7 @@ static spj_result_t spj_parse_array(spj_lexer_t *lexer, SpjJSONValue *jsonvalue)
 }
 
 
-static spj_jsontoken_type_t spj_parse_default(spj_lexer_t *lexer, SpjJSONValue *jsonvalue, int inarray) {
+static spj_jsontoken_type_t spj_parse_default(spj_lexer_t *lexer, spj_jsonvalue_t *jsonvalue, int inarray) {
     spj_jsontoken_type_t token = spj_gettoken(lexer);
 
     switch (token) {
@@ -159,7 +159,7 @@ static spj_jsontoken_type_t spj_parse_default(spj_lexer_t *lexer, SpjJSONValue *
 #pragma mark Public API
 
 
-spj_result_t spj_parse(const char *jsonstring, size_t datasize, SpjJSONValue *jsonvalue, spj_error_t *error) {
+spj_result_t spj_parse(const char *jsonstring, size_t datasize, spj_jsonvalue_t *jsonvalue, spj_error_t *error) {
     spj_result_t result;
     spj_lexer_t lexer;
 

@@ -7,7 +7,7 @@
 
 int main() {
     spj_error_t error;
-    SpjJSONValue jsonvalue;
+    spj_jsonvalue_t jsonvalue;
     char *jsonbytes;
     size_t datasize;
 

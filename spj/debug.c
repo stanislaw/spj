@@ -3,12 +3,12 @@
 #include <assert.h>
 #include "jsonvalue.h"
 
-static void spj_jsonvalue_debug_internal(SpjJSONValue *jsonvalue) {
+static void spj_jsonvalue_debug_internal(spj_jsonvalue_t *jsonvalue) {
     size_t i;
 
     switch (jsonvalue->type) {
         case SpjJSONValueArray: {
-            SpjJSONValue data;
+            spj_jsonvalue_t data;
 
             printf("[");
 
@@ -28,7 +28,7 @@ static void spj_jsonvalue_debug_internal(SpjJSONValue *jsonvalue) {
         }
 
         case SpjJSONValueObject: {
-            SpjJSONNamedValue data;
+            spj_jsonnamedvalue_t data;
 
             printf("{");
 
@@ -93,7 +93,7 @@ static void spj_jsonvalue_debug_internal(SpjJSONValue *jsonvalue) {
 }
 
 
-void spj_jsonvalue_debug(SpjJSONValue *jsonvalue) {
+void spj_jsonvalue_debug(spj_jsonvalue_t *jsonvalue) {
     printf("[Debug] ");
 
     spj_jsonvalue_debug_internal(jsonvalue);

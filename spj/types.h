@@ -17,7 +17,7 @@ typedef enum spj_jsonvalue_type_t {
 
 
 typedef struct SpjObject {
-    struct SpjJSONNamedValue *data;
+    struct spj_jsonnamedvalue_t *data;
     size_t size;
 
 #ifdef USE_OBJ_DICT
@@ -27,7 +27,7 @@ typedef struct SpjObject {
 
 
 typedef struct SpjArray {
-    struct SpjJSONValue *data;
+    struct spj_jsonvalue_t *data;
     size_t size;
 } SpjArray;
 
@@ -43,7 +43,7 @@ static const SpjArray  SpjArrayZero  = { NULL, 0 };
 static const SpjString SpjStringZero = { NULL, 0 };
 
 
-typedef struct SpjJSONValue {
+typedef struct spj_jsonvalue_t {
     spj_jsonvalue_type_t type;
     union {
         struct SpjObject object;
@@ -51,13 +51,13 @@ typedef struct SpjJSONValue {
         struct SpjString string;
         double number;
     } value;
-} SpjJSONValue;
+} spj_jsonvalue_t;
 
 
-typedef struct SpjJSONNamedValue {
-    struct SpjJSONValue value;
+typedef struct spj_jsonnamedvalue_t {
+    struct spj_jsonvalue_t value;
     struct SpjString name;
-} SpjJSONNamedValue;
+} spj_jsonnamedvalue_t;
 
 
 typedef enum {

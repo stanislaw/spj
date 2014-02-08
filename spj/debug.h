@@ -25,7 +25,7 @@
 #endif
 
 
-void spj_jsonvalue_debug(SpjJSONValue *jsonvalue);
+void spj_jsonvalue_debug(spj_jsonvalue_t *jsonvalue);
 
 
 /* http://stackoverflow.com/questions/2349776/how-can-i-benchmark-c-code-easily */

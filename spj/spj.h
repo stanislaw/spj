@@ -8,8 +8,8 @@
 #include "debug.h"
 
 
-spj_result_t spj_parse(const char *jsonstring, size_t datasize, SpjJSONValue *jsonvalue, spj_error_t *error);
-void spj_jsonvalue_free(SpjJSONValue *jsonvalue);
+spj_result_t spj_parse(const char *jsonstring, size_t datasize, spj_jsonvalue_t *jsonvalue, spj_error_t *error);
+void spj_jsonvalue_free(spj_jsonvalue_t *jsonvalue);
 
 
 #endif

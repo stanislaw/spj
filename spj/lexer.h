@@ -27,7 +27,7 @@ typedef struct {
     size_t currentposition;
     size_t datasize;
 
-    SpjJSONValue value;
+    spj_jsonvalue_t value;
 
     spj_error_t *error;
 } spj_lexer_t;

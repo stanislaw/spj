@@ -33,10 +33,10 @@ static void test(int (*func)(void), const char *name) {
 
 int test_empty() {
     char *jsonbytes;
-    SpjJSONValue jsonvalue;
+    spj_jsonvalue_t jsonvalue;
     spj_error_t error;
 
-    memset(&jsonvalue, 0, sizeof(SpjJSONValue));
+    memset(&jsonvalue, 0, sizeof(spj_jsonvalue_t));
     memset(&error, 0, sizeof(spj_error_t));
 
     jsonbytes = "{}";
@@ -46,7 +46,7 @@ int test_empty() {
     check(error.message == NULL);
     check(error.code == SpjJSONNoError);
 
-    memset(&jsonvalue, 0, sizeof(SpjJSONValue));
+    memset(&jsonvalue, 0, sizeof(spj_jsonvalue_t));
     memset(&error, 0, sizeof(spj_error_t));
 
     jsonbytes = "[]";
@@ -62,10 +62,10 @@ int test_empty() {
 
 int test_simple_root_objects() {
     char *jsonbytes;
-    SpjJSONValue jsonvalue;
+    spj_jsonvalue_t jsonvalue;
     spj_error_t error;
 
-    memset(&jsonvalue, 0, sizeof(SpjJSONValue));
+    memset(&jsonvalue, 0, sizeof(spj_jsonvalue_t));
     memset(&error, 0, sizeof(spj_error_t));
 
     jsonbytes = "[1]";
@@ -82,7 +82,7 @@ int test_simple_root_objects() {
     check(jsonvalue.value.array.data[0].value.number == 1);
 
 
-    memset(&jsonvalue, 0, sizeof(SpjJSONValue));
+    memset(&jsonvalue, 0, sizeof(spj_jsonvalue_t));
     memset(&error, 0, sizeof(spj_error_t));
 
     jsonbytes = "[1, 2, 3, 4]";
@@ -97,7 +97,7 @@ int test_simple_root_objects() {
     check(jsonvalue.value.array.data[3].value.number == 4);
 
 
-    memset(&jsonvalue, 0, sizeof(SpjJSONValue));
+    memset(&jsonvalue, 0, sizeof(spj_jsonvalue_t));
     memset(&error, 0, sizeof(spj_error_t));
 
     jsonbytes = "{\"hello\":\"world\", \"key\":\"value\", \"number\": \"one\"}";
@@ -122,11 +122,11 @@ int test_simple_root_objects() {
 
 int test_simple_root_objects_one_level_nesting() {
     char *jsonbytes;
-    SpjJSONValue jsonvalue;
+    spj_jsonvalue_t jsonvalue;
     spj_error_t error;
 
 
-    memset(&jsonvalue, 0, sizeof(SpjJSONValue));
+    memset(&jsonvalue, 0, sizeof(spj_jsonvalue_t));
     memset(&error, 0, sizeof(spj_error_t));
 
     jsonbytes = "[{}]";
@@ -143,7 +143,7 @@ int test_simple_root_objects_one_level_nesting() {
     check(jsonvalue.value.array.data[0].value.object.data == NULL);
 
 
-    memset(&jsonvalue, 0, sizeof(SpjJSONValue));
+    memset(&jsonvalue, 0, sizeof(spj_jsonvalue_t));
     memset(&error, 0, sizeof(spj_error_t));
 
     jsonbytes = "{\"array\":[1, 2, 3]}";
@@ -175,11 +175,11 @@ int test_simple_root_objects_one_level_nesting() {
 
 int test_simple_root_objects_two_level_nesting() {
     char *jsonbytes;
-    SpjJSONValue jsonvalue;
+    spj_jsonvalue_t jsonvalue;
     spj_error_t error;
 
 
-    memset(&jsonvalue, 0, sizeof(SpjJSONValue));
+    memset(&jsonvalue, 0, sizeof(spj_jsonvalue_t));
     memset(&error, 0, sizeof(spj_error_t));
 
     jsonbytes = "[[{\"hello\":\"world\"}]]";
@@ -205,11 +205,11 @@ int test_simple_root_objects_two_level_nesting() {
 
 int test_wrong_root_object() {
     char *jsonbytes;
-    SpjJSONValue jsonvalue;
+    spj_jsonvalue_t jsonvalue;
     spj_error_t error;
     spj_result_t result;
 
-    memset(&jsonvalue, 0, sizeof(SpjJSONValue));
+    memset(&jsonvalue, 0, sizeof(spj_jsonvalue_t));
     memset(&error, 0, sizeof(spj_error_t));
 
     check(error.message == NULL);
@@ -218,7 +218,7 @@ int test_wrong_root_object() {
     check(error.message != NULL);
     check(result == SpjJSONParsingResultError);
 
-    memset(&jsonvalue, 0, sizeof(SpjJSONValue));
+    memset(&jsonvalue, 0, sizeof(spj_jsonvalue_t));
     memset(&error, 0, sizeof(spj_error_t));
 
     check(error.message == NULL);
