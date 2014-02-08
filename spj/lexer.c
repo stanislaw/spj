@@ -11,42 +11,6 @@
 #include <string.h>
 
 
-/*
-    SpjJSONValueType spj_value_for_token(SpjJSONTokenType token) {
-        switch (token) {
-            case SpjJSONTokenObjectStart: {
-                return SpjJSONValueObject;
-            }
-
-            case SpjJSONTokenArrayStart: {
-                return SpjJSONValueArray;
-            }
-
-            case SpjJSONTokenNumber: {
-                return SpjJSONValueNumber;
-            }
-
-            case SpjJSONTokenString: {
-                return SpjJSONValueString;
-            }
-
-            case SpjJSONTokenBool: {
-                return SpjJSONValueBool;
-            }
-
-            case SpjJSONTokenNull: {
-                return SpjJSONValueNull;
-            }
-
-            default:
-                assert(0);
-        }
-        
-        return 0;
-    }
-*/
-
-
 spj_lexer_t spj_lexer_create(const char *jsonbytes, size_t datasize) {
     spj_lexer_t lexer;
 
@@ -54,6 +18,9 @@ spj_lexer_t spj_lexer_create(const char *jsonbytes, size_t datasize) {
     lexer.currentposition = 0;
     lexer.datasize = datasize;
     lexer.error = NULL;
+
+    lexer.shared_array_elements = malloc(sizeof(SpjJSONValue) * 20);
+    lexer.shared_object_elements = malloc(sizeof(SpjJSONNamedValue) * 20);
 
     return lexer;
 }
@@ -106,7 +73,7 @@ static size_t spj_lexer_seek(spj_lexer_t *lexer, int offset) {
             lexer->currentposition = lexer->datasize - 1;
         }
     } else if (offset < 0) {
-        unsigned int uoffset = (unsigned int)(-offset);
+        unsigned int uoffset = (unsigned int)abs(offset);
 
         if (lexer->currentposition > uoffset) {
             lexer->currentposition -= uoffset;
@@ -138,7 +105,7 @@ SpjJSONTokenType spj_gettoken_string(spj_lexer_t *lexer) {
     }
 
     string.size = lexer->currentposition - firstchar_position;
-    string.data = (char *)malloc((string.size + 1) * sizeof(char));
+    string.data = malloc((string.size + 1) * sizeof(char));
 
     firstchar_ptr = lexer->data + firstchar_position;
 

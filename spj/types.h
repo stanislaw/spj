@@ -6,14 +6,14 @@
 #include <stdio.h>
 
 
-typedef enum SpjJSONValueType {
+typedef enum spj_jsonvalue_type_t {
     SpjJSONValueObject = 1,
     SpjJSONValueArray,
     SpjJSONValueString,
     SpjJSONValueNumber,
     SpjJSONValueBool,
     SpjJSONValueNull
-} SpjJSONValueType;
+} spj_jsonvalue_type_t;
 
 
 typedef struct SpjObject {
@@ -44,7 +44,7 @@ static const SpjString SpjStringZero = { NULL, 0 };
 
 
 typedef struct SpjJSONValue {
-    SpjJSONValueType type;
+    spj_jsonvalue_type_t type;
     union {
         struct SpjObject object;
         struct SpjArray  array;

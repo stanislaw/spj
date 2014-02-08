@@ -6,7 +6,7 @@
 #include <stdlib.h>
 
 
-void spj_jsonvalue_init(SpjJSONValue *jsonvalue, SpjJSONValueType type) {
+void spj_jsonvalue_init(SpjJSONValue *jsonvalue, spj_jsonvalue_type_t type) {
     jsonvalue->type = type;
 
     switch (type) {
@@ -56,7 +56,6 @@ void spj_jsonvalue_object_add(SpjJSONValue *jsonvalue, SpjJSONNamedValue *child_
         }
     }
 
-    jsonvalue->value.object.data[jsonvalue->value.object.size++] = *child_jsonvalue;
 }
 
 

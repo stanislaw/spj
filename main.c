@@ -132,7 +132,7 @@ int main() {
     }";
 
 
-    N = 100;
+    N = 10000;
 
     for (j = 0; j < 5; j++) {
     initial_time = get_time();
@@ -144,13 +144,13 @@ int main() {
     }
 
     printf("time elapsed: %f seconds\n", get_time() - initial_time);
+
+        spj_jsonvalue_free(&jsonvalue);
     }
 
 
     //spj_jsonvalue_debug(&jsonvalue);
 
-    spj_jsonvalue_free(&jsonvalue);
-    
     /*printf("\n");*/
 
     return 0;

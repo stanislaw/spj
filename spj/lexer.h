@@ -29,6 +29,10 @@ typedef struct {
 
     SpjJSONValue value;
 
+    SpjJSONValue *shared_array_elements;
+    SpjJSONNamedValue *shared_object_elements;
+
+
     spj_error_t *error;
 } spj_lexer_t;
 

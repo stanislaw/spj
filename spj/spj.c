@@ -51,7 +51,9 @@ static spj_result_t spj_parse_object(spj_lexer_t *lexer, SpjJSONValue *jsonvalue
 
         child_jsonvalue.value = child_jsonvalue_value;
 
-        spj_jsonvalue_object_add(jsonvalue, &child_jsonvalue, &capacity);
+        //spj_jsonvalue_object_add(jsonvalue, &child_jsonvalue, &capacity);
+
+        lexer->shared_object_elements[jsonvalue->value.object.size++] = child_jsonvalue;
 
         token = spj_gettoken(lexer);
 
@@ -66,7 +68,15 @@ static spj_result_t spj_parse_object(spj_lexer_t *lexer, SpjJSONValue *jsonvalue
 
     assert(lexer->data[lexer->currentposition - 1] == '}');
 
-    spj_jsonvalue_object_finalize(jsonvalue, &capacity);
+    //spj_jsonvalue_object_finalize(jsonvalue, &capacity);
+
+    if (jsonvalue->value.object.size > 0) {
+        SpjJSONNamedValue *data = malloc(jsonvalue->value.object.size * sizeof(SpjJSONNamedValue));
+        
+        memcpy(data, lexer->shared_object_elements, jsonvalue->value.object.size * sizeof(SpjJSONNamedValue));
+
+        jsonvalue->value.object.data = data;
+    }
 
     return 0;
 }
@@ -78,9 +88,6 @@ static spj_result_t spj_parse_array(spj_lexer_t *lexer, SpjJSONValue *jsonvalue)
     SpjJSONValue child_jsonvalue;
 
     capacity = 0;
-
-    assert(jsonvalue->type == SpjJSONValueArray);
-    assert(jsonvalue->value.array.size == 0);
 
     assert(lexer->data[lexer->currentposition - 1] == '[');
 
@@ -95,7 +102,9 @@ static spj_result_t spj_parse_array(spj_lexer_t *lexer, SpjJSONValue *jsonvalue)
             break;
         }
 
-        spj_jsonvalue_array_add(jsonvalue, &child_jsonvalue, &capacity);
+        //spj_jsonvalue_array_add(jsonvalue, &child_jsonvalue, &capacity);
+
+        lexer->shared_array_elements[jsonvalue->value.array.size++] = child_jsonvalue;
 
         token = spj_gettoken(lexer);
 
@@ -112,7 +121,14 @@ static spj_result_t spj_parse_array(spj_lexer_t *lexer, SpjJSONValue *jsonvalue)
 
     assert(lexer->data[lexer->currentposition - 1] == ']');
 
-    spj_jsonvalue_array_finalize(jsonvalue, &capacity);
+    if (jsonvalue->value.array.size > 0) {
+        SpjJSONValue *data = malloc(jsonvalue->value.array.size * sizeof(SpjJSONValue));
+
+        memcpy(data, lexer->shared_array_elements, jsonvalue->value.array.size * sizeof(SpjJSONValue));
+
+        jsonvalue->value.array.data = data;
+        //spj_jsonvalue_array_finalize(jsonvalue, &capacity);
+    }
 
     return 0;
 }
@@ -167,7 +183,6 @@ spj_result_t spj_parse(const char *jsonstring, size_t datasize, SpjJSONValue *js
     spj_lexer_t lexer;
 
     /* printf("Original JSON: %s\n", jsonstring); */
-    
 
     lexer = spj_lexer_create(jsonstring, datasize);
     
@@ -199,6 +214,9 @@ spj_result_t spj_parse(const char *jsonstring, size_t datasize, SpjJSONValue *js
 
             return SpjJSONParsingResultError;
     }
+
+    free(lexer.shared_array_elements);
+    free(lexer.shared_object_elements);
 
     return result;
 }
