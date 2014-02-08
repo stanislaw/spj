@@ -20,9 +20,9 @@ int main() {
     spj_error_t error;
     SpjJSONValue jsonvalue;
     char *jsonbytes;
+    size_t datasize;
 
-
-    int N, i;
+    int N, i, j;
     double initial_time;
 
 
@@ -145,12 +145,13 @@ int main() {
 
     N = 100;
 
-    int j;
     for (j = 0; j < 5; j++) {
     initial_time = get_time();
 
+    datasize = strlen(jsonbytes);
+
     for (i = 0; i < N; i++) {
-        spj_parse(jsonbytes, &jsonvalue, &error);
+        spj_parse(jsonbytes, datasize, &jsonvalue, &error);
     }
 
     printf("time elapsed: %f seconds\n", get_time() - initial_time);

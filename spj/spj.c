@@ -162,21 +162,23 @@ static SpjJSONTokenType spj_parse_default(spj_lexer_t *lexer, SpjJSONValue *json
 #pragma mark Public API
 
 
-spj_result_t spj_parse(const char *jsonstring, SpjJSONValue *jsonvalue, spj_error_t *error) {
+spj_result_t spj_parse(const char *jsonstring, size_t datasize, SpjJSONValue *jsonvalue, spj_error_t *error) {
     spj_result_t result;
     spj_lexer_t lexer;
-    size_t datasize;
 
     /* printf("Original JSON: %s\n", jsonstring); */
     
-    datasize = strlen(jsonstring);
 
     lexer = spj_lexer_create(jsonstring, datasize);
     
     lexer.error = error;
 
-    switch (spj_gettoken(&lexer)) {
-        case SpjJSONTokenObjectStart: {
+    while (isspace(spj_lexer_peek(&lexer))) {
+        spj_lexer_increment(&lexer);
+    }
+
+    switch (spj_lexer_getc(&lexer)) {
+        case '{': {
             spj_jsonvalue_init(jsonvalue, SpjJSONValueObject);
 
             result = spj_parse_object(&lexer, jsonvalue);
@@ -184,7 +186,7 @@ spj_result_t spj_parse(const char *jsonstring, SpjJSONValue *jsonvalue, spj_erro
             break;
         }
 
-        case SpjJSONTokenArrayStart: {
+        case '[': {
             spj_jsonvalue_init(jsonvalue, SpjJSONValueArray);
 
             result = spj_parse_array(&lexer, jsonvalue);

@@ -59,7 +59,7 @@ spj_lexer_t spj_lexer_create(const char *jsonbytes, size_t datasize) {
 }
 
 
-static void spj_lexer_increment(spj_lexer_t *lexer) {
+void spj_lexer_increment(spj_lexer_t *lexer) {
     lexer->currentposition++;
 
     /* Check datasize = 0 case later */
@@ -75,12 +75,26 @@ char spj_lexer_peek(spj_lexer_t *lexer) {
 }
 
 
-static char spj_lexer_getc(spj_lexer_t *lexer) {
+char spj_lexer_getc(spj_lexer_t *lexer) {
     char c = lexer->data[lexer->currentposition];
 
     spj_lexer_increment(lexer);
 
     return c;
+}
+
+
+const char * spj_lexer_getp(spj_lexer_t *lexer) {
+    const char *p = lexer->data + lexer->currentposition;
+
+    spj_lexer_increment(lexer);
+
+    return p;
+}
+
+
+const char * spj_lexer_peekp(spj_lexer_t *lexer) {
+    return lexer->data + lexer->currentposition;
 }
 
 
@@ -149,49 +163,25 @@ SpjJSONTokenType spj_gettoken_string(spj_lexer_t *lexer) {
 
 SpjJSONTokenType spj_gettoken_number(spj_lexer_t *lexer) {
     SpjJSONValue jsonvalue;
-    size_t firstnumber_position;
     char currentbyte;
-    const char *firstchar;
+    const char *firstbyte;
     char *endpointer = NULL;
-    int fractional;
     int err;
+
+    firstbyte = spj_lexer_getp(lexer);
 
     spj_jsonvalue_init(&jsonvalue, SpjJSONValueNumber);
 
-    firstnumber_position = lexer->currentposition;
-
     currentbyte = spj_lexer_peek(lexer);
 
-    if ((isdigit(currentbyte) || currentbyte == '-') == 0) {
+    if ((isdigit(*firstbyte) || *firstbyte == '-') == 0) {
         assert(0);
-        return SpjJSONTokenError;
     }
 
-    fractional = 0;
-    
-    while ((currentbyte = spj_lexer_peek(lexer))) {
-        if (fractional == 0 && currentbyte == '.') {
-            fractional = 1;
-            spj_lexer_increment(lexer);
-        } else if (isdigit(currentbyte)) {
-            spj_lexer_increment(lexer);
-        } else {
-            break;
-        }
-    }
-
-    firstchar = lexer->data + firstnumber_position;
-
-    if (fractional == 0) {
-        jsonvalue.value.number = strtol(firstchar, &endpointer, 10);
-    } else {
-        jsonvalue.value.number = strtod(firstchar, &endpointer);
-    }
-
-    /* TODO */
+    jsonvalue.value.number = strtod(firstbyte, &endpointer);
 
     err = errno;
-    if (jsonvalue.value.number == 0 && firstchar == endpointer) {
+    if (jsonvalue.value.number == 0 && firstbyte == endpointer) {
         assert(0);
     }
 
@@ -199,7 +189,9 @@ SpjJSONTokenType spj_gettoken_number(spj_lexer_t *lexer) {
         assert(0);
     }
 
-    assert(endpointer == (lexer->data + lexer->currentposition));
+    while (spj_lexer_peekp(lexer) != endpointer) {
+        spj_lexer_increment(lexer);
+    }
 
     lexer->value = jsonvalue;
 

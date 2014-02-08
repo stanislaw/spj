@@ -35,6 +35,10 @@ typedef struct {
 
 char spj_lexer_peek(spj_lexer_t *lexer);
 spj_lexer_t spj_lexer_create(const char *jsonbytes, size_t datasize);
+void spj_lexer_increment(spj_lexer_t *lexer);
+char spj_lexer_getc(spj_lexer_t *lexer);
+const char * spj_lexer_getp(spj_lexer_t *lexer);
+const char * spj_lexer_peekp(spj_lexer_t *lexer);
 
 
 SpjJSONTokenType spj_gettoken_string(spj_lexer_t *lexer);
