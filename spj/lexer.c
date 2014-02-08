@@ -90,7 +90,7 @@ static size_t spj_lexer_seek(spj_lexer_t *lexer, int offset) {
 #pragma mark Lexer functions
 
 
-SpjJSONTokenType spj_gettoken_string(spj_lexer_t *lexer) {
+spj_jsontoken_type_t spj_gettoken_string(spj_lexer_t *lexer) {
     SpjJSONValue jsonvalue;
     SpjString string;
     size_t firstchar_position;
@@ -128,7 +128,7 @@ SpjJSONTokenType spj_gettoken_string(spj_lexer_t *lexer) {
 }
 
 
-SpjJSONTokenType spj_gettoken_number(spj_lexer_t *lexer) {
+spj_jsontoken_type_t spj_gettoken_number(spj_lexer_t *lexer) {
     SpjJSONValue jsonvalue;
     char currentbyte;
     const char *firstbyte;
@@ -170,7 +170,7 @@ SpjJSONTokenType spj_gettoken_number(spj_lexer_t *lexer) {
 }
 
 
-SpjJSONTokenType spj_gettoken(spj_lexer_t *lexer) {
+spj_jsontoken_type_t spj_gettoken(spj_lexer_t *lexer) {
     char currentbyte;
 
     while (isspace(currentbyte = spj_lexer_getc(lexer)));

@@ -10,11 +10,11 @@
 #include <ctype.h>
 
 
-static SpjJSONTokenType spj_parse_default(spj_lexer_t *lexer, SpjJSONValue *jsonvalue, int inarray);
+static spj_jsontoken_type_t spj_parse_default(spj_lexer_t *lexer, SpjJSONValue *jsonvalue, int inarray);
 
 static spj_result_t spj_parse_object(spj_lexer_t *lexer, SpjJSONValue *jsonvalue) {
     size_t n, capacity;
-    SpjJSONTokenType token;
+    spj_jsontoken_type_t token;
     SpjJSONNamedValue child_jsonvalue;
     SpjJSONValue child_jsonvalue_value;
 
@@ -84,7 +84,7 @@ static spj_result_t spj_parse_object(spj_lexer_t *lexer, SpjJSONValue *jsonvalue
 
 static spj_result_t spj_parse_array(spj_lexer_t *lexer, SpjJSONValue *jsonvalue) {
     size_t i, capacity;
-    SpjJSONTokenType token;
+    spj_jsontoken_type_t token;
     SpjJSONValue child_jsonvalue;
 
     capacity = 0;
@@ -134,8 +134,8 @@ static spj_result_t spj_parse_array(spj_lexer_t *lexer, SpjJSONValue *jsonvalue)
 }
 
 
-static SpjJSONTokenType spj_parse_default(spj_lexer_t *lexer, SpjJSONValue *jsonvalue, int inarray) {
-    SpjJSONTokenType token = spj_gettoken(lexer);
+static spj_jsontoken_type_t spj_parse_default(spj_lexer_t *lexer, SpjJSONValue *jsonvalue, int inarray) {
+    spj_jsontoken_type_t token = spj_gettoken(lexer);
 
     switch (token) {
         case SpjJSONTokenObjectStart: {

@@ -6,7 +6,7 @@
 #include "types.h"
 
 
-typedef enum SpjJSONTokenType {
+typedef enum spj_jsontoken_type_t {
     SpjJSONTokenError =       0,
     SpjJSONTokenNumber =      1,
     SpjJSONTokenString =      2,
@@ -19,7 +19,7 @@ typedef enum SpjJSONTokenType {
     SpjJSONTokenColon =       9,
     SpjJSONTokenComma =      10,
     SpjJSONTokenEOS =        11 
-} SpjJSONTokenType;
+} spj_jsontoken_type_t;
 
 
 typedef struct {
@@ -45,9 +45,9 @@ const char * spj_lexer_getp(spj_lexer_t *lexer);
 const char * spj_lexer_peekp(spj_lexer_t *lexer);
 
 
-SpjJSONTokenType spj_gettoken_string(spj_lexer_t *lexer);
-SpjJSONTokenType spj_gettoken_number(spj_lexer_t *lexer);
-SpjJSONTokenType spj_gettoken(spj_lexer_t *lexer);
+spj_jsontoken_type_t spj_gettoken_string(spj_lexer_t *lexer);
+spj_jsontoken_type_t spj_gettoken_number(spj_lexer_t *lexer);
+spj_jsontoken_type_t spj_gettoken(spj_lexer_t *lexer);
 
 
 
