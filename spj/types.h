@@ -66,7 +66,7 @@ typedef enum {
     SpjJSONErrorWrongRootObject,
     SpjJSONErrorOutOfMemory,
     SpjJSONErrorUnexpectedEOS
-} SpjJSONError;
+} spj_errorcode_t;
 
 
 typedef enum {
@@ -76,7 +76,7 @@ typedef enum {
 
 
 typedef struct {
-    SpjJSONError code;
+    spj_errorcode_t code;
     char *message;
 } spj_error_t;
 
