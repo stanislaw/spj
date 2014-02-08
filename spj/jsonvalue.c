@@ -56,6 +56,7 @@ void spj_jsonvalue_object_add(SpjJSONValue *jsonvalue, SpjJSONNamedValue *child_
         }
     }
 
+    jsonvalue->value.object.data[jsonvalue->value.object.size++] = *child_jsonvalue;
 }
 
 

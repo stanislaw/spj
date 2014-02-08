@@ -19,9 +19,6 @@ spj_lexer_t spj_lexer_create(const char *jsonbytes, size_t datasize) {
     lexer.datasize = datasize;
     lexer.error = NULL;
 
-    lexer.shared_array_elements = malloc(sizeof(SpjJSONValue) * 20);
-    lexer.shared_object_elements = malloc(sizeof(SpjJSONNamedValue) * 20);
-
     return lexer;
 }
 
