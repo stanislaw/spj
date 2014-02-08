@@ -201,6 +201,8 @@ int test_simple_root_objects_two_level_nesting() {
 
   return 0;
 }
+
+
 int test_wrong_root_object() {
     char *jsonbytes;
     SpjJSONValue jsonvalue;
