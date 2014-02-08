@@ -1,5 +1,5 @@
 CC=clang
-CFLAGS=-g -Wall -Wextra -ansi -pedantic
+CFLAGS=-O3 -g -Wall -Wextra -ansi -pedantic
 LDFLAGS=
 SOURCES=main.c
 OUT=-o main

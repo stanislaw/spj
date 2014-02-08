@@ -153,7 +153,7 @@ spj_jsontoken_type_t spj_gettoken_number(spj_lexer_t *lexer) {
         assert(0);
     }
 
-    while (spj_lexer_peekp(lexer) != endpointer) {
+    while (spj_lexer_peekp(lexer) < endpointer) {
         spj_lexer_increment(lexer);
     }
 
