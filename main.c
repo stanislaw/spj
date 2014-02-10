@@ -7,9 +7,9 @@
 
 int main() {
     spj_error_t error;
-    spj_jsonvalue_t jsonvalue;
     char *jsonbytes;
     size_t datasize;
+    spj_jsonvalue_t jsonvalue;
 
     int N, i, j;
     double initial_time;
@@ -135,21 +135,21 @@ int main() {
     N = 10000;
 
     for (j = 0; j < 5; j++) {
-    initial_time = get_time();
+        initial_time = get_time();
 
-    datasize = strlen(jsonbytes);
+        datasize = strlen(jsonbytes);
 
-    for (i = 0; i < N; i++) {
-        spj_parse(jsonbytes, datasize, &jsonvalue, &error);
+        for (i = 0; i < N; i++) {
+
+            spj_parse(jsonbytes, datasize, &jsonvalue, &error);
+        }
+
+        printf("time elapsed: %f seconds\n", get_time() - initial_time);
     }
 
-    printf("time elapsed: %f seconds\n", get_time() - initial_time);
+    spj_jsonvalue_free(&jsonvalue);
 
-        spj_jsonvalue_free(&jsonvalue);
-    }
-
-
-    //spj_jsonvalue_debug(&jsonvalue);
+    /*spj_jsonvalue_debug(&jsonvalue);*/
 
     /*printf("\n");*/
 
