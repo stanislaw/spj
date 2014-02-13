@@ -8,7 +8,7 @@ static void spj_jsonvalue_debug_internal(spj_jsonvalue_t *jsonvalue) {
 
     switch (jsonvalue->type) {
         case SpjJSONValueArray: {
-            spj_jsonvalue_t data;
+            spj_jsonvalue_t value;
 
             printf("[");
 
@@ -17,9 +17,9 @@ static void spj_jsonvalue_debug_internal(spj_jsonvalue_t *jsonvalue) {
                     printf(", ");
                 }
 
-                data = jsonvalue->value.array.data[i];
+                value = jsonvalue->value.array.values[i];
 
-                spj_jsonvalue_debug_internal(&data);
+                spj_jsonvalue_debug_internal(&value);
             }
 
             printf("]");
@@ -28,7 +28,7 @@ static void spj_jsonvalue_debug_internal(spj_jsonvalue_t *jsonvalue) {
         }
 
         case SpjJSONValueObject: {
-            spj_jsonnamedvalue_t data;
+            spj_jsonvalue_t value;
 
             printf("{");
 
@@ -37,17 +37,17 @@ static void spj_jsonvalue_debug_internal(spj_jsonvalue_t *jsonvalue) {
                     printf(", ");
                 }
 
-                data = jsonvalue->value.object.data[i];
+                value = jsonvalue->value.object.values[i];
 
                 printf("\"");
 
-                printf("%s", data.name.data);
+                printf("%s", jsonvalue->value.object.keys[i].data);
 
                 printf("\"");
 
                 printf(":");
 
-                spj_jsonvalue_debug_internal(&data.value);
+                spj_jsonvalue_debug_internal(&value);
             }
 
             printf("}");

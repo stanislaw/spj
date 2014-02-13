@@ -78,8 +78,8 @@ int test_simple_root_objects() {
 
     check(jsonvalue.value.array.size == 1);
 
-    check(jsonvalue.value.array.data[0].type == SpjJSONValueNumber);
-    check(jsonvalue.value.array.data[0].value.number == 1);
+    check(jsonvalue.value.array.values[0].type == SpjJSONValueNumber);
+    check(jsonvalue.value.array.values[0].value.number == 1);
 
 
     memset(&jsonvalue, 0, sizeof(spj_jsonvalue_t));
@@ -93,8 +93,8 @@ int test_simple_root_objects() {
     check(jsonvalue.type == SpjJSONValueArray);
     check(jsonvalue.value.array.size == 4);
 
-    check(jsonvalue.value.array.data[3].type == SpjJSONValueNumber);
-    check(jsonvalue.value.array.data[3].value.number == 4);
+    check(jsonvalue.value.array.values[3].type == SpjJSONValueNumber);
+    check(jsonvalue.value.array.values[3].value.number == 4);
 
 
     memset(&jsonvalue, 0, sizeof(spj_jsonvalue_t));
@@ -108,13 +108,13 @@ int test_simple_root_objects() {
     check(jsonvalue.type == SpjJSONValueObject);
     check(jsonvalue.value.object.size == 3);
 
-    check(jsonvalue.value.object.data[0].value.type == SpjJSONValueString);
+    check(jsonvalue.value.object.values[0].type == SpjJSONValueString);
 
-    check(jsonvalue.value.object.data[0].name.size == 5);
-    check(jsonvalue.value.object.data[0].value.value.string.size == 5);
+    check(jsonvalue.value.object.keys[0].size == 5);
+    check(jsonvalue.value.object.values[0].value.string.size == 5);
 
-    check(strcmp(jsonvalue.value.object.data[0].name.data, "hello") == 0);
-    check(strcmp(jsonvalue.value.object.data[0].value.value.string.data, "world") == 0);
+    check(strcmp(jsonvalue.value.object.keys[0].data, "hello") == 0);
+    check(strcmp(jsonvalue.value.object.values[0].value.string.data, "world") == 0);
 
     return 0;
 }
@@ -138,9 +138,9 @@ int test_simple_root_objects_one_level_nesting() {
 
     check(jsonvalue.value.array.size == 1);
 
-    check(jsonvalue.value.array.data[0].type == SpjJSONValueObject);
-    check(jsonvalue.value.array.data[0].value.object.size == 0);
-    check(jsonvalue.value.array.data[0].value.object.data == NULL);
+    check(jsonvalue.value.array.values[0].type == SpjJSONValueObject);
+    check(jsonvalue.value.array.values[0].value.object.size == 0);
+    check(jsonvalue.value.array.values[0].value.object.values == NULL);
 
 
     memset(&jsonvalue, 0, sizeof(spj_jsonvalue_t));
@@ -155,18 +155,18 @@ int test_simple_root_objects_one_level_nesting() {
 
     check(jsonvalue.value.object.size == 1);
 
-    check(strcmp(jsonvalue.value.object.data[0].name.data, "array") == 0);
-    check(jsonvalue.value.object.data[0].value.type == SpjJSONValueArray);
-    check(jsonvalue.value.object.data[0].value.value.array.size == 3);
+    check(strcmp(jsonvalue.value.object.keys[0].data, "array") == 0);
+    check(jsonvalue.value.object.values[0].type == SpjJSONValueArray);
+    check(jsonvalue.value.object.values[0].value.array.size == 3);
 
 
-    check(jsonvalue.value.object.data[0].value.value.array.data[0].type == SpjJSONValueNumber);
-    check(jsonvalue.value.object.data[0].value.value.array.data[1].type == SpjJSONValueNumber);
-    check(jsonvalue.value.object.data[0].value.value.array.data[2].type == SpjJSONValueNumber);
+    check(jsonvalue.value.object.values[0].value.array.values[0].type == SpjJSONValueNumber);
+    check(jsonvalue.value.object.values[0].value.array.values[1].type == SpjJSONValueNumber);
+    check(jsonvalue.value.object.values[0].value.array.values[2].type == SpjJSONValueNumber);
 
-    check(jsonvalue.value.object.data[0].value.value.array.data[0].value.number == 1);
-    check(jsonvalue.value.object.data[0].value.value.array.data[1].value.number == 2);
-    check(jsonvalue.value.object.data[0].value.value.array.data[2].value.number == 3);
+    check(jsonvalue.value.object.values[0].value.array.values[0].value.number == 1);
+    check(jsonvalue.value.object.values[0].value.array.values[1].value.number == 2);
+    check(jsonvalue.value.object.values[0].value.array.values[2].value.number == 3);
 
 
   return 0;
@@ -191,12 +191,12 @@ int test_simple_root_objects_two_level_nesting() {
 
     check(jsonvalue.value.array.size == 1);
 
-    check(jsonvalue.value.array.data[0].type == SpjJSONValueArray);
-    check(jsonvalue.value.array.data[0].value.array.size == 1);
+    check(jsonvalue.value.array.values[0].type == SpjJSONValueArray);
+    check(jsonvalue.value.array.values[0].value.array.size == 1);
 
-    check(jsonvalue.value.array.data[0].value.array.data[0].value.object.data[0].name.data);
-    check(strcmp(jsonvalue.value.array.data[0].value.array.data[0].value.object.data[0].name.data, "hello") == 0);
-    check(strcmp(jsonvalue.value.array.data[0].value.array.data[0].value.object.data[0].value.value.string.data, "world") == 0);
+    check(jsonvalue.value.array.values[0].value.array.values[0].value.object.keys[0].data);
+    check(strcmp(jsonvalue.value.array.values[0].value.array.values[0].value.object.keys[0].data, "hello") == 0);
+    check(strcmp(jsonvalue.value.array.values[0].value.array.values[0].value.object.values[0].value.string.data, "world") == 0);
 
 
   return 0;

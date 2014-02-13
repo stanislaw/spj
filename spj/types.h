@@ -16,29 +16,26 @@ typedef enum spj_jsonvalue_type_t {
 } spj_jsonvalue_type_t;
 
 
-typedef struct spj_object_t {
-    struct spj_jsonnamedvalue_t *data;
-    size_t size;
-
-#ifdef USE_OBJ_DICT
-    struct htab *hash;
-#endif
-} spj_object_t;
-
-
-typedef struct spj_array_t {
-    struct spj_jsonvalue_t *data;
-    size_t size;
-} spj_array_t;
-
-
 typedef struct spj_string_t {
     char *data;
     size_t size;
 } spj_string_t;
 
 
-static const spj_object_t SpjObjectZero = { NULL, 0 };
+typedef struct spj_object_t {
+    struct spj_string_t *keys;
+    struct spj_jsonvalue_t *values;
+    size_t size;
+} spj_object_t;
+
+
+typedef struct spj_array_t {
+    struct spj_jsonvalue_t *values;
+    size_t size;
+} spj_array_t;
+
+
+static const spj_object_t SpjObjectZero = { NULL, NULL, 0 };
 static const spj_array_t  SpjArrayZero  = { NULL, 0 };
 static const spj_string_t SpjStringZero = { NULL, 0 };
 
@@ -52,12 +49,6 @@ typedef struct spj_jsonvalue_t {
         double number;
     } value;
 } spj_jsonvalue_t;
-
-
-typedef struct spj_jsonnamedvalue_t {
-    struct spj_jsonvalue_t value;
-    struct spj_string_t name;
-} spj_jsonnamedvalue_t;
 
 
 typedef enum {
