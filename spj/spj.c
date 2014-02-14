@@ -28,11 +28,11 @@ static spj_result_t spj_parse_object(spj_lexer_t *lexer, spj_jsonvalue_t *jsonva
     for (n = 0;; n++) {
         token = spj_gettoken(lexer);
 
-        if (n == 0 && token == SpjJSONTokenObjectEnd) {
+        if (n == 0 && token == SpjTokenObjectEnd) {
             break;
         }
 
-        if (token != SpjJSONTokenString) {
+        if (token != SpjTokenString) {
             printf("expected string %s\n", lexer->data + lexer->currentposition);
 
             assert(0);
@@ -40,7 +40,7 @@ static spj_result_t spj_parse_object(spj_lexer_t *lexer, spj_jsonvalue_t *jsonva
 
         keys[n] = lexer->value.value.string;
         
-        if ((token = spj_gettoken(lexer)) != SpjJSONTokenColon) {
+        if ((token = spj_gettoken(lexer)) != SpjTokenColon) {
             assert(0);
         }
 
@@ -50,11 +50,11 @@ static spj_result_t spj_parse_object(spj_lexer_t *lexer, spj_jsonvalue_t *jsonva
 
         token = spj_gettoken(lexer);
 
-        if (token == SpjJSONTokenObjectEnd) {
+        if (token == SpjTokenObjectEnd) {
             break;
         }
 
-        if (token != SpjJSONTokenComma) {
+        if (token != SpjTokenComma) {
             assert(0);
         }
     }
@@ -90,7 +90,7 @@ static spj_result_t spj_parse_array(spj_lexer_t *lexer, spj_jsonvalue_t *jsonval
     for (i = 0;; i++) {
         token = spj_parse_default(lexer, &child_jsonvalue, (i == 0));
 
-        if (i == 0 && token == SpjJSONTokenArrayEnd) {
+        if (i == 0 && token == SpjTokenArrayEnd) {
             break;
         }
 
@@ -98,11 +98,11 @@ static spj_result_t spj_parse_array(spj_lexer_t *lexer, spj_jsonvalue_t *jsonval
 
         token = spj_gettoken(lexer);
 
-        if (token == SpjJSONTokenArrayEnd) {
+        if (token == SpjTokenArrayEnd) {
             break;
         }
 
-        if (token != SpjJSONTokenComma) {
+        if (token != SpjTokenComma) {
             printf("fail on symbol %d %c\n", token, spj_lexer_peek(lexer));
             
             assert(0);
@@ -125,30 +125,30 @@ static spj_jsontoken_type_t spj_parse_default(spj_lexer_t *lexer, spj_jsonvalue_
     spj_jsontoken_type_t token = spj_gettoken(lexer);
 
     switch (token) {
-        case SpjJSONTokenObjectStart: {
-            spj_jsonvalue_init(jsonvalue, SpjJSONValueObject);
+        case SpjTokenObjectStart: {
+            spj_jsonvalue_init(jsonvalue, SpjValueObject);
 
             spj_parse_object(lexer, jsonvalue);
 
             break;
         }
 
-        case SpjJSONTokenArrayStart: {
-            spj_jsonvalue_init(jsonvalue, SpjJSONValueArray);
+        case SpjTokenArrayStart: {
+            spj_jsonvalue_init(jsonvalue, SpjValueArray);
 
             spj_parse_array(lexer, jsonvalue);
 
             break;
         }
 
-        case SpjJSONTokenNumber: case SpjJSONTokenString: case SpjJSONTokenTrue: case SpjJSONTokenFalse: case SpjJSONTokenNull: {
+        case SpjTokenNumber: case SpjTokenString: case SpjTokenTrue: case SpjTokenFalse: case SpjTokenNull: {
             *jsonvalue = lexer->value;
 
             break;
         }
 
         /* Legitimate exception for Empty Array not to perform lookups twice */
-        case SpjJSONTokenArrayEnd: {
+        case SpjTokenArrayEnd: {
             if (inarray) break;
         }
             
@@ -181,7 +181,7 @@ spj_result_t spj_parse(const char *jsonstring, size_t datasize, spj_jsonvalue_t 
 
     switch (spj_lexer_getc(&lexer)) {
         case '{': {
-            spj_jsonvalue_init(jsonvalue, SpjJSONValueObject);
+            spj_jsonvalue_init(jsonvalue, SpjValueObject);
 
             result = spj_parse_object(&lexer, jsonvalue);
 
@@ -189,7 +189,7 @@ spj_result_t spj_parse(const char *jsonstring, size_t datasize, spj_jsonvalue_t 
         }
 
         case '[': {
-            spj_jsonvalue_init(jsonvalue, SpjJSONValueArray);
+            spj_jsonvalue_init(jsonvalue, SpjValueArray);
 
             result = spj_parse_array(&lexer, jsonvalue);
 

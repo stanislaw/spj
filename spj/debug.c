@@ -7,7 +7,7 @@ static void spj_jsonvalue_debug_internal(spj_jsonvalue_t *jsonvalue) {
     size_t i;
 
     switch (jsonvalue->type) {
-        case SpjJSONValueArray: {
+        case SpjValueArray: {
             spj_jsonvalue_t value;
 
             printf("[");
@@ -27,7 +27,7 @@ static void spj_jsonvalue_debug_internal(spj_jsonvalue_t *jsonvalue) {
             break;
         }
 
-        case SpjJSONValueObject: {
+        case SpjValueObject: {
             spj_jsonvalue_t value;
 
             printf("{");
@@ -55,7 +55,7 @@ static void spj_jsonvalue_debug_internal(spj_jsonvalue_t *jsonvalue) {
             break;
         }
 
-        case SpjJSONValueString:
+        case SpjValueString:
             printf("\"");
 
             printf("%s", jsonvalue->value.string.data);
@@ -64,22 +64,22 @@ static void spj_jsonvalue_debug_internal(spj_jsonvalue_t *jsonvalue) {
 
             break;
 
-        case SpjJSONValueNumber:
+        case SpjValueNumber:
             printf("%f", jsonvalue->value.number);
 
             break;
 
-        case SpjJSONValueNull:
+        case SpjValueNull:
             printf("null");
 
             break;
 
-        case SpjJSONValueTrue:
+        case SpjValueTrue:
             printf("true");
 
             break;
 
-        case SpjJSONValueFalse:
+        case SpjValueFalse:
             printf("false");
 
             break;

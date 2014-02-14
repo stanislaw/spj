@@ -7,13 +7,13 @@
 
 
 typedef enum spj_jsonvalue_type_t {
-    SpjJSONValueObject = 1,
-    SpjJSONValueArray,
-    SpjJSONValueString,
-    SpjJSONValueNumber,
-    SpjJSONValueNull,
-    SpjJSONValueFalse,
-    SpjJSONValueTrue
+    SpjValueObject = 1,
+    SpjValueArray,
+    SpjValueString,
+    SpjValueNumber,
+    SpjValueNull,
+    SpjValueFalse,
+    SpjValueTrue
 } spj_jsonvalue_type_t;
 
 

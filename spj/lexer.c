@@ -111,7 +111,7 @@ spj_jsontoken_type_t spj_gettoken_string(spj_lexer_t *lexer) {
 
     /* printf("Token[String] : %s(%lu, %lu)\n", string.data, strlen(string.data), string.size); */
 
-    spj_jsonvalue_init(&jsonvalue, SpjJSONValueString);
+    spj_jsonvalue_init(&jsonvalue, SpjValueString);
 
     jsonvalue.value.string = string;
 
@@ -121,7 +121,7 @@ spj_jsontoken_type_t spj_gettoken_string(spj_lexer_t *lexer) {
 
     spj_lexer_increment(lexer);
 
-    return SpjJSONTokenString;
+    return SpjTokenString;
 }
 
 
@@ -134,7 +134,7 @@ spj_jsontoken_type_t spj_gettoken_number(spj_lexer_t *lexer) {
 
     firstbyte = spj_lexer_getp(lexer);
 
-    spj_jsonvalue_init(&jsonvalue, SpjJSONValueNumber);
+    spj_jsonvalue_init(&jsonvalue, SpjValueNumber);
 
     currentbyte = spj_lexer_peek(lexer);
 
@@ -163,7 +163,7 @@ spj_jsontoken_type_t spj_gettoken_number(spj_lexer_t *lexer) {
 
     assert(isdigit(spj_lexer_peek(lexer)) == 0);
 
-    return SpjJSONTokenNumber;
+    return SpjTokenNumber;
 }
 
 
@@ -174,25 +174,25 @@ spj_jsontoken_type_t spj_gettoken(spj_lexer_t *lexer) {
 
     switch (currentbyte) {
         case '\0':
-            return SpjJSONTokenEOS;
+            return SpjTokenEOS;
 
         case '[':
-            return SpjJSONTokenArrayStart;
+            return SpjTokenArrayStart;
 
         case ']':
-            return SpjJSONTokenArrayEnd;
+            return SpjTokenArrayEnd;
 
         case '{':
-            return SpjJSONTokenObjectStart;
+            return SpjTokenObjectStart;
         
         case '}':
-            return SpjJSONTokenObjectEnd;
+            return SpjTokenObjectEnd;
 
         case ':':
-            return SpjJSONTokenColon;
+            return SpjTokenColon;
 
         case ',':
-            return SpjJSONTokenComma;
+            return SpjTokenComma;
 
         case '"':
             return spj_gettoken_string(lexer);
@@ -212,11 +212,11 @@ spj_jsontoken_type_t spj_gettoken(spj_lexer_t *lexer) {
             /* printf("Token[Bool] : true\n"); */
 
             spj_jsonvalue_t jsonvalue;
-            spj_jsonvalue_init(&jsonvalue, SpjJSONValueTrue);
+            spj_jsonvalue_init(&jsonvalue, SpjValueTrue);
 
             lexer->value = jsonvalue;
 
-            return SpjJSONTokenTrue;
+            return SpjTokenTrue;
 
         } else {
             assert(0);
@@ -232,11 +232,11 @@ spj_jsontoken_type_t spj_gettoken(spj_lexer_t *lexer) {
             /* printf("Token[Bool] : false\n"); */
 
             spj_jsonvalue_t jsonvalue;
-            spj_jsonvalue_init(&jsonvalue, SpjJSONValueFalse);
+            spj_jsonvalue_init(&jsonvalue, SpjValueFalse);
 
             lexer->value = jsonvalue;
 
-            return SpjJSONTokenFalse;
+            return SpjTokenFalse;
 
         } else {
             assert(0);
@@ -251,11 +251,11 @@ spj_jsontoken_type_t spj_gettoken(spj_lexer_t *lexer) {
             /* printf("Token[Null]\n"); */
 
             spj_jsonvalue_t jsonvalue;
-            spj_jsonvalue_init(&jsonvalue, SpjJSONValueNull);
+            spj_jsonvalue_init(&jsonvalue, SpjValueNull);
 
             lexer->value = jsonvalue;
             
-            return SpjJSONTokenNull;
+            return SpjTokenNull;
             
         } else {
             assert(0);
@@ -267,6 +267,6 @@ spj_jsontoken_type_t spj_gettoken(spj_lexer_t *lexer) {
     
     assert(0);
     
-    return SpjJSONTokenError;
+    return SpjTokenError;
 }
 

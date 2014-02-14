@@ -10,22 +10,22 @@ void spj_jsonvalue_init(spj_jsonvalue_t *jsonvalue, spj_jsonvalue_type_t type) {
     jsonvalue->type = type;
 
     switch (type) {
-        case SpjJSONValueObject:
+        case SpjValueObject:
             jsonvalue->value.object = SpjObjectZero;
 
             break;
 
-        case SpjJSONValueArray:
+        case SpjValueArray:
             jsonvalue->value.array = SpjArrayZero;
 
             break;
 
-        case SpjJSONValueString:
+        case SpjValueString:
             jsonvalue->value.string = SpjStringZero;
 
             break;
 
-        case SpjJSONValueNumber:
+        case SpjValueNumber:
             jsonvalue->value.number = 0;
 
             break;
@@ -42,7 +42,7 @@ void spj_jsonvalue_free(spj_jsonvalue_t *jsonvalue) {
     }
 
     switch (jsonvalue->type) {
-        case SpjJSONValueObject: {
+        case SpjValueObject: {
             size_t i;
 
             for (i = 0; i < jsonvalue->value.object.size; i++) {
@@ -57,7 +57,7 @@ void spj_jsonvalue_free(spj_jsonvalue_t *jsonvalue) {
             break;
         }
 
-        case SpjJSONValueArray: {
+        case SpjValueArray: {
             size_t i;
             
             for (i = 0; i < jsonvalue->value.array.size; i++) {
@@ -69,7 +69,7 @@ void spj_jsonvalue_free(spj_jsonvalue_t *jsonvalue) {
             break;
         }
 
-        case SpjJSONValueString:
+        case SpjValueString:
             free(jsonvalue->value.string.data);
 
             break;

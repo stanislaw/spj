@@ -41,7 +41,7 @@ int test_empty() {
 
     jsonbytes = "{}";
     spj_parse(jsonbytes, strlen(jsonbytes), &jsonvalue, &error);
-    check(jsonvalue.type == SpjJSONValueObject);
+    check(jsonvalue.type == SpjValueObject);
     check(jsonvalue.value.object.size == 0);
     check(error.message == NULL);
     check(error.code == SpjJSONNoError);
@@ -51,7 +51,7 @@ int test_empty() {
 
     jsonbytes = "[]";
     spj_parse(jsonbytes, strlen(jsonbytes), &jsonvalue, &error);
-    check(jsonvalue.type == SpjJSONValueArray);
+    check(jsonvalue.type == SpjValueArray);
     check(jsonvalue.value.array.size == 0);
     check(error.message == NULL);
     check(error.code == SpjJSONNoError);
@@ -74,11 +74,11 @@ int test_simple_root_objects() {
     check(error.message == NULL);
     check(error.code == SpjJSONNoError);
 
-    check(jsonvalue.type == SpjJSONValueArray);
+    check(jsonvalue.type == SpjValueArray);
 
     check(jsonvalue.value.array.size == 1);
 
-    check(jsonvalue.value.array.values[0].type == SpjJSONValueNumber);
+    check(jsonvalue.value.array.values[0].type == SpjValueNumber);
     check(jsonvalue.value.array.values[0].value.number == 1);
 
 
@@ -90,10 +90,10 @@ int test_simple_root_objects() {
     check(error.message == NULL);
     check(error.code == SpjJSONNoError);
 
-    check(jsonvalue.type == SpjJSONValueArray);
+    check(jsonvalue.type == SpjValueArray);
     check(jsonvalue.value.array.size == 4);
 
-    check(jsonvalue.value.array.values[3].type == SpjJSONValueNumber);
+    check(jsonvalue.value.array.values[3].type == SpjValueNumber);
     check(jsonvalue.value.array.values[3].value.number == 4);
 
 
@@ -105,10 +105,10 @@ int test_simple_root_objects() {
     check(error.message == NULL);
     check(error.code == SpjJSONNoError);
 
-    check(jsonvalue.type == SpjJSONValueObject);
+    check(jsonvalue.type == SpjValueObject);
     check(jsonvalue.value.object.size == 3);
 
-    check(jsonvalue.value.object.values[0].type == SpjJSONValueString);
+    check(jsonvalue.value.object.values[0].type == SpjValueString);
 
     check(jsonvalue.value.object.keys[0].size == 5);
     check(jsonvalue.value.object.values[0].value.string.size == 5);
@@ -134,11 +134,11 @@ int test_simple_root_objects_one_level_nesting() {
     check(error.message == NULL);
     check(error.code == SpjJSONNoError);
 
-    check(jsonvalue.type == SpjJSONValueArray);
+    check(jsonvalue.type == SpjValueArray);
 
     check(jsonvalue.value.array.size == 1);
 
-    check(jsonvalue.value.array.values[0].type == SpjJSONValueObject);
+    check(jsonvalue.value.array.values[0].type == SpjValueObject);
     check(jsonvalue.value.array.values[0].value.object.size == 0);
     check(jsonvalue.value.array.values[0].value.object.values == NULL);
 
@@ -151,18 +151,18 @@ int test_simple_root_objects_one_level_nesting() {
     check(error.message == NULL);
     check(error.code == SpjJSONNoError);
 
-    check(jsonvalue.type == SpjJSONValueObject);
+    check(jsonvalue.type == SpjValueObject);
 
     check(jsonvalue.value.object.size == 1);
 
     check(strcmp(jsonvalue.value.object.keys[0].data, "array") == 0);
-    check(jsonvalue.value.object.values[0].type == SpjJSONValueArray);
+    check(jsonvalue.value.object.values[0].type == SpjValueArray);
     check(jsonvalue.value.object.values[0].value.array.size == 3);
 
 
-    check(jsonvalue.value.object.values[0].value.array.values[0].type == SpjJSONValueNumber);
-    check(jsonvalue.value.object.values[0].value.array.values[1].type == SpjJSONValueNumber);
-    check(jsonvalue.value.object.values[0].value.array.values[2].type == SpjJSONValueNumber);
+    check(jsonvalue.value.object.values[0].value.array.values[0].type == SpjValueNumber);
+    check(jsonvalue.value.object.values[0].value.array.values[1].type == SpjValueNumber);
+    check(jsonvalue.value.object.values[0].value.array.values[2].type == SpjValueNumber);
 
     check(jsonvalue.value.object.values[0].value.array.values[0].value.number == 1);
     check(jsonvalue.value.object.values[0].value.array.values[1].value.number == 2);
@@ -187,11 +187,11 @@ int test_simple_root_objects_two_level_nesting() {
     check(error.message == NULL);
     check(error.code == SpjJSONNoError);
 
-    check(jsonvalue.type == SpjJSONValueArray);
+    check(jsonvalue.type == SpjValueArray);
 
     check(jsonvalue.value.array.size == 1);
 
-    check(jsonvalue.value.array.values[0].type == SpjJSONValueArray);
+    check(jsonvalue.value.array.values[0].type == SpjValueArray);
     check(jsonvalue.value.array.values[0].value.array.size == 1);
 
     check(jsonvalue.value.array.values[0].value.array.values[0].value.object.keys[0].data);
