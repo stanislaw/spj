@@ -18,16 +18,12 @@ static spj_result_t spj_parse_object(spj_lexer_t *lexer, spj_jsonvalue_t *jsonva
     spj_jsontoken_type_t token;
     spj_jsonvalue_t child_jsonvalue_value;
 
-    spj_jsonvalue_t *values = alloca(sizeof(spj_jsonvalue_t) * 20);
-    spj_string_t *keys = alloca(sizeof(spj_string_t) * 20);
+    spj_jsonvalue_t *values = alloca(sizeof(spj_jsonvalue_t) * 100);
+    spj_string_t *keys = alloca(sizeof(spj_string_t) * 100);
 
     capacity = 0;
 
     assert(lexer->data[lexer->currentposition - 1] == '{'); /* remove this later */
-
-    assert(jsonvalue->type == SpjJSONValueObject);
-    assert(jsonvalue->value.object.size == 0);
-    assert(jsonvalue->value.object.values == NULL);
 
     for (n = 0;; n++) {
         token = spj_gettoken(lexer);
@@ -89,11 +85,7 @@ static spj_result_t spj_parse_array(spj_lexer_t *lexer, spj_jsonvalue_t *jsonval
 
     assert(lexer->data[lexer->currentposition - 1] == '[');
 
-    assert(jsonvalue->value.array.size == 0);
-    assert(jsonvalue->value.array.values == NULL);
-    assert(jsonvalue->type == SpjJSONValueArray);
-
-    spj_jsonvalue_t *elements = malloc(sizeof(spj_jsonvalue_t) * 20);
+    spj_jsonvalue_t *elements = alloca(sizeof(spj_jsonvalue_t) * 100);
 
     for (i = 0;; i++) {
         token = spj_parse_default(lexer, &child_jsonvalue, (i == 0));

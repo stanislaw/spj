@@ -4,7 +4,7 @@
 
 #include <assert.h>
 #include <stdlib.h>
-
+#include <string.h>
 
 void spj_jsonvalue_init(spj_jsonvalue_t *jsonvalue, spj_jsonvalue_type_t type) {
     jsonvalue->type = type;
@@ -51,11 +51,10 @@ void spj_jsonvalue_free(spj_jsonvalue_t *jsonvalue) {
             size_t i;
 
             for (i = 0; i < jsonvalue->value.object.size; i++) {
-                spj_jsonvalue_free(& jsonvalue->value.object.values[i]);
-
                 free(jsonvalue->value.object.keys[i].data);
+                jsonvalue->value.object.keys[i] = SpjStringZero;
 
-                jsonvalue->value.object.keys[i] = SpjStringZero; /* нужно? */
+                spj_jsonvalue_free(& jsonvalue->value.object.values[i]);
             }
 
             free(jsonvalue->value.object.values);
@@ -84,6 +83,6 @@ void spj_jsonvalue_free(spj_jsonvalue_t *jsonvalue) {
             break;
     }
 
-    spj_jsonvalue_init(jsonvalue, jsonvalue->type);
+    memset(jsonvalue, 0, sizeof(spj_jsonvalue_t));
 }
 

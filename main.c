@@ -147,7 +147,7 @@ int main() {
         printf("time elapsed: %f seconds\n", get_time() - initial_time);
     }
 
-    spj_jsonvalue_debug(&jsonvalue);
+    //spj_jsonvalue_debug(&jsonvalue);
 
     spj_jsonvalue_free(&jsonvalue);
 
