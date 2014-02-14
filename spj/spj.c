@@ -18,8 +18,8 @@ static spj_result_t spj_parse_object(spj_lexer_t *lexer, spj_jsonvalue_t *jsonva
     spj_jsontoken_type_t token;
     spj_jsonvalue_t child_jsonvalue_value;
 
-    spj_jsonvalue_t *values = alloca(sizeof(spj_jsonvalue_t) * 100);
-    spj_string_t *keys = alloca(sizeof(spj_string_t) * 100);
+    spj_jsonvalue_t *values = alloca(sizeof(spj_jsonvalue_t) * 10);
+    spj_string_t *keys = alloca(sizeof(spj_string_t) * 10);
 
     capacity = 0;
 

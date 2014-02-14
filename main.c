@@ -134,7 +134,7 @@ int main() {
 
     N = 10000;
 
-    for (j = 0; j < 5; j++) {
+    for (j = 0; j < 3; j++) {
         initial_time = get_time();
 
         datasize = strlen(jsonbytes);
