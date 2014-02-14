@@ -141,7 +141,7 @@ static spj_jsontoken_type_t spj_parse_default(spj_lexer_t *lexer, spj_jsonvalue_
             break;
         }
 
-        case SpjJSONTokenNumber: case SpjJSONTokenString: case SpjJSONTokenBool: case SpjJSONTokenNull: {
+        case SpjJSONTokenNumber: case SpjJSONTokenString: case SpjJSONTokenTrue: case SpjJSONTokenFalse: case SpjJSONTokenNull: {
             *jsonvalue = lexer->value;
 
             break;
@@ -169,7 +169,7 @@ spj_result_t spj_parse(const char *jsonstring, size_t datasize, spj_jsonvalue_t 
     spj_result_t result;
     spj_lexer_t lexer;
 
-    //printf("Original JSON: %s\n", jsonstring);
+    /*printf("Original JSON: %s\n", jsonstring);*/
 
     lexer = spj_lexer_create(jsonstring, datasize);
     

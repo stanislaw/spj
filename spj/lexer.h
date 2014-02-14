@@ -10,15 +10,16 @@ typedef enum spj_jsontoken_type_t {
     SpjJSONTokenError =       0,
     SpjJSONTokenNumber =      1,
     SpjJSONTokenString =      2,
-    SpjJSONTokenBool =        3,
-    SpjJSONTokenNull =        4,
-    SpjJSONTokenObjectStart = 5,
-    SpjJSONTokenArrayStart =  6,
-    SpjJSONTokenObjectEnd =   7,
-    SpjJSONTokenArrayEnd =    8,
-    SpjJSONTokenColon =       9,
-    SpjJSONTokenComma =      10,
-    SpjJSONTokenEOS =        11 
+    SpjJSONTokenNull =        3,
+    SpjJSONTokenTrue =        4,
+    SpjJSONTokenFalse =       5,
+    SpjJSONTokenObjectStart = 6,
+    SpjJSONTokenArrayStart =  7,
+    SpjJSONTokenObjectEnd =   8,
+    SpjJSONTokenArrayEnd =    9,
+    SpjJSONTokenColon =      10,
+    SpjJSONTokenComma =      11,
+    SpjJSONTokenEOS =        12
 } spj_jsontoken_type_t;
 
 

@@ -74,12 +74,13 @@ static void spj_jsonvalue_debug_internal(spj_jsonvalue_t *jsonvalue) {
 
             break;
 
-        case SpjJSONValueBool:
-            if (jsonvalue->value.number == 1) {
-                printf("false");
-            } else {
-                printf("true");
-            }
+        case SpjJSONValueTrue:
+            printf("true");
+
+            break;
+
+        case SpjJSONValueFalse:
+            printf("false");
 
             break;
 

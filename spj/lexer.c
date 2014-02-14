@@ -212,13 +212,11 @@ spj_jsontoken_type_t spj_gettoken(spj_lexer_t *lexer) {
             /* printf("Token[Bool] : true\n"); */
 
             spj_jsonvalue_t jsonvalue;
-            spj_jsonvalue_init(&jsonvalue, SpjJSONValueBool);
-
-            jsonvalue.value.number = 1;
+            spj_jsonvalue_init(&jsonvalue, SpjJSONValueTrue);
 
             lexer->value = jsonvalue;
 
-            return SpjJSONTokenBool;
+            return SpjJSONTokenTrue;
 
         } else {
             assert(0);
@@ -234,13 +232,11 @@ spj_jsontoken_type_t spj_gettoken(spj_lexer_t *lexer) {
             /* printf("Token[Bool] : false\n"); */
 
             spj_jsonvalue_t jsonvalue;
-            spj_jsonvalue_init(&jsonvalue, SpjJSONValueBool);
-
-            jsonvalue.value.number = 0;
+            spj_jsonvalue_init(&jsonvalue, SpjJSONValueFalse);
 
             lexer->value = jsonvalue;
 
-            return SpjJSONTokenBool;
+            return SpjJSONTokenFalse;
 
         } else {
             assert(0);

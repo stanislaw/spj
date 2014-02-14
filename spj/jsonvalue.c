@@ -30,11 +30,6 @@ void spj_jsonvalue_init(spj_jsonvalue_t *jsonvalue, spj_jsonvalue_type_t type) {
 
             break;
 
-        case SpjJSONValueBool:
-            jsonvalue->value.number = 0;
-
-            break;
-
         default:
             break;
     }
