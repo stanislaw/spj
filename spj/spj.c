@@ -14,21 +14,15 @@ static spj_jsontoken_type_t spj_parse_default(spj_lexer_t *lexer, spj_jsonvalue_
 
 
 static spj_result_t spj_parse_object(spj_lexer_t *lexer, spj_jsonvalue_t *jsonvalue) {
-    size_t n, capacity;
     spj_jsontoken_type_t token;
     spj_jsonvalue_t child_jsonvalue_value;
 
-    spj_jsonvalue_t *values = alloca(sizeof(spj_jsonvalue_t) * 10);
-    spj_string_t *keys = alloca(sizeof(spj_string_t) * 10);
-
-    capacity = 0;
-
     assert(lexer->data[lexer->currentposition - 1] == '{'); /* remove this later */
 
-    for (n = 0;; n++) {
+    for (;;) {
         token = spj_gettoken(lexer);
 
-        if (n == 0 && token == SpjTokenObjectEnd) {
+        if (jsonvalue->value.object.size == 0 && token == SpjTokenObjectEnd) {
             break;
         }
 
@@ -38,21 +32,29 @@ static spj_result_t spj_parse_object(spj_lexer_t *lexer, spj_jsonvalue_t *jsonva
             assert(0);
         }
 
-        keys[n] = lexer->value.value.string;
+        jsonvalue->value.object.size++;
+
+        size_t idx = lexer->buf_bytes_used + jsonvalue->value.object.size - 1;
+
+        lexer->keys_buf[idx] = lexer->value.value.string;
         
         if ((token = spj_gettoken(lexer)) != SpjTokenColon) {
             assert(0);
         }
 
+        lexer->buf_bytes_used += jsonvalue->value.object.size;
         spj_parse_default(lexer, &child_jsonvalue_value, 0);
+        lexer->buf_bytes_used -= jsonvalue->value.object.size;
 
-        values[jsonvalue->value.object.size++] = child_jsonvalue_value;
+        lexer->values_buf[idx] = child_jsonvalue_value;
+
 
         token = spj_gettoken(lexer);
 
         if (token == SpjTokenObjectEnd) {
             break;
         }
+
 
         if (token != SpjTokenComma) {
             assert(0);
@@ -64,10 +66,10 @@ static spj_result_t spj_parse_object(spj_lexer_t *lexer, spj_jsonvalue_t *jsonva
 
     if (jsonvalue->value.object.size > 0) {
         jsonvalue->value.object.values = malloc(jsonvalue->value.object.size * sizeof(spj_jsonvalue_t));
-        memcpy(jsonvalue->value.object.values, values, jsonvalue->value.object.size * sizeof(spj_jsonvalue_t));
+        memcpy(jsonvalue->value.object.values, lexer->values_buf + lexer->buf_bytes_used, jsonvalue->value.object.size * sizeof(spj_jsonvalue_t));
 
         jsonvalue->value.object.keys = malloc(jsonvalue->value.object.size * sizeof(spj_string_t));
-        memcpy(jsonvalue->value.object.keys, keys, jsonvalue->value.object.size * sizeof(spj_string_t));
+        memcpy(jsonvalue->value.object.keys, lexer->keys_buf + lexer->buf_bytes_used, jsonvalue->value.object.size * sizeof(spj_string_t));
     }
 
     /* spj_jsonvalue_object_finalize(jsonvalue, &capacity); */
@@ -77,24 +79,26 @@ static spj_result_t spj_parse_object(spj_lexer_t *lexer, spj_jsonvalue_t *jsonva
 
 
 static spj_result_t spj_parse_array(spj_lexer_t *lexer, spj_jsonvalue_t *jsonvalue) {
-    size_t i, capacity;
     spj_jsontoken_type_t token;
     spj_jsonvalue_t child_jsonvalue;
 
-    capacity = 0;
-
     assert(lexer->data[lexer->currentposition - 1] == '[');
 
-    spj_jsonvalue_t *elements = alloca(sizeof(spj_jsonvalue_t) * 100);
+    for (;;) {
+        lexer->buf_bytes_used += jsonvalue->value.array.size;
+        token = spj_parse_default(lexer, &child_jsonvalue, jsonvalue->value.array.size == 0);
+        lexer->buf_bytes_used -= jsonvalue->value.array.size;
 
-    for (i = 0;; i++) {
-        token = spj_parse_default(lexer, &child_jsonvalue, (i == 0));
-
-        if (i == 0 && token == SpjTokenArrayEnd) {
+        if (jsonvalue->value.array.size == 0 && token == SpjTokenArrayEnd) {
             break;
         }
 
-        elements[jsonvalue->value.array.size++] = child_jsonvalue;
+        jsonvalue->value.array.size++;
+
+        size_t idx = lexer->buf_bytes_used + jsonvalue->value.array.size - 1;
+
+        lexer->values_buf[idx] = child_jsonvalue;
+
 
         token = spj_gettoken(lexer);
 
@@ -114,7 +118,7 @@ static spj_result_t spj_parse_array(spj_lexer_t *lexer, spj_jsonvalue_t *jsonval
     if (jsonvalue->value.array.size > 0) {
         jsonvalue->value.array.values = malloc(jsonvalue->value.array.size * sizeof(spj_jsonvalue_t));
 
-        memcpy(jsonvalue->value.array.values, elements, jsonvalue->value.array.size * sizeof(spj_jsonvalue_t));
+        memcpy(jsonvalue->value.array.values, lexer->values_buf + lexer->buf_bytes_used, jsonvalue->value.array.size * sizeof(spj_jsonvalue_t));
     }
 
     return 0;
@@ -202,6 +206,7 @@ spj_result_t spj_parse(const char *jsonstring, size_t datasize, spj_jsonvalue_t 
             return SpjJSONParsingResultError;
     }
 
+    spj_lexer_free(&lexer);
     
     return result;
 }

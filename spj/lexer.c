@@ -19,9 +19,20 @@ spj_lexer_t spj_lexer_create(const char *jsonbytes, size_t datasize) {
     lexer.datasize = datasize;
     lexer.error = NULL;
 
+    lexer.buf_capacity = 128;
+    lexer.buf_bytes_used = 0;
+
+    lexer.keys_buf = malloc(lexer.buf_capacity * sizeof(spj_string_t));
+    lexer.values_buf = malloc(lexer.buf_capacity * sizeof(spj_jsonvalue_t));
+    
     return lexer;
 }
 
+
+void spj_lexer_free(spj_lexer_t *lexer) {
+    free(lexer->keys_buf);
+    free(lexer->values_buf);
+}
 
 void spj_lexer_increment(spj_lexer_t *lexer) {
     lexer->currentposition++;

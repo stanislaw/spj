@@ -134,7 +134,7 @@ int main() {
 
     N = 10000;
 
-    for (j = 0; j < 3; j++) {
+    for (j = 0; j < 7; j++) {
         initial_time = get_time();
 
         datasize = strlen(jsonbytes);
@@ -147,7 +147,7 @@ int main() {
         printf("time elapsed: %f seconds\n", get_time() - initial_time);
     }
 
-    //spj_jsonvalue_debug(&jsonvalue);
+    spj_jsonvalue_debug(&jsonvalue);
 
     spj_jsonvalue_free(&jsonvalue);
 
