@@ -30,10 +30,10 @@ typedef struct {
 
     spj_jsonvalue_t value;
 
-    spj_jsonvalue_t *values_buf;
-    spj_string_t *keys_buf;
-    size_t buf_bytes_used;
+    size_t buf_used;
     size_t buf_capacity;
+    spj_string_t *buf_keys;
+    spj_jsonvalue_t *buf_values;
 
     spj_error_t *error;
 } spj_lexer_t;
@@ -42,6 +42,8 @@ typedef struct {
 char spj_lexer_peek(spj_lexer_t *lexer);
 spj_lexer_t spj_lexer_create(const char *jsonbytes, size_t datasize);
 void spj_lexer_free(spj_lexer_t *lexer);
+
+void spj_lexer_increment_buf_used(spj_lexer_t *lexer);
 
 void spj_lexer_increment(spj_lexer_t *lexer);
 char spj_lexer_getc(spj_lexer_t *lexer);

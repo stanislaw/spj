@@ -19,20 +19,40 @@ spj_lexer_t spj_lexer_create(const char *jsonbytes, size_t datasize) {
     lexer.datasize = datasize;
     lexer.error = NULL;
 
-    lexer.buf_capacity = 128;
-    lexer.buf_bytes_used = 0;
-
-    lexer.keys_buf = malloc(lexer.buf_capacity * sizeof(spj_string_t));
-    lexer.values_buf = malloc(lexer.buf_capacity * sizeof(spj_jsonvalue_t));
+    lexer.buf_used = 0;
+    lexer.buf_capacity = 32;
+    lexer.buf_keys = malloc(lexer.buf_capacity * sizeof(spj_string_t));
+    lexer.buf_values = malloc(lexer.buf_capacity * sizeof(spj_jsonvalue_t));
     
     return lexer;
 }
 
 
 void spj_lexer_free(spj_lexer_t *lexer) {
-    free(lexer->keys_buf);
-    free(lexer->values_buf);
+    free(lexer->buf_keys);
+    free(lexer->buf_values);
 }
+
+
+void spj_lexer_increment_buf_used(spj_lexer_t *lexer) {
+    lexer->buf_used++;
+
+    if (lexer->buf_used == lexer->buf_capacity) {
+        lexer->buf_capacity = lexer->buf_capacity << 1;
+
+        spj_string_t *larger_keys = realloc(lexer->buf_keys, lexer->buf_capacity * sizeof(spj_string_t));
+        spj_jsonvalue_t *larger_values = realloc(lexer->buf_values, lexer->buf_capacity * sizeof(spj_jsonvalue_t));
+
+        if (larger_keys != NULL && larger_values != NULL) {
+            lexer->buf_keys = larger_keys;
+            lexer->buf_values = larger_values;
+        } else {
+            assert(0); /* Handle out of memory */
+        }
+    }
+}
+
+
 
 void spj_lexer_increment(spj_lexer_t *lexer) {
     lexer->currentposition++;

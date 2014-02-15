@@ -52,6 +52,7 @@ void spj_jsonvalue_free(spj_jsonvalue_t *jsonvalue) {
                 spj_jsonvalue_free(& jsonvalue->value.object.values[i]);
             }
 
+            free(jsonvalue->value.object.keys);
             free(jsonvalue->value.object.values);
 
             break;
